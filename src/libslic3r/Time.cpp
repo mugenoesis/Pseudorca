@@ -249,7 +249,11 @@ std::string millis_to_iso8601(long long unix_millis)
     std::tm tms = {};
     _gmtime_r(&seconds, &tms);
 
-    char buf[32];
+    // tm_year is an int, so GCC's -Wformat-truncation sizes the worst case off
+    // its full range (up to 78 bytes for a pathological year), not the ~24
+    // bytes a real calendar date needs -- widen the buffer to fit that bound
+    // outright rather than demote the warning.
+    char buf[80];
     std::snprintf(buf, sizeof(buf), "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ",
         tms.tm_year + 1900,
         tms.tm_mon + 1,
