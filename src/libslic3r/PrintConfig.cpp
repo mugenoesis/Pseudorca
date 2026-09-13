@@ -12744,6 +12744,12 @@ CLIActionsConfigDef::CLIActionsConfigDef()
     def->tooltip = L("Show the full list of SLA print configuration options.");
     def->set_default_value(new ConfigOptionBool(false));*/
 
+    def = this->add("help_json", coBool);
+    def->label = L("Help (JSON)");
+    def->tooltip = L("Show the full list of print/G-code configuration options as JSON, for machine consumption.");
+    def->cli = "help-json";
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("info", coBool);
     def->label = L("Output Model Info");
     def->tooltip = L("This outputs the model\u2019s information.");

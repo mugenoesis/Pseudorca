@@ -481,6 +481,83 @@ std::ostream& ConfigDef::print_cli_help(std::ostream& out, bool show_defaults, s
     return out;
 }
 
+std::ostream& ConfigDef::print_cli_help_json(std::ostream& out, std::function<bool(const ConfigOptionDef &)> filter) const
+{
+    auto type_name = [](ConfigOptionType type) -> std::string {
+        switch (type) {
+        case coFloat:            return "float";
+        case coFloats:           return "floats";
+        case coInt:              return "int";
+        case coInts:             return "ints";
+        case coString:           return "string";
+        case coStrings:          return "strings";
+        case coPercent:          return "percent";
+        case coPercents:         return "percents";
+        case coFloatOrPercent:   return "float_or_percent";
+        case coFloatsOrPercents: return "floats_or_percents";
+        case coPoint:            return "point";
+        case coPoints:           return "points";
+        case coPoint3:           return "point3";
+        case coBool:             return "bool";
+        case coBools:            return "bools";
+        case coEnum:             return "enum";
+        case coEnums:            return "enums";
+        case coPointsGroups:     return "points_groups";
+        case coIntsGroups:       return "ints_groups";
+        default:                 return "none";
+        }
+    };
+    auto printer_technology_name = [](PrinterTechnology tech) -> std::string {
+        switch (tech) {
+        case ptFFF: return "FFF";
+        case ptSLA: return "SLA";
+        case ptAny: return "any";
+        default:    return "unknown";
+        }
+    };
+
+    json out_options = json::array();
+    for (const auto& opt : this->options) {
+        const ConfigOptionDef& def = opt.second;
+        if (def.cli == ConfigOptionDef::nocli || !filter(def))
+            continue;
+
+        // Same CLI flag derivation as print_cli_help() above (key with underscores
+        // replaced by dashes, unless def.cli names explicit aliases).
+        std::vector<std::string> cli_args = def.cli_args(opt.first);
+        if (cli_args.empty())
+            continue;
+        for (auto& arg : cli_args)
+            arg.insert(0, (arg.size() == 1) ? "-" : "--");
+
+        json entry;
+        entry["key"]                = opt.first;
+        entry["cli"]                = cli_args;
+        entry["type"]               = type_name(def.type);
+        entry["label"]              = def.label;
+        entry["tooltip"]            = def.tooltip;
+        entry["category"]           = def.category;
+        entry["printer_technology"] = printer_technology_name(def.printer_technology);
+        entry["nullable"]           = def.nullable;
+        if (!def.sidetext.empty())
+            entry["sidetext"] = def.sidetext;
+        if (!def.enum_values.empty())
+            entry["enum_values"] = def.enum_values;
+        if (!def.enum_labels.empty())
+            entry["enum_labels"] = def.enum_labels;
+        if (def.min > -FLT_MAX)
+            entry["min"] = def.min;
+        if (def.max < FLT_MAX)
+            entry["max"] = def.max;
+        if (def.default_value)
+            entry["default"] = def.default_value->serialize();
+
+        out_options.push_back(std::move(entry));
+    }
+    out << out_options.dump(2);
+    return out;
+}
+
 void ConfigBase::apply_only(const ConfigBase &other, const t_config_option_keys &keys, bool ignore_nonexistent)
 {
     // loop through options and apply them

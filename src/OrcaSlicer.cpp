@@ -6190,6 +6190,8 @@ int CLI::run(int argc, char **argv)
             this->print_help(true, ptFFF);
         } else if (opt_key == "help_sla") {
             this->print_help(true, ptSLA);
+        } else if (opt_key == "help_json") {
+            this->print_help_json();
         } else if (opt_key == "pipe") {
             //already processed before
         } else if (opt_key == "load_slicedata") {
@@ -8207,6 +8209,19 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
             << "Run --help-fff / --help-sla to see the full listing of print options." << std::endl;
     }*/
     // flush the output buffer
+    boost::nowide::cout.flush();
+    boost::nowide::cerr.flush();
+}
+
+void CLI::print_help_json() const
+{
+    attach_console_on_demand();
+
+    // Unlike print_help(), this is meant to be parsed by a program (e.g. the headless-orca
+    // FastAPI wrapper auto-generating a settings schema), so stdout carries nothing but the
+    // JSON document itself -- no banner, no usage text.
+    print_config_def.print_cli_help_json(boost::nowide::cout);
+    boost::nowide::cout << std::endl;
     boost::nowide::cout.flush();
     boost::nowide::cerr.flush();
 }
