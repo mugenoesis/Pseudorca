@@ -1072,12 +1072,17 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
 
         ObjectDataViewModelNode* last_instance_node = node_parent->GetNthChild(0);
         PrintIndicator last_instance_printable = last_instance_node->IsPrintable();
+        // Captured before delete: ItemDeleted only needs the node's former address as an
+        // opaque row id (the control never dereferences it), but reading a pointer's value
+        // after delete is itself UB, which -Werror=use-after-free correctly flags.
+        wxDataViewItem last_instance_item(last_instance_node);
         node_parent->GetChildren().Remove(last_instance_node);
         delete last_instance_node;
-        ItemDeleted(parent, wxDataViewItem(last_instance_node));
+        ItemDeleted(parent, last_instance_item);
 
         ObjectDataViewModelNode* obj_node = node_parent->GetParent();
         obj_node->set_printable_icon(last_instance_printable);
+        wxDataViewItem node_parent_item(node_parent);
         obj_node->GetChildren().Remove(node_parent);
         delete node_parent;
         ret_item = wxDataViewItem(obj_node);
@@ -1086,7 +1091,7 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
         if (obj_node->GetChildCount() == 0)
             obj_node->m_container = false;
 #endif //__WXGTK__
-        ItemDeleted(ret_item, wxDataViewItem(node_parent));
+        ItemDeleted(ret_item, node_parent_item);
         return ret_item;
     }
 
@@ -1097,6 +1102,7 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
     if (node_parent->GetChildCount() == 0 && node_parent->m_type == itLayerRoot)
     {
         ObjectDataViewModelNode* obj_node = node_parent->GetParent();
+        wxDataViewItem node_parent_item(node_parent);
         obj_node->GetChildren().Remove(node_parent);
         delete node_parent;
         ret_item = wxDataViewItem(obj_node);
@@ -1105,7 +1111,7 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
         if (obj_node->GetChildCount() == 0)
             obj_node->m_container = false;
 #endif //__WXGTK__
-        ItemDeleted(ret_item, wxDataViewItem(node_parent));
+        ItemDeleted(ret_item, node_parent_item);
         return ret_item;
     }
 
@@ -1129,6 +1135,7 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
 
             ObjectDataViewModelNode* last_child_node = node_parent->GetNthChild(vol_idx);
             DeleteSettings(wxDataViewItem(last_child_node));
+            wxDataViewItem last_child_item(last_child_node);
             node_parent->GetChildren().Remove(last_child_node);
             node_parent->m_volumes_cnt = 0;
             delete last_child_node;
@@ -1137,7 +1144,7 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
             if (node_parent->GetChildCount() == 0)
                 node_parent->m_container = false;
 #endif //__WXGTK__
-            ItemDeleted(parent, wxDataViewItem(last_child_node));
+            ItemDeleted(parent, last_child_item);
 
             // BBS: Current object is already removed in model.objects,
             // but it is still exists in m_objects at the moment.
@@ -1191,9 +1198,10 @@ wxDataViewItem ObjectDataViewModel::DeleteLastInstance(const wxDataViewItem &par
     for (int i = inst_cnt - 1; i >= stop;--i) {
         ObjectDataViewModelNode *last_instance_node = inst_root_node->GetNthChild(i);
         if (i==0) last_inst_printable = last_instance_node->IsPrintable();
+        wxDataViewItem last_instance_item(last_instance_node);
         inst_root_node->GetChildren().Remove(last_instance_node);
         delete last_instance_node;
-        ItemDeleted(inst_root_item, wxDataViewItem(last_instance_node));
+        ItemDeleted(inst_root_item, last_instance_item);
     }
 
     if (delete_inst_root_item) {
