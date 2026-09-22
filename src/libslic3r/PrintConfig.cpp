@@ -13090,6 +13090,15 @@ CLIMiscConfigDef::CLIMiscConfigDef()
     def->cli_params = "\"1,2,3,1\"";
     def->set_default_value(new ConfigOptionInts());
 
+    def = this->add("remap_filament_extruder", coString);
+    def->label = L("Remap filament extruder");
+    def->tooltip = L("Comma-separated old:new 1-based extruder/slot reassignments to apply to the "
+                      "loaded model before slicing, e.g. \"1:4,2:2\" -- rewrites both the plain "
+                      "per-object/volume extruder assignment and any per-triangle MMU-painted color "
+                      "assignment.");
+    def->cli_params = "\"1:4,2:2\"";
+    def->set_default_value(new ConfigOptionString(""));
+
     def = this->add("allow_multicolor_oneplate", coBool);
     def->label = L("Allow multiple colors on one plate");
     def->tooltip = L("If enabled, Arrange will allow multiple colors on one plate.");

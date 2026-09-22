@@ -82,6 +82,8 @@
 #include "nlohmann/json.hpp"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/nowide/args.hpp>
 #include <boost/nowide/cstdlib.hpp>
@@ -2454,7 +2456,22 @@ int CLI::run(int argc, char **argv)
         }
     }
 
-    if (filament_count == 0)
+    // ORCA: filament_count here still means "how many filament slots the
+    // loaded 3mf itself declared" (set at ~line 1799 from the file's own
+    // embedded filament list) -- a plain `== 0` check only ever adopted
+    // load_filament_count for a file with NO declared filaments at all.
+    // A real project file with its own materials already has a non-zero
+    // filament_count, so supplying MORE --load-filaments than that (e.g.
+    // to reach a physical extruder the file's own roles never reference)
+    // left filament_count stuck at the smaller, stale value. Every
+    // downstream per-filament vector (inherits_group/different_settings
+    // below, filament_settings_id/filament_ids further down) is sized
+    // from filament_count but indexed using positions that can go up to
+    // load_filament_count, so a stale, too-small filament_count caused an
+    // out-of-bounds write there -- confirmed via a debug build + gdb,
+    // crashing later inside an unrelated std::string assignment once the
+    // corrupted heap region was reused.
+    if (filament_count < load_filament_count)
         filament_count = load_filament_count;
 
     if (is_bbl_3mf && (load_filament_count > 0) && (load_filaments_set.size() == 1))
@@ -3754,6 +3771,22 @@ int CLI::run(int argc, char **argv)
         project_filament_colors.resize(filament_count, "#FFFFFF");
     }
 
+    // ORCA: a real project file's own embedded filament_colour can be
+    // non-empty but still SMALLER than filament_count once more
+    // --load-filaments entries were supplied than the file's own roles
+    // (e.g. to reach a physical extruder the file never references) --
+    // pad it to match so it stays in sync with filament_is_support and
+    // other filament_count-sized options set up a few lines below.
+    // Confirmed via testing: without this, the mismatch was caught as
+    // CLI_CONFIG_FILE_ERROR ("filament_is_support's count N not equal to
+    // filament_colour's size M") once the earlier stale-filament_count
+    // crash (see the fix above) was already fixed.
+    if (project_filament_colors_option && project_filament_colors_option->values.size() < (size_t)filament_count) {
+        BOOST_LOG_TRIVIAL(info) << boost::format("project_filament_colors has %1% entries but filament_count is %2%, padding to match")
+            % project_filament_colors_option->values.size() % filament_count;
+        project_filament_colors_option->values.resize(filament_count, "#FFFFFF");
+    }
+
     if (project_filament_colors_option &&
         (selected_filament_colors_option || !m_print_config.option<ConfigOptionFloats>("flush_volumes_matrix") || (current_extruder_count != new_extruder_count) || (new_nozzle_volume_type != current_nozzle_volume_type)))
     {
@@ -3947,6 +3980,38 @@ int CLI::run(int argc, char **argv)
         m_models.emplace_back(std::move(m));
     }
 
+    // Apply any requested filament/extruder slot remapping (both the plain
+    // per-object/volume "extruder" config and any per-triangle MMU-painted
+    // color assignment) before the print pipeline consumes the model --
+    // lets a physical multi-extruder printer's real head layout differ from
+    // whatever extruder numbers the file's author originally used.
+    {
+        ConfigOptionString* remap_opt = m_config.option<ConfigOptionString>("remap_filament_extruder");
+        if (remap_opt && !remap_opt->value.empty()) {
+            std::map<int, int> slot_relocations;
+            std::vector<std::string> pairs;
+            boost::split(pairs, remap_opt->value, boost::is_any_of(","));
+            for (const std::string& pair_str : pairs) {
+                std::vector<std::string> parts;
+                boost::split(parts, pair_str, boost::is_any_of(":"));
+                bool ok = parts.size() == 2;
+                int old_slot = 0, new_slot = 0;
+                if (ok) {
+                    try {
+                        old_slot = boost::lexical_cast<int>(boost::trim_copy(parts[0]));
+                        new_slot = boost::lexical_cast<int>(boost::trim_copy(parts[1]));
+                    } catch (const boost::bad_lexical_cast&) { ok = false; }
+                }
+                if (!ok) {
+                    BOOST_LOG_TRIVIAL(error) << boost::format("invalid remap_filament_extruder pair '%1%'") % pair_str;
+                    record_exit_reson(outfile_dir, CLI_INVALID_PARAMS, 0, cli_errors[CLI_INVALID_PARAMS], sliced_info);
+                    flush_and_exit(CLI_INVALID_PARAMS);
+                }
+                slot_relocations[old_slot - 1] = new_slot - 1; // remap_model_filament_slots takes 0-based
+            }
+            remap_model_filament_slots(m_models[0], slot_relocations);
+        }
+    }
 
     //update the object config due to extruder count change
     if ((machine_switch) && ((current_extruder_count != new_extruder_count) || (current_print_variant_count != new_printer_variant_count)))
