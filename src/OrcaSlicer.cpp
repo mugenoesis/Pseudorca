@@ -4831,6 +4831,37 @@ int CLI::run(int argc, char **argv)
             % arrange_depth_mm % unscale<double>(max_y - min_y);
     };
     cap_beds_for_belt_printer(beds);
+    // ORCA: covers the common case the arrange cap above doesn't -- a
+    // single-object plate never triggers auto-arrange at all
+    // (need_arrange stays false, confirmed via the "before arrange,
+    // need_arrange=%1%" log further down), so the object just keeps
+    // whatever position it's given by default, which for a belt printer's
+    // own (deliberately very long) printable_area lands roughly at the
+    // whole span's center -- far from the prime lines that help
+    // first-layer adhesion (confirmed: Y=1054 while priming happens
+    // within the first ~20mm). Explicitly recenter near the belt's own Y
+    // origin here, before the transforms loop below -- so an explicit
+    // user-requested `--center` (handled in that loop) still wins if one
+    // is passed, and any later auto-arrange (when it does run) still
+    // re-positions things properly using the capped beds above.
+    if (!beds.empty() && !m_models.empty()) {
+        ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
+        if (infinite_y_opt && infinite_y_opt->value) {
+            coord_t min_x = beds.front().x(), max_x = beds.front().x(), min_y = beds.front().y();
+            for (const Point &p : beds) {
+                min_x = std::min(min_x, p.x());
+                max_x = std::max(max_x, p.x());
+                min_y = std::min(min_y, p.y());
+            }
+            double center_x_mm = (unscale<double>(min_x) + unscale<double>(max_x)) / 2.;
+            double margin_y_mm = 60.; // clear of the purge blob/prime lines
+            Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm);
+            for (Model &model : m_models)
+                model.center_instances_around_point(target);
+            BOOST_LOG_TRIVIAL(info) << boost::format("belt printer: recentered default object placement near the prime-line origin at (%1%, %2%)")
+                % center_x_mm % (unscale<double>(min_y) + margin_y_mm);
+        }
+    }
     ArrangeParams arrange_cfg;
 
     BOOST_LOG_TRIVIAL(info) << "will start transforms, commands count " << m_transforms.size() << "\n";
