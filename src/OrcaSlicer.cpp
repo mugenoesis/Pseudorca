@@ -4788,6 +4788,46 @@ int CLI::run(int argc, char **argv)
     // Loop through transform options.
     bool user_center_specified = false;
     Points beds = get_bed_shape(m_print_config);
+    // ORCA: a belt printer's own Y axis (belt_printer_infinite_y) models
+    // "distance travelled along the belt from the fixed prime-line
+    // reference point" -- confirmed against IdeaFormer IR3 V2's own
+    // machine_start_gcode, which always purges/primes within the first
+    // ~20mm of Y -- not a normal bed dimension a single small plate should
+    // ever be centered within. printable_area (and so get_bed_shape() above)
+    // is deliberately very long (e.g. 2000mm) so a real, long print is
+    // still valid; that's correct and stays untouched for bed-boundary
+    // validation elsewhere. But feeding that same huge shape straight into
+    // auto-arrange below makes it center the plate's objects around the
+    // middle of the whole span -- tens of centimeters from the prime lines
+    // that are supposed to help the first layer adhere (reported: a small
+    // part landing at Y=1054 while priming happens at Y<20). Arrange only
+    // ever needs *just enough* room near the origin to pack whatever's
+    // actually on the plate, so shrink (never grow) the Y extent it's
+    // given to a generous multiple of the model's own footprint, anchored
+    // at the same minimum Y the real bed already starts at.
+    if (!beds.empty() && !m_models.empty()) {
+        ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
+        if (infinite_y_opt && infinite_y_opt->value) {
+            BoundingBoxf3 model_bbox = m_models[0].bounding_box_exact();
+            if (model_bbox.defined) {
+                coord_t min_y = beds.front().y(), max_y = beds.front().y();
+                for (const Point &p : beds) {
+                    min_y = std::min(min_y, p.y());
+                    max_y = std::max(max_y, p.y());
+                }
+                double margin_mm = 60.; // clear of the purge blob/prime lines
+                double arrange_depth_mm = std::max(150., model_bbox.size().y() * 2. + margin_mm);
+                coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
+                if (capped_max_y < max_y) {
+                    for (Point &p : beds)
+                        if (p.y() > capped_max_y) p.y() = capped_max_y;
+                    BOOST_LOG_TRIVIAL(info) << boost::format(
+                        "belt printer: capped auto-arrange's Y span to %1%mm near the prime-line origin (was %2%mm)")
+                        % arrange_depth_mm % unscale<double>(max_y - min_y);
+                }
+            }
+        }
+    }
     ArrangeParams arrange_cfg;
 
     BOOST_LOG_TRIVIAL(info) << "will start transforms, commands count " << m_transforms.size() << "\n";
