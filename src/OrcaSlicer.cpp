@@ -4793,41 +4793,44 @@ int CLI::run(int argc, char **argv)
     // reference point" -- confirmed against IdeaFormer IR3 V2's own
     // machine_start_gcode, which always purges/primes within the first
     // ~20mm of Y -- not a normal bed dimension a single small plate should
-    // ever be centered within. printable_area (and so get_bed_shape() above)
-    // is deliberately very long (e.g. 2000mm) so a real, long print is
-    // still valid; that's correct and stays untouched for bed-boundary
+    // ever be centered within. printable_area (and so get_bed_shape()/
+    // get_shrink_bedpts(), both used to (re)populate `beds` at several
+    // points below depending which transform/arrange path runs) is
+    // deliberately very long (e.g. 2000mm) so a real, long print is still
+    // valid; that's correct and stays untouched for bed-boundary
     // validation elsewhere. But feeding that same huge shape straight into
-    // auto-arrange below makes it center the plate's objects around the
-    // middle of the whole span -- tens of centimeters from the prime lines
-    // that are supposed to help the first layer adhere (reported: a small
-    // part landing at Y=1054 while priming happens at Y<20). Arrange only
-    // ever needs *just enough* room near the origin to pack whatever's
-    // actually on the plate, so shrink (never grow) the Y extent it's
-    // given to a generous multiple of the model's own footprint, anchored
-    // at the same minimum Y the real bed already starts at.
-    if (!beds.empty() && !m_models.empty()) {
+    // auto-arrange centers the plate's objects around the middle of the
+    // whole span -- tens of centimeters from the prime lines that are
+    // supposed to help the first layer adhere (reported: a small part
+    // landing at Y=1054 while priming happens at Y<20). Arrange only ever
+    // needs *just enough* room near the origin to pack whatever's actually
+    // on the plate, so this shrinks (never grows) the Y extent it's given
+    // to a generous multiple of the model's own footprint, anchored at the
+    // same minimum Y the real bed already starts at -- called again right
+    // before every actual `arrange_objects`/`arrangement::arrange` call
+    // below, since `beds` gets reassigned from scratch in between.
+    auto cap_beds_for_belt_printer = [this](Points &beds_to_cap) {
+        if (beds_to_cap.empty() || m_models.empty()) return;
         ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
-        if (infinite_y_opt && infinite_y_opt->value) {
-            BoundingBoxf3 model_bbox = m_models[0].bounding_box_exact();
-            if (model_bbox.defined) {
-                coord_t min_y = beds.front().y(), max_y = beds.front().y();
-                for (const Point &p : beds) {
-                    min_y = std::min(min_y, p.y());
-                    max_y = std::max(max_y, p.y());
-                }
-                double margin_mm = 60.; // clear of the purge blob/prime lines
-                double arrange_depth_mm = std::max(150., model_bbox.size().y() * 2. + margin_mm);
-                coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
-                if (capped_max_y < max_y) {
-                    for (Point &p : beds)
-                        if (p.y() > capped_max_y) p.y() = capped_max_y;
-                    BOOST_LOG_TRIVIAL(info) << boost::format(
-                        "belt printer: capped auto-arrange's Y span to %1%mm near the prime-line origin (was %2%mm)")
-                        % arrange_depth_mm % unscale<double>(max_y - min_y);
-                }
-            }
+        if (!infinite_y_opt || !infinite_y_opt->value) return;
+        BoundingBoxf3 model_bbox = m_models[0].bounding_box_exact();
+        if (!model_bbox.defined) return;
+        coord_t min_y = beds_to_cap.front().y(), max_y = beds_to_cap.front().y();
+        for (const Point &p : beds_to_cap) {
+            min_y = std::min(min_y, p.y());
+            max_y = std::max(max_y, p.y());
         }
-    }
+        double margin_mm = 60.; // clear of the purge blob/prime lines
+        double arrange_depth_mm = std::max(150., model_bbox.size().y() * 2. + margin_mm);
+        coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
+        if (capped_max_y >= max_y) return;
+        for (Point &p : beds_to_cap)
+            if (p.y() > capped_max_y) p.y() = capped_max_y;
+        BOOST_LOG_TRIVIAL(info) << boost::format(
+            "belt printer: capped auto-arrange's Y span to %1%mm near the prime-line origin (was %2%mm)")
+            % arrange_depth_mm % unscale<double>(max_y - min_y);
+    };
+    cap_beds_for_belt_printer(beds);
     ArrangeParams arrange_cfg;
 
     BOOST_LOG_TRIVIAL(info) << "will start transforms, commands count " << m_transforms.size() << "\n";
@@ -4944,6 +4947,7 @@ int CLI::run(int argc, char **argv)
                 if (!all_objects_have_instances) model.add_default_instances();
 
                 try {
+                    cap_beds_for_belt_printer(beds);
                     if (dups > 1) {
                         // if all input objects have defined position(s) apply duplication to the whole model
                         duplicate(model, size_t(dups), beds, arrange_cfg);
@@ -5444,6 +5448,7 @@ int CLI::run(int argc, char **argv)
                 arrangement::update_selected_items_axis_align(selected, &m_print_config, arrange_cfg);
 
                 beds = get_shrink_bedpts(&m_print_config, arrange_cfg);
+                cap_beds_for_belt_printer(beds);
 
                 partplate_list.preprocess_exclude_areas(arrange_cfg.excluded_regions, enable_wrapping_detect, 1, scale_(1));
 
@@ -5917,6 +5922,7 @@ int CLI::run(int argc, char **argv)
                 arrangement::update_selected_items_axis_align(selected, &m_print_config, arrange_cfg);
 
                 beds=get_shrink_bedpts(&m_print_config, arrange_cfg);
+                cap_beds_for_belt_printer(beds);
 
                 partplate_list.preprocess_exclude_areas(arrange_cfg.excluded_regions, enable_wrapping_detect, 1, scale_(1));
 
