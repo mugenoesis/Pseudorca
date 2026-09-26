@@ -4854,7 +4854,15 @@ int CLI::run(int argc, char **argv)
                 min_y = std::min(min_y, p.y());
             }
             double center_x_mm = (unscale<double>(min_x) + unscale<double>(max_x)) / 2.;
-            double margin_y_mm = 60.; // clear of the purge blob/prime lines
+            // Deliberately small, not "clear of" the prime lines: confirmed
+            // via the web viewer's belt back-transform (once gcode_remap/
+            // belt_printer actually resolved correctly -- see
+            // api/app/profiles.py) that a 60mm margin here left the object's
+            // own nearest point ~45mm from the prime lines' own position,
+            // i.e. not actually touching. The prime lines exist partly to
+            // help first-layer adhesion, which only works if the object
+            // starts at/near them, not merely somewhere on the same bed.
+            double margin_y_mm = 15.;
             Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm);
             for (Model &model : m_models)
                 model.center_instances_around_point(target);
