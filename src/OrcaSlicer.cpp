@@ -4820,8 +4820,24 @@ int CLI::run(int argc, char **argv)
             min_y = std::min(min_y, p.y());
             max_y = std::max(max_y, p.y());
         }
-        double margin_mm = 60.; // clear of the purge blob/prime lines
-        double arrange_depth_mm = std::max(150., model_bbox.size().y() * 2. + margin_mm);
+        // Matches the explicit recenter below (same 15mm target) -- both
+        // exist for the same reason (help first-layer adhesion by starting
+        // near the prime lines), just on different code paths (this one is
+        // what actually determines placement whenever arrange runs at all,
+        // which is the common case for a plain mesh upload with no saved
+        // instance position -- need_arrange stays true then, confirmed
+        // against a real 3DBenchy .drc slice; the explicit recenter below
+        // only fires when arrange is skipped entirely).
+        double margin_mm = 15.;
+        // Sized so arrange's own centering within this capped band lands a
+        // lone object's near edge at min_y + margin_mm: object depth plus
+        // margin_mm of clearance on each side, centered => near edge =
+        // center - depth/2 = min_y + margin_mm. The previous "depth * 2"
+        // sizing gave arrange far more room than needed, which centered
+        // objects tens of mm from the belt origin despite this function's
+        // own stated intent (confirmed: a real 3DBenchy .drc slice landed
+        // ~46mm from the prime lines with that sizing, not ~margin_mm).
+        double arrange_depth_mm = std::max(20., model_bbox.size().y() + 2. * margin_mm);
         coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
         if (capped_max_y >= max_y) return;
         for (Point &p : beds_to_cap)
