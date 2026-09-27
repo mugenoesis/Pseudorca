@@ -127,11 +127,24 @@ public:
 	static double extrusion_width(const std::string &opt_key, const ConfigOptionResolver &config, const unsigned int first_printing_extruder = 0);
 
 private:
-    Flow(float width, float height, float spacing, float nozzle_diameter, bool bridge) : 
-        m_width(width), m_height(height), m_spacing(spacing), m_nozzle_diameter(nozzle_diameter), m_bridge(bridge) 
-        { 
+    Flow(float width, float height, float spacing, float nozzle_diameter, bool bridge) :
+        m_width(width),
+        // ORCA: height is frequently derived from a layer-height difference
+        // computed elsewhere (support/raft layer generation, interface
+        // layers, etc.) with no runtime validation that it's positive --
+        // confirmed via a real crash: a belt printer's tree-support raft/base
+        // layer height came out <= 0 for one layer, and mm3_per_mm() then
+        // threw FlowErrorNegativeFlow, aborting the ENTIRE slice. A
+        // vanishingly thin layer contributes negligible material either way,
+        // so clamp rather than propagate a degenerate value into a hard
+        // failure. Width is left unclamped -- mm3_per_mm()'s check on it is
+        // meant to catch a genuinely bad (user-facing) width/height
+        // combination, which this must not silently mask.
+        m_height(std::max(height, float(EPSILON))),
+        m_spacing(spacing), m_nozzle_diameter(nozzle_diameter), m_bridge(bridge)
+        {
             // Gap fill violates this condition.
-            //assert(width >= height); 
+            //assert(width >= height);
         }
 
     float       m_width { 0 };
