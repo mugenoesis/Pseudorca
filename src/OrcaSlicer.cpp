@@ -4841,11 +4841,19 @@ int CLI::run(int argc, char **argv)
         // Physically, that's the belt needing to run backward past its own
         // already-primed starting point, which real belt hardware generally
         // can't do safely. 15mm left support nowhere to go; 30mm leaves
-        // roughly 2x that observed overshoot as headroom while still landing
-        // within a few mm of the prime lines. This is a heuristic, not a
-        // guarantee -- support extent genuinely varies by model/settings, and
-        // a model with unusually large overhangs could still overshoot it.
-        double margin_mm = 30.;
+        // roughly 2x that observed overshoot as headroom.
+        //
+        // But 30mm unconditionally regressed the plain (no-support) case:
+        // confirmed the object/brim visibly no longer reaches the prime
+        // lines once this margin applies regardless of settings, even
+        // though nothing besides support material was ever observed to
+        // extend past the object's own footprint. Brim only adds a few mm
+        // around the object, nowhere near enough to need the wider margin.
+        // Condition on enable_support specifically, so fixing the support
+        // case doesn't regress adhesion for every other slice.
+        ConfigOptionBool *support_opt = m_print_config.option<ConfigOptionBool>("enable_support");
+        bool              support_enabled = support_opt && support_opt->value;
+        double margin_mm = support_enabled ? 30. : 15.;
         // Sized so arrange's own centering within this capped band lands a
         // lone object's near edge at min_y + margin_mm: object depth plus
         // margin_mm of clearance on each side, centered => near edge =
@@ -4907,15 +4915,16 @@ int CLI::run(int argc, char **argv)
             // i.e. not actually touching. The prime lines exist partly to
             // help first-layer adhesion, which only works if the object
             // starts at/near them, not merely somewhere on the same bed.
-            // Bumped from 15 to 30mm (matches the arrange-cap's own margin
-            // above): support material generated later can extend further
-            // toward the origin than the bare mesh this recenter targets --
-            // confirmed on a real belt slice with supports enabled reaching
-            // ~11.6mm past a 15mm-margin placement, i.e. past the belt's own
-            // origin. See the arrange-cap's own comment above for the full
-            // reasoning; same heuristic applies here for the (rarer)
-            // need_arrange=false path this code covers.
-            double margin_y_mm = 30.;
+            // Conditioned on enable_support, same as the arrange-cap's own
+            // margin above and for the same reason: a flat 30mm regressed
+            // adhesion for every non-support slice (object/brim visibly not
+            // reaching the prime lines), when only support material was ever
+            // observed to need the extra room. See the arrange-cap's own
+            // comment above for the full reasoning; same heuristic applies
+            // here for the (rarer) need_arrange=false path this code covers.
+            ConfigOptionBool *support_opt_recenter = m_print_config.option<ConfigOptionBool>("enable_support");
+            bool              support_enabled_recenter = support_opt_recenter && support_opt_recenter->value;
+            double margin_y_mm = support_enabled_recenter ? 30. : 15.;
             Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm);
             for (Model &model : m_models)
                 model.center_instances_around_point(target);
