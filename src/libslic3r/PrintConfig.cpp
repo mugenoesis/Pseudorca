@@ -7616,7 +7616,15 @@ void PrintConfigDef::init_fff_params()
                      "When enabled, the Y axis build volume limit is effectively removed, "
                      "allowing objects of any length to be printed along the belt direction.");
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionBool(true));
+    // Regression: a default of true here made every belt-specific arrange-cap/
+    // recenter check (OrcaSlicer.cpp's cap_beds_for_belt_printer and friends,
+    // all gated only on this option) silently activate for every ordinary
+    // printer whose profile never mentions this belt-only option -- confirmed
+    // moving a normal-sized object (3DBenchy) on a plain Creality/Bambu profile
+    // off the bed entirely ("no object fully inside the print volume"), a bug
+    // any non-belt printer with no explicit override would hit. Belt printer
+    // profiles set this explicitly on their shared "fdm_belt_common" base.
+    def->set_default_value(new ConfigOptionBool(false));
 
     // Mesh rotation applied before slicing — the sole mesh-side belt transform AND
     // the single source of truth for the physical belt tilt (bed rendering, support
