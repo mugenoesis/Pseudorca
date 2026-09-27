@@ -2870,6 +2870,35 @@ bool GCodeProcessor::check_multi_extruder_gcode_valid(const int                 
     // (is_active() == false) apply_inverse is identity and behaviour is
     // unchanged from before.
     const bool machine_frame_active = m_machine_frame_transform.is_active();
+    // ORCA: gcode_remap_x/y/z (GCodeWriter::apply_axis_remap's forward
+    // permutation) must ALSO be undone here, not just the machine-frame
+    // shear/scale -- see the m_gcode_remap_* member comments in the header
+    // for the confirmed real-world failure this fixes (a bed-bounds check
+    // that always trivially passed because it was comparing the wrong
+    // upright axis against printable_area/printable_height).
+    const bool gcode_remap_active = int(m_gcode_remap_x) != int(RemapAxis::PosX) ||
+                                     int(m_gcode_remap_y) != int(RemapAxis::PosY) ||
+                                     int(m_gcode_remap_z) != int(RemapAxis::PosZ);
+    // Bed max in the same (untranslated, pre-plate-offset) frame `build`
+    // below is computed in -- only consumed by a "Rev*" remap code, which
+    // reads as "this axis measured from the bed's far edge" (mirroring
+    // GCodeWriter::apply_axis_remap's own forward version of this).
+    const BoundingBox printable_bbox_scaled = plate_printable_poly.bounding_box();
+    const Vec3d gcode_remap_bed_max(
+        unscale<double>(printable_bbox_scaled.max.x()),
+        unscale<double>(printable_bbox_scaled.max.y()),
+        m_result.printable_height);
+    auto unapply_gcode_remap = [&gcode_remap_bed_max](const RemapAxis (&codes)[3], const Vec3d &pos) -> Vec3d {
+        Vec3d upright = Vec3d::Zero();
+        for (int letter = 0; letter < 3; ++letter) {
+            int    code  = int(codes[letter]);
+            int    axis  = code % 3;
+            double value = pos[letter];
+            upright[axis] = code < 3 ? value : (code < 6 ? -value : gcode_remap_bed_max[axis] - value);
+        }
+        return upright;
+    };
+    const RemapAxis gcode_remap_codes[3] = { m_gcode_remap_x, m_gcode_remap_y, m_gcode_remap_z };
     auto compare_pos = [&](const GCodeProcessorResult::MoveVertex &move) -> Vec3d {
         Vec3d pos = move.position.cast<double>();
         if (!machine_frame_active)
@@ -2883,6 +2912,8 @@ bool GCodeProcessor::check_multi_extruder_gcode_valid(const int                 
                       pos.y() - m_y_offset - extruder_off.y(),
                       pos.z() - extruder_off.z() + m_z_offset);
         Vec3d build = m_machine_frame_transform.apply_inverse(machine);
+        if (gcode_remap_active)
+            build = unapply_gcode_remap(gcode_remap_codes, build);
         // Re-apply plate offset so the result matches plate_printable_poly,
         // which is translated by plate_offset below.
         return Vec3d(build.x() + m_x_offset, build.y() + m_y_offset, build.z());
@@ -3165,6 +3196,13 @@ void GCodeProcessor::apply_config(const PrintConfig& config)
     m_machine_frame_transform.init_from_config(config);
     m_result.machine_frame_transform_active = m_machine_frame_transform.is_active();
     m_belt_printer = config.belt_printer.value;
+    // ORCA: also cache gcode_remap_x/y/z so compare_pos (in
+    // check_multi_extruder_gcode_valid) can undo the axis-letter permutation,
+    // not just the shear/scale -- see the member declarations in the header
+    // for why both are needed.
+    m_gcode_remap_x = config.gcode_remap_x.value;
+    m_gcode_remap_y = config.gcode_remap_y.value;
+    m_gcode_remap_z = config.gcode_remap_z.value;
 
     auto filament_maps = config.option<ConfigOptionInts>("filament_map");
     if (filament_maps != nullptr) {
