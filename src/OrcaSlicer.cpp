@@ -4820,15 +4820,32 @@ int CLI::run(int argc, char **argv)
             min_y = std::min(min_y, p.y());
             max_y = std::max(max_y, p.y());
         }
-        // Matches the explicit recenter below (same 15mm target) -- both
-        // exist for the same reason (help first-layer adhesion by starting
-        // near the prime lines), just on different code paths (this one is
-        // what actually determines placement whenever arrange runs at all,
-        // which is the common case for a plain mesh upload with no saved
-        // instance position -- need_arrange stays true then, confirmed
-        // against a real 3DBenchy .drc slice; the explicit recenter below
-        // only fires when arrange is skipped entirely).
-        double margin_mm = 15.;
+        // Matches the explicit recenter below (same margin) -- both exist for
+        // the same reason (help first-layer adhesion by starting near the
+        // prime lines), just on different code paths (this one is what
+        // actually determines placement whenever arrange runs at all, which
+        // is the common case for a plain mesh upload with no saved instance
+        // position -- need_arrange stays true then, confirmed against a real
+        // 3DBenchy .drc slice; the explicit recenter below only fires when
+        // arrange is skipped entirely).
+        //
+        // This margin sizes the object's OWN mesh distance from the belt
+        // origin, but support material generated later (a slicing-time
+        // computation, well after this placement decision) can extend
+        // further toward the origin than the bare mesh does -- confirmed on
+        // a real 3DBenchy slice with supports enabled: the mesh itself
+        // landed almost exactly at the origin (upright Y ~= 0, as this
+        // margin intends), but the generated support structure extended a
+        // further ~11.6mm past it, into upright Y < 0 -- i.e. past the
+        // belt's own origin, before where the prime lines even start.
+        // Physically, that's the belt needing to run backward past its own
+        // already-primed starting point, which real belt hardware generally
+        // can't do safely. 15mm left support nowhere to go; 30mm leaves
+        // roughly 2x that observed overshoot as headroom while still landing
+        // within a few mm of the prime lines. This is a heuristic, not a
+        // guarantee -- support extent genuinely varies by model/settings, and
+        // a model with unusually large overhangs could still overshoot it.
+        double margin_mm = 30.;
         // Sized so arrange's own centering within this capped band lands a
         // lone object's near edge at min_y + margin_mm: object depth plus
         // margin_mm of clearance on each side, centered => near edge =
@@ -4890,7 +4907,15 @@ int CLI::run(int argc, char **argv)
             // i.e. not actually touching. The prime lines exist partly to
             // help first-layer adhesion, which only works if the object
             // starts at/near them, not merely somewhere on the same bed.
-            double margin_y_mm = 15.;
+            // Bumped from 15 to 30mm (matches the arrange-cap's own margin
+            // above): support material generated later can extend further
+            // toward the origin than the bare mesh this recenter targets --
+            // confirmed on a real belt slice with supports enabled reaching
+            // ~11.6mm past a 15mm-margin placement, i.e. past the belt's own
+            // origin. See the arrange-cap's own comment above for the full
+            // reasoning; same heuristic applies here for the (rarer)
+            // need_arrange=false path this code covers.
+            double margin_y_mm = 30.;
             Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm);
             for (Model &model : m_models)
                 model.center_instances_around_point(target);
