@@ -4847,6 +4847,18 @@ int CLI::run(int argc, char **argv)
             % arrange_depth_mm % unscale<double>(max_y - min_y);
     };
     cap_beds_for_belt_printer(beds);
+    // ORCA: with the capped bed above sized tight to the object (just
+    // object_depth + 2*margin_mm), allow_rotations letting arrange rotate
+    // the object to fit better becomes a real, observed behavior (confirmed:
+    // a real 3DBenchy .drc slice came back rotated ~in-plane once the cap
+    // shrank, changing both its X and Y footprint span from the expected
+    // ~31mm/~60mm to ~50mm/~50mm) -- undesirable for a belt printer, where
+    // the object's designed orientation relative to the belt's own travel
+    // direction is often intentional. Force rotations off whenever this cap
+    // is in play; applied at both arrange_cfg.allow_rotations assignment
+    // sites below.
+    ConfigOptionBool *belt_infinite_y_for_rotation_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
+    bool is_belt_infinite_y = belt_infinite_y_for_rotation_opt && belt_infinite_y_for_rotation_opt->value;
     // ORCA: covers the common case the arrange cap above doesn't -- a
     // single-object plate never triggers auto-arrange at all
     // (need_arrange stays false, confirmed via the "before arrange,
@@ -5477,7 +5489,7 @@ int CLI::run(int argc, char **argv)
                     partplate_list.preprocess_nonprefered_areas(unselected, i + 1);
 
                 //Step-2:prepare the arrange params
-                arrange_cfg.allow_rotations = allow_rotations;
+                arrange_cfg.allow_rotations = allow_rotations && !is_belt_infinite_y;
                 arrange_cfg.allow_multi_materials_on_same_plate = allow_multicolor_oneplate;
                 arrange_cfg.avoid_extrusion_cali_region = avoid_extrusion_cali_region;
                 arrange_cfg.clearance_height_to_rod = height_to_rod;
@@ -5951,7 +5963,7 @@ int CLI::run(int argc, char **argv)
 
 
                 //Step-2:prepare the arrange params
-                arrange_cfg.allow_rotations  = allow_rotations;
+                arrange_cfg.allow_rotations  = allow_rotations && !is_belt_infinite_y;
                 arrange_cfg.allow_multi_materials_on_same_plate = allow_multicolor_oneplate;
                 arrange_cfg.avoid_extrusion_cali_region         = avoid_extrusion_cali_region;
                 arrange_cfg.clearance_height_to_rod             = height_to_rod;
