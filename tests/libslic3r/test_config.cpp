@@ -314,9 +314,9 @@ TEST_CASE("Flush-volume warning predicate respects used filament transitions", "
 TEST_CASE("belt_printer_infinite_y defaults to off", "[Config][Regression][belt]")
 {
     FullPrintConfig config;
-    CHECK_FALSE(config.opt_bool("belt_printer_infinite_y"));
+    CHECK_FALSE(config.belt_printer_infinite_y.value);
     // belt_printer itself must also default off, for the same reason.
-    CHECK_FALSE(config.opt_bool("belt_printer"));
+    CHECK_FALSE(config.belt_printer.value);
 }
 
 // TODO: https://github.com/SoftFever/OrcaSlicer/issues/11269 - Is this test still relevant? Delete if not.
