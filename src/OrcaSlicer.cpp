@@ -4865,8 +4865,11 @@ int CLI::run(int argc, char **argv)
         double arrange_depth_mm = std::max(20., model_bbox.size().y() + 2. * margin_mm);
         coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
         if (capped_max_y >= max_y) return;
+        // --belt-shift-y moves this whole strip along the belt, so arrange
+        // centres the object that much further from (or closer to) the origin.
+        const coord_t belt_shift = scale_(m_config.opt_float("belt_shift_y"));
         for (Point &p : beds_to_cap)
-            if (p.y() > capped_max_y) p.y() = capped_max_y;
+            p.y() = (p.y() > capped_max_y ? capped_max_y : p.y()) + belt_shift;
         BOOST_LOG_TRIVIAL(info) << boost::format(
             "belt printer: capped auto-arrange's Y span to %1%mm near the prime-line origin (was %2%mm)")
             % arrange_depth_mm % unscale<double>(max_y - min_y);
@@ -4927,7 +4930,10 @@ int CLI::run(int argc, char **argv)
             ConfigOptionBool *support_opt_recenter = m_print_config.option<ConfigOptionBool>("enable_support");
             bool              support_enabled_recenter = support_opt_recenter && support_opt_recenter->value;
             double margin_y_mm = support_enabled_recenter ? 30. : 15.;
-            Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm);
+            // --belt-shift-y: the caller measured where the print (support
+            // included) really starts and wants it moved onto the prime lines.
+            const double belt_shift_y_mm = m_config.opt_float("belt_shift_y");
+            Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm + belt_shift_y_mm);
             size_t num_instances = 0;
             for (const Model &model : m_models)
                 for (const ModelObject *object : model.objects)
@@ -4952,7 +4958,7 @@ int CLI::run(int argc, char **argv)
                         }
                     if (! group.defined)
                         continue;
-                    const double start_y = unscale<double>(min_y) + std::max(0., margin_y_mm - 0.5 * lowest.size().y());
+                    const double start_y = unscale<double>(min_y) + std::max(0., margin_y_mm - 0.5 * lowest.size().y()) + belt_shift_y_mm;
                     const Vec3d  shift(center_x_mm - group.center().x(), start_y - group.min.y(), 0.);
                     if (std::abs(shift.x()) < EPSILON && std::abs(shift.y()) < EPSILON)
                         continue;
@@ -5143,6 +5149,8 @@ int CLI::run(int argc, char **argv)
             }
         } else if (opt_key == "ensure_on_bed") {
             // do nothing, the value is used later
+        } else if (opt_key == "belt_shift_y") {
+            // do nothing, the value is read where the belt printer places objects
         } else if (opt_key == "keep_positions") {
             // do nothing, the value is read where the belt printer places objects
         } else if (opt_key == "rotate") {

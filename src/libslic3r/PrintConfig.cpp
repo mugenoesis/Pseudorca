@@ -12846,6 +12846,12 @@ CLITransformConfigDef::CLITransformConfigDef()
     def->tooltip = L("Lift the object above the bed when it is partially below. Disabled by default.");
     def->set_default_value(new ConfigOptionBool(false));
 
+    def = this->add("belt_shift_y", coFloat);
+    def->label = L("Belt shift Y");
+    def->tooltip = L("Belt printers: move the automatic placement this many mm along the belt (positive = away from the prime lines). Used to line the start of the print, including any support, up with the prime lines.");
+    def->cli_params = "mm";
+    def->set_default_value(new ConfigOptionFloat(0));
+
     def = this->add("keep_positions", coBool);
     def->label = L("Keep positions");
     def->tooltip = L("Keep every object exactly where the input file puts it. On a belt printer this skips the automatic placement near the prime-line origin. Disabled by default.");
