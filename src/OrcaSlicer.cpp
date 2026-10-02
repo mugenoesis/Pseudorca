@@ -4926,10 +4926,48 @@ int CLI::run(int argc, char **argv)
             bool              support_enabled_recenter = support_opt_recenter && support_opt_recenter->value;
             double margin_y_mm = support_enabled_recenter ? 30. : 15.;
             Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm);
-            for (Model &model : m_models)
-                model.center_instances_around_point(target);
-            BOOST_LOG_TRIVIAL(info) << boost::format("belt printer: recentered default object placement near the prime-line origin at (%1%, %2%)")
-                % center_x_mm % (unscale<double>(min_y) + margin_y_mm);
+            size_t num_instances = 0;
+            for (const Model &model : m_models)
+                for (const ModelObject *object : model.objects)
+                    num_instances += object->instances.size();
+            if (num_instances > 1) {
+                // Several objects (e.g. a row laid out along the belt by the
+                // caller): centering the whole group on the margin point would
+                // put half of it at negative Y, before the belt origin.
+                // Instead keep the group's X centred on the bed and start its
+                // lowest-Y object where a lone object of that depth would
+                // start (its centre on the margin), but never before the
+                // origin. The group's own spacing is left untouched.
+                for (Model &model : m_models) {
+                    BoundingBoxf3 group;
+                    BoundingBoxf3 lowest;
+                    for (const ModelObject *object : model.objects)
+                        for (size_t i = 0; i < object->instances.size(); ++ i) {
+                            BoundingBoxf3 bb = object->instance_bounding_box(i, false);
+                            group.merge(bb);
+                            if (! lowest.defined || bb.min.y() < lowest.min.y())
+                                lowest = bb;
+                        }
+                    if (! group.defined)
+                        continue;
+                    const double start_y = unscale<double>(min_y) + std::max(0., margin_y_mm - 0.5 * lowest.size().y());
+                    const Vec3d  shift(center_x_mm - group.center().x(), start_y - group.min.y(), 0.);
+                    if (std::abs(shift.x()) < EPSILON && std::abs(shift.y()) < EPSILON)
+                        continue;
+                    for (ModelObject *object : model.objects) {
+                        for (ModelInstance *instance : object->instances)
+                            instance->set_offset(instance->get_offset() + shift);
+                        object->invalidate_bounding_box();
+                    }
+                }
+                BOOST_LOG_TRIVIAL(info) << boost::format("belt printer: anchored %1% objects at the belt origin (x centred on %2%)")
+                    % num_instances % center_x_mm;
+            } else {
+                for (Model &model : m_models)
+                    model.center_instances_around_point(target);
+                BOOST_LOG_TRIVIAL(info) << boost::format("belt printer: recentered default object placement near the prime-line origin at (%1%, %2%)")
+                    % center_x_mm % (unscale<double>(min_y) + margin_y_mm);
+            }
         }
     }
     ArrangeParams arrange_cfg;
