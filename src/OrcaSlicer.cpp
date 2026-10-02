@@ -4899,7 +4899,9 @@ int CLI::run(int argc, char **argv)
     // re-positions things properly using the capped beds above.
     if (!beds.empty() && !m_models.empty()) {
         ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
-        if (infinite_y_opt && infinite_y_opt->value) {
+        // --keep-positions: the caller already placed every object (see
+        // api/app/threemf_objects.py), so don't move them to the default spot.
+        if (infinite_y_opt && infinite_y_opt->value && ! m_config.opt_bool("keep_positions")) {
             coord_t min_x = beds.front().x(), max_x = beds.front().x(), min_y = beds.front().y();
             for (const Point &p : beds) {
                 min_x = std::min(min_x, p.x());
@@ -5141,6 +5143,8 @@ int CLI::run(int argc, char **argv)
             }
         } else if (opt_key == "ensure_on_bed") {
             // do nothing, the value is used later
+        } else if (opt_key == "keep_positions") {
+            // do nothing, the value is read where the belt printer places objects
         } else if (opt_key == "rotate") {
             for (auto &model : m_models)
                 for (auto &o : model.objects)

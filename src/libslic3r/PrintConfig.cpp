@@ -12846,6 +12846,11 @@ CLITransformConfigDef::CLITransformConfigDef()
     def->tooltip = L("Lift the object above the bed when it is partially below. Disabled by default.");
     def->set_default_value(new ConfigOptionBool(false));
 
+    def = this->add("keep_positions", coBool);
+    def->label = L("Keep positions");
+    def->tooltip = L("Keep every object exactly where the input file puts it. On a belt printer this skips the automatic placement near the prime-line origin. Disabled by default.");
+    def->set_default_value(new ConfigOptionBool(false));
+
     /*def = this->add("copy", coInt);
     def->label = L("Copy");
     def->tooltip =L("Duplicate copies of model.");
