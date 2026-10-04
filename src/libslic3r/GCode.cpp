@@ -48,6 +48,8 @@
 #include "Print.hpp"
 #include "Utils.hpp"
 #include "ClipperUtils.hpp"
+#include "Support/BeltFloorContext.hpp"
+#include "libslic3r.h"
 #include "LocalesUtils.hpp"
 #include "libslic3r/format.hpp"
 #include "Time.hpp"
@@ -2200,6 +2202,42 @@ static bool belt_object_layer_prints_something(const PrintObject &object, const 
     return false;
 }
 
+// Belt printers: true when every separate piece of material on this layer rests on the belt.
+// Every layer plane of a belt printer meets the belt, so material lying on the belt is held by
+// the belt itself and is printable even when the layers just before it printed nothing (for
+// example a short support stub printed ahead of the part, then a gap, then the next support
+// branch starting on the belt). A piece that starts above the belt with nothing printed under
+// it would be extruded into air, so this returns false if any piece clears the belt.
+static bool belt_layer_rests_on_belt(const GCode::LayerToPrint &layer_to_print, const BeltFloorContext &belt_floor)
+{
+    ExPolygons islands;
+    if (layer_to_print.object_layer)
+        append(islands, layer_to_print.object_layer->lslices);
+    if (layer_to_print.support_layer) {
+        // Tree supports do not fill support_islands, so take the pieces from the extrusions.
+        Polylines lines;
+        layer_to_print.support_layer->support_fills.collect_polylines(lines);
+        if (! lines.empty())
+            append(islands, union_ex(offset(lines, scaled<float>(0.2))));
+    }
+    islands = union_ex(islands);
+    if (islands.empty())
+        // Only a belt brim band here: brim bands are laid on the belt by construction.
+        return layer_to_print.belt_brim_band != nullptr && ! layer_to_print.belt_brim_band->fills.empty();
+    const double print_z = layer_to_print.print_z();
+    // Material on the belt starts within about one layer of the belt surface; allow a little
+    // more for the stair-stepping of the sheared slices.
+    const double tolerance = 1.5 * layer_to_print.layer()->height + EPSILON;
+    for (const ExPolygon &island : islands) {
+        double clearance = std::numeric_limits<double>::max();
+        for (const Point &pt : island.contour.points)
+            clearance = std::min(clearance, print_z - belt_floor.floor_print_z(pt));
+        if (clearance > tolerance)
+            return false;
+    }
+    return true;
+}
+
 std::vector<GCode::LayerToPrint> GCode::collect_layers_to_print(const PrintObject& object, bool skip_empty_first_layer)
 {
     std::vector<GCode::LayerToPrint> layers_to_print;
@@ -2222,6 +2260,12 @@ std::vector<GCode::LayerToPrint> GCode::collect_layers_to_print(const PrintObjec
     }*/
 
     std::vector<std::pair<double, double>> warning_ranges;
+
+    // Belt printers: the belt surface, to tell a harmless gap (everything printed after it rests on
+    // the belt) from a real one (something after it would start in mid-air).
+    BeltFloorContext belt_floor;
+    const bool belt_floor_active = object.print()->config().belt_printer.value
+                                && belt_floor.init(object.slicing_parameters(), object.print()->config());
 
     // Pair the object layers with the support layers by z.
     //
@@ -2326,9 +2370,19 @@ std::vector<GCode::LayerToPrint> GCode::collect_layers_to_print(const PrintObjec
                 // does not hold on a belt for the lead-in. Suppress only this leading case,
                 // and keep flagging genuine *internal* gaps (which on a belt may still be an
                 // over-angle overhang that would print into air).
+                //
+                // With the belt geometry known, the same holds for any gap, leading or internal: it is
+                // harmless when every piece printed right after it rests on the belt (see
+                // belt_layer_rests_on_belt()), and a real problem when something would start in mid-air.
+                // Internal gaps of this kind happen with tree supports allowed to rest on the model: a
+                // short support stub can print ahead of the part, then nothing for a few layers, then the
+                // next branch starting on the belt. Checking the leading case too means a part floating
+                // above the belt at the very start of the print is no longer waved through unchecked.
+                // Without the belt geometry, fall back to allowing only the leading gap, as before.
                 const bool belt_leading_gap = object.print()->config().belt_printer.value
-                                           && last_extrusion_layer == nullptr;
-                if (!belt_leading_gap)
+                                           && last_extrusion_layer == nullptr && ! belt_floor_active;
+                const bool belt_gap_onto_belt = belt_floor_active && belt_layer_rests_on_belt(layer_to_print, belt_floor);
+                if (!belt_leading_gap && !belt_gap_onto_belt)
                     warning_ranges.emplace_back(std::make_pair((last_extrusion_layer ? last_extrusion_layer->print_z() : 0.), layers_to_print.back().print_z()));
             }
         }
@@ -2340,7 +2394,9 @@ std::vector<GCode::LayerToPrint> GCode::collect_layers_to_print(const PrintObjec
     // ORCA-Belt: objects print at their position along the belt, so the first
     // extrusions legitimately start far above Z=0. Drop the spurious
     // "empty layers from the bed" range while keeping genuine mid-print gaps.
-    if (skip_empty_first_layer && !warning_ranges.empty() && warning_ranges.front().first == 0.)
+    // With the belt geometry known, a leading range was only recorded because its material does
+    // not rest on the belt, so keep it.
+    if (skip_empty_first_layer && ! belt_floor_active && !warning_ranges.empty() && warning_ranges.front().first == 0.)
         warning_ranges.erase(warning_ranges.begin());
 
     if (! warning_ranges.empty()) {
