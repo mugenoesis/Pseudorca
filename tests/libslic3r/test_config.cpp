@@ -302,6 +302,23 @@ TEST_CASE("Flush-volume warning predicate respects used filament transitions", "
     }
 }
 
+// Regression test: belt_printer_infinite_y previously defaulted to true, so
+// every ordinary (non-belt) printer profile that never mentions this
+// belt-only option silently inherited it -- OrcaSlicer.cpp's belt-specific
+// arrange-cap/recenter logic is gated only on this flag being true, with no
+// accompanying check of belt_printer itself, so it activated for plain
+// Creality/Bambu-style profiles too. Confirmed moving a normal-sized object
+// (3DBenchy) on such a profile off the bed entirely ("no object fully inside
+// the print volume"). Belt printer profiles set this explicitly on their
+// shared "fdm_belt_common" base, so the option must default to off.
+TEST_CASE("belt_printer_infinite_y defaults to off", "[Config][Regression][belt]")
+{
+    FullPrintConfig config;
+    CHECK_FALSE(config.belt_printer_infinite_y.value);
+    // belt_printer itself must also default off, for the same reason.
+    CHECK_FALSE(config.belt_printer.value);
+}
+
 // TODO: https://github.com/SoftFever/OrcaSlicer/issues/11269 - Is this test still relevant? Delete if not.
 // It was failing so at least "nozzle_type" and "extruder_printable_area" could not be serialized
 // and an exception was thrown, but "nozzle_type" has been around for at least 3 months now.

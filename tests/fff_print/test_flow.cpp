@@ -77,6 +77,30 @@ SCENARIO("Flow math for non-bridges", "[Flow]") {
 
 }
 
+// Regression test for a real crash: a layer-height difference computed
+// elsewhere (e.g. a support fragment's remaining height after clipping) can
+// come out <= 0 for one layer. Flow's shared private constructor clamps
+// m_height to EPSILON instead of propagating the degenerate value into
+// mm3_per_mm(), which would otherwise throw FlowErrorNegativeFlow and crash
+// the slice. Width is deliberately left unclamped (mm3_per_mm() has its own
+// check for that).
+TEST_CASE("Flow clamps a non-positive height instead of throwing", "[Flow][Regression]") {
+    float nozzle_diameter = 0.4f;
+    auto base = Flow::new_from_config_width(frPerimeter, ConfigOptionFloatOrPercent(0.4f, false), nozzle_diameter, 0.2f);
+
+    for (float bad_height : {0.f, -0.1f, -1.f}) {
+        auto flow = base.with_height(bad_height);
+        CHECK(flow.height() >= float(EPSILON));
+        CHECK_NOTHROW(flow.mm3_per_mm());
+    }
+
+    // The 3-arg constructor (width, height, nozzle_diameter) funnels through
+    // the same shared constructor -- confirm it's clamped there too.
+    Flow direct(1.0f, -1.0f, nozzle_diameter);
+    CHECK(direct.height() >= float(EPSILON));
+    CHECK_NOTHROW(direct.mm3_per_mm());
+}
+
 /// Spacing, width calculation for bridge extrusions
 SCENARIO("Flow math for bridges", "[Flow]") {
     GIVEN("Nozzle Diameter of 0.4, a desired width of 1mm and layer height of 0.5") {

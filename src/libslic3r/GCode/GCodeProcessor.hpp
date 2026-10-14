@@ -1243,6 +1243,20 @@ inline constexpr float DEFAULT_FILAMENT_DENSITY = 1.245f;
         // pre-machine-frame (build-volume) frame.
         MachineFrameTransform m_machine_frame_transform;
         bool                  m_belt_printer{ false };
+        // ORCA: gcode_remap_x/y/z (GCodeWriter::apply_axis_remap's forward
+        // permutation) -- check_multi_extruder_gcode_valid's compare_pos
+        // must undo this TOO, not just the machine-frame shear/scale, or a
+        // non-identity remap (e.g. IdeaFormer IR3 V2: gcode Y <- upright Z,
+        // gcode Z <- upright Y) leaves the wrong upright axis sitting in
+        // each position slot: height ends up compared against the bed's Y
+        // bounds and depth against the height limit, both of which then
+        // trivially "pass" regardless of the real (out-of-bounds) geometry.
+        // Confirmed via a real belt slice: support material landing at
+        // upright Y = -4mm (physically before the belt's own origin) was
+        // never flagged by this check.
+        RemapAxis m_gcode_remap_x{ RemapAxis::PosX };
+        RemapAxis m_gcode_remap_y{ RemapAxis::PosY };
+        RemapAxis m_gcode_remap_z{ RemapAxis::PosZ };
 
         unsigned int m_line_id;
         unsigned int m_last_line_id;

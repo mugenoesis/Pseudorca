@@ -3534,6 +3534,33 @@ static void generate_support_areas(Print &print, TreeSupport* tree_support, cons
         bool   has_support = num_support_layers > 0;
         bool   has_raft    = config.raft_layers.size() > 0;
         num_support_layers = std::max(num_support_layers, config.raft_layers.size());
+        // precalculate()'s return value is deliberately just the topmost layer
+        // that still needs avoidance data precalculated (bounded by where the
+        // last real overhang sits, minus z_distance_top_layers) -- it is NOT
+        // "how many support layers this object needs" and can fall well short
+        // of that whenever the last overhang isn't near the very top of the
+        // raft+object span. generate_initial_areas() (below) independently
+        // computes the true count as layer_count + num_raft_layers -
+        // z_distance_delta (z_distance_top_layers + 1) and writes tip/overhang
+        // data into move_bounds[layer_idx] up to that index. move_bounds is
+        // sized from num_support_layers right here, so if this value is
+        // smaller than what generate_initial_areas() actually needs,
+        // generate_initial_areas() writes past the end of move_bounds via
+        // operator[] -- silent out-of-bounds corruption, not a crash. This is
+        // normally a small (often zero) discrepancy with a typical few-layer
+        // raft, but a belt printer's virtual raft can be 50+ layers, making
+        // the gap large and reliably corrupting the layers just below the
+        // object -- confirmed by direct instrumentation on a real belt job
+        // (raft=50, object layers=210, z_distance_delta=2: precalculate()
+        // returned 252 while generate_initial_areas() needed 258). Match
+        // generate_initial_areas()'s own formula here so move_bounds is
+        // always big enough.
+        {
+            const size_t z_distance_delta_here = config.z_distance_top_layers + 1;
+            const size_t min_layers_needed = size_t(std::max<int>(0,
+                int(print_object.layer_count()) + int(config.raft_layers.size()) - int(z_distance_delta_here)));
+            num_support_layers = std::max(num_support_layers, min_layers_needed);
+        }
 
         if (num_support_layers == 0)
             continue;

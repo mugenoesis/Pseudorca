@@ -4853,6 +4853,196 @@ int CLI::run(int argc, char **argv)
     // Loop through transform options.
     bool user_center_specified = false;
     Points beds = get_bed_shape(m_print_config);
+    // ORCA: a belt printer's own Y axis (belt_printer_infinite_y) models
+    // "distance travelled along the belt from the fixed prime-line
+    // reference point" -- confirmed against IdeaFormer IR3 V2's own
+    // machine_start_gcode, which always purges/primes within the first
+    // ~20mm of Y -- not a normal bed dimension a single small plate should
+    // ever be centered within. printable_area (and so get_bed_shape()/
+    // get_shrink_bedpts(), both used to (re)populate `beds` at several
+    // points below depending which transform/arrange path runs) is
+    // deliberately very long (e.g. 2000mm) so a real, long print is still
+    // valid; that's correct and stays untouched for bed-boundary
+    // validation elsewhere. But feeding that same huge shape straight into
+    // auto-arrange centers the plate's objects around the middle of the
+    // whole span -- tens of centimeters from the prime lines that are
+    // supposed to help the first layer adhere (reported: a small part
+    // landing at Y=1054 while priming happens at Y<20). Arrange only ever
+    // needs *just enough* room near the origin to pack whatever's actually
+    // on the plate, so this shrinks (never grows) the Y extent it's given
+    // to a generous multiple of the model's own footprint, anchored at the
+    // same minimum Y the real bed already starts at -- called again right
+    // before every actual `arrange_objects`/`arrangement::arrange` call
+    // below, since `beds` gets reassigned from scratch in between.
+    auto cap_beds_for_belt_printer = [this](Points &beds_to_cap) {
+        if (beds_to_cap.empty() || m_models.empty()) return;
+        ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
+        if (!infinite_y_opt || !infinite_y_opt->value) return;
+        BoundingBoxf3 model_bbox = m_models[0].bounding_box_exact();
+        if (!model_bbox.defined) return;
+        coord_t min_y = beds_to_cap.front().y(), max_y = beds_to_cap.front().y();
+        for (const Point &p : beds_to_cap) {
+            min_y = std::min(min_y, p.y());
+            max_y = std::max(max_y, p.y());
+        }
+        // Matches the explicit recenter below (same margin) -- both exist for
+        // the same reason (help first-layer adhesion by starting near the
+        // prime lines), just on different code paths (this one is what
+        // actually determines placement whenever arrange runs at all, which
+        // is the common case for a plain mesh upload with no saved instance
+        // position -- need_arrange stays true then, confirmed against a real
+        // 3DBenchy .drc slice; the explicit recenter below only fires when
+        // arrange is skipped entirely).
+        //
+        // This margin sizes the object's OWN mesh distance from the belt
+        // origin, but support material generated later (a slicing-time
+        // computation, well after this placement decision) can extend
+        // further toward the origin than the bare mesh does -- confirmed on
+        // a real 3DBenchy slice with supports enabled: the mesh itself
+        // landed almost exactly at the origin (upright Y ~= 0, as this
+        // margin intends), but the generated support structure extended a
+        // further ~11.6mm past it, into upright Y < 0 -- i.e. past the
+        // belt's own origin, before where the prime lines even start.
+        // Physically, that's the belt needing to run backward past its own
+        // already-primed starting point, which real belt hardware generally
+        // can't do safely. 15mm left support nowhere to go; 30mm leaves
+        // roughly 2x that observed overshoot as headroom.
+        //
+        // But 30mm unconditionally regressed the plain (no-support) case:
+        // confirmed the object/brim visibly no longer reaches the prime
+        // lines once this margin applies regardless of settings, even
+        // though nothing besides support material was ever observed to
+        // extend past the object's own footprint. Brim only adds a few mm
+        // around the object, nowhere near enough to need the wider margin.
+        // Condition on enable_support specifically, so fixing the support
+        // case doesn't regress adhesion for every other slice.
+        ConfigOptionBool *support_opt = m_print_config.option<ConfigOptionBool>("enable_support");
+        bool              support_enabled = support_opt && support_opt->value;
+        double margin_mm = support_enabled ? 30. : 15.;
+        // Sized so arrange's own centering within this capped band lands a
+        // lone object's near edge at min_y + margin_mm: object depth plus
+        // margin_mm of clearance on each side, centered => near edge =
+        // center - depth/2 = min_y + margin_mm. The previous "depth * 2"
+        // sizing gave arrange far more room than needed, which centered
+        // objects tens of mm from the belt origin despite this function's
+        // own stated intent (confirmed: a real 3DBenchy .drc slice landed
+        // ~46mm from the prime lines with that sizing, not ~margin_mm).
+        double arrange_depth_mm = std::max(20., model_bbox.size().y() + 2. * margin_mm);
+        coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
+        if (capped_max_y >= max_y) return;
+        // --belt-shift-y moves this whole strip along the belt, so arrange
+        // centres the object that much further from (or closer to) the origin.
+        const coord_t belt_shift = scale_(m_config.opt_float("belt_shift_y"));
+        for (Point &p : beds_to_cap)
+            p.y() = (p.y() > capped_max_y ? capped_max_y : p.y()) + belt_shift;
+        BOOST_LOG_TRIVIAL(info) << boost::format(
+            "belt printer: capped auto-arrange's Y span to %1%mm near the prime-line origin (was %2%mm)")
+            % arrange_depth_mm % unscale<double>(max_y - min_y);
+    };
+    cap_beds_for_belt_printer(beds);
+    // ORCA: with the capped bed above sized tight to the object (just
+    // object_depth + 2*margin_mm), allow_rotations letting arrange rotate
+    // the object to fit better becomes a real, observed behavior (confirmed:
+    // a real 3DBenchy .drc slice came back rotated ~in-plane once the cap
+    // shrank, changing both its X and Y footprint span from the expected
+    // ~31mm/~60mm to ~50mm/~50mm) -- undesirable for a belt printer, where
+    // the object's designed orientation relative to the belt's own travel
+    // direction is often intentional. Force rotations off whenever this cap
+    // is in play; applied at both arrange_cfg.allow_rotations assignment
+    // sites below.
+    ConfigOptionBool *belt_infinite_y_for_rotation_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
+    bool is_belt_infinite_y = belt_infinite_y_for_rotation_opt && belt_infinite_y_for_rotation_opt->value;
+    // ORCA: covers the common case the arrange cap above doesn't -- a
+    // single-object plate never triggers auto-arrange at all
+    // (need_arrange stays false, confirmed via the "before arrange,
+    // need_arrange=%1%" log further down), so the object just keeps
+    // whatever position it's given by default, which for a belt printer's
+    // own (deliberately very long) printable_area lands roughly at the
+    // whole span's center -- far from the prime lines that help
+    // first-layer adhesion (confirmed: Y=1054 while priming happens
+    // within the first ~20mm). Explicitly recenter near the belt's own Y
+    // origin here, before the transforms loop below -- so an explicit
+    // user-requested `--center` (handled in that loop) still wins if one
+    // is passed, and any later auto-arrange (when it does run) still
+    // re-positions things properly using the capped beds above.
+    if (!beds.empty() && !m_models.empty()) {
+        ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
+        // --keep-positions: the caller already placed every object (see
+        // api/app/threemf_objects.py), so don't move them to the default spot.
+        if (infinite_y_opt && infinite_y_opt->value && ! m_config.opt_bool("keep_positions")) {
+            coord_t min_x = beds.front().x(), max_x = beds.front().x(), min_y = beds.front().y();
+            for (const Point &p : beds) {
+                min_x = std::min(min_x, p.x());
+                max_x = std::max(max_x, p.x());
+                min_y = std::min(min_y, p.y());
+            }
+            double center_x_mm = (unscale<double>(min_x) + unscale<double>(max_x)) / 2.;
+            // Deliberately small, not "clear of" the prime lines: confirmed
+            // via the web viewer's belt back-transform (once gcode_remap/
+            // belt_printer actually resolved correctly -- see
+            // api/app/profiles.py) that a 60mm margin here left the object's
+            // own nearest point ~45mm from the prime lines' own position,
+            // i.e. not actually touching. The prime lines exist partly to
+            // help first-layer adhesion, which only works if the object
+            // starts at/near them, not merely somewhere on the same bed.
+            // Conditioned on enable_support, same as the arrange-cap's own
+            // margin above and for the same reason: a flat 30mm regressed
+            // adhesion for every non-support slice (object/brim visibly not
+            // reaching the prime lines), when only support material was ever
+            // observed to need the extra room. See the arrange-cap's own
+            // comment above for the full reasoning; same heuristic applies
+            // here for the (rarer) need_arrange=false path this code covers.
+            ConfigOptionBool *support_opt_recenter = m_print_config.option<ConfigOptionBool>("enable_support");
+            bool              support_enabled_recenter = support_opt_recenter && support_opt_recenter->value;
+            double margin_y_mm = support_enabled_recenter ? 30. : 15.;
+            // --belt-shift-y: the caller measured where the print (support
+            // included) really starts and wants it moved onto the prime lines.
+            const double belt_shift_y_mm = m_config.opt_float("belt_shift_y");
+            Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm + belt_shift_y_mm);
+            size_t num_instances = 0;
+            for (const Model &model : m_models)
+                for (const ModelObject *object : model.objects)
+                    num_instances += object->instances.size();
+            if (num_instances > 1) {
+                // Several objects (e.g. a row laid out along the belt by the
+                // caller): centering the whole group on the margin point would
+                // put half of it at negative Y, before the belt origin.
+                // Instead keep the group's X centred on the bed and start its
+                // lowest-Y object where a lone object of that depth would
+                // start (its centre on the margin), but never before the
+                // origin. The group's own spacing is left untouched.
+                for (Model &model : m_models) {
+                    BoundingBoxf3 group;
+                    BoundingBoxf3 lowest;
+                    for (const ModelObject *object : model.objects)
+                        for (size_t i = 0; i < object->instances.size(); ++ i) {
+                            BoundingBoxf3 bb = object->instance_bounding_box(i, false);
+                            group.merge(bb);
+                            if (! lowest.defined || bb.min.y() < lowest.min.y())
+                                lowest = bb;
+                        }
+                    if (! group.defined)
+                        continue;
+                    const double start_y = unscale<double>(min_y) + std::max(0., margin_y_mm - 0.5 * lowest.size().y()) + belt_shift_y_mm;
+                    const Vec3d  shift(center_x_mm - group.center().x(), start_y - group.min.y(), 0.);
+                    if (std::abs(shift.x()) < EPSILON && std::abs(shift.y()) < EPSILON)
+                        continue;
+                    for (ModelObject *object : model.objects) {
+                        for (ModelInstance *instance : object->instances)
+                            instance->set_offset(instance->get_offset() + shift);
+                        object->invalidate_bounding_box();
+                    }
+                }
+                BOOST_LOG_TRIVIAL(info) << boost::format("belt printer: anchored %1% objects at the belt origin (x centred on %2%)")
+                    % num_instances % center_x_mm;
+            } else {
+                for (Model &model : m_models)
+                    model.center_instances_around_point(target);
+                BOOST_LOG_TRIVIAL(info) << boost::format("belt printer: recentered default object placement near the prime-line origin at (%1%, %2%)")
+                    % center_x_mm % (unscale<double>(min_y) + margin_y_mm);
+            }
+        }
+    }
     ArrangeParams arrange_cfg;
 
     BOOST_LOG_TRIVIAL(info) << "will start transforms, commands count " << m_transforms.size() << "\n";
@@ -4969,6 +5159,7 @@ int CLI::run(int argc, char **argv)
                 if (!all_objects_have_instances) model.add_default_instances();
 
                 try {
+                    cap_beds_for_belt_printer(beds);
                     if (dups > 1) {
                         // if all input objects have defined position(s) apply duplication to the whole model
                         duplicate(model, size_t(dups), beds, arrange_cfg);
@@ -5023,6 +5214,10 @@ int CLI::run(int argc, char **argv)
             }
         } else if (opt_key == "ensure_on_bed") {
             // do nothing, the value is used later
+        } else if (opt_key == "belt_shift_y") {
+            // do nothing, the value is read where the belt printer places objects
+        } else if (opt_key == "keep_positions") {
+            // do nothing, the value is read where the belt printer places objects
         } else if (opt_key == "rotate") {
             for (auto &model : m_models)
                 for (auto &o : model.objects)
@@ -5443,7 +5638,7 @@ int CLI::run(int argc, char **argv)
                     partplate_list.preprocess_nonprefered_areas(unselected, i + 1);
 
                 //Step-2:prepare the arrange params
-                arrange_cfg.allow_rotations = allow_rotations;
+                arrange_cfg.allow_rotations = allow_rotations && !is_belt_infinite_y;
                 arrange_cfg.allow_multi_materials_on_same_plate = allow_multicolor_oneplate;
                 arrange_cfg.avoid_extrusion_cali_region = avoid_extrusion_cali_region;
                 arrange_cfg.clearance_height_to_rod = height_to_rod;
@@ -5469,6 +5664,7 @@ int CLI::run(int argc, char **argv)
                 arrangement::update_selected_items_axis_align(selected, &m_print_config, arrange_cfg);
 
                 beds = get_shrink_bedpts(&m_print_config, arrange_cfg);
+                cap_beds_for_belt_printer(beds);
 
                 partplate_list.preprocess_exclude_areas(arrange_cfg.excluded_regions, enable_wrapping_detect, 1, scale_(1));
 
@@ -5916,7 +6112,7 @@ int CLI::run(int argc, char **argv)
 
 
                 //Step-2:prepare the arrange params
-                arrange_cfg.allow_rotations  = allow_rotations;
+                arrange_cfg.allow_rotations  = allow_rotations && !is_belt_infinite_y;
                 arrange_cfg.allow_multi_materials_on_same_plate = allow_multicolor_oneplate;
                 arrange_cfg.avoid_extrusion_cali_region         = avoid_extrusion_cali_region;
                 arrange_cfg.clearance_height_to_rod             = height_to_rod;
@@ -5942,6 +6138,7 @@ int CLI::run(int argc, char **argv)
                 arrangement::update_selected_items_axis_align(selected, &m_print_config, arrange_cfg);
 
                 beds=get_shrink_bedpts(&m_print_config, arrange_cfg);
+                cap_beds_for_belt_printer(beds);
 
                 partplate_list.preprocess_exclude_areas(arrange_cfg.excluded_regions, enable_wrapping_detect, 1, scale_(1));
 

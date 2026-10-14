@@ -1203,6 +1203,18 @@ static void modulate_extrusion_by_overlapping_layers(
         // Adjust the extrusion parameters for a reduced layer height and a non-bridging flow (nozzle_dmr = -1, does not matter).
         assert(this_layer.print_z > overlapping_layer.print_z);
         frag.height = float(this_layer.print_z - overlapping_layer.print_z);
+        // ORCA: the assert above is compiled out in a release build, and can
+        // actually be violated -- confirmed via a real belt-printer (tree
+        // support) crash: this_layer/overlapping_layer print_z ended up
+        // equal (or reversed) for a support/interface layer pair, making
+        // frag.height <= 0, which Flow::mm3_per_mm() below then rejects by
+        // throwing (aborting the ENTIRE slice over one degenerate support
+        // fragment). Clamp to a tiny positive height instead: a fragment
+        // this thin contributes negligible material either way, and this
+        // never changes behavior for the (overwhelming majority of) cases
+        // where the ordering assumption already holds.
+        if (frag.height <= 0.f)
+            frag.height = float(EPSILON);
         frag.mm3_per_mm = Flow(frag.width, frag.height, -1.f).mm3_per_mm();
 #ifdef SLIC3R_DEBUG
         svg.draw(frag.polylines, dbg_index_to_color(i_overlapping_layer), scale_(0.1));
