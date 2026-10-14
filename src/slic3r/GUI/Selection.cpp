@@ -3305,7 +3305,11 @@ void Selection::paste_objects_from_clipboard()
         if (shift_all(0) != 0 || shift_all(1) != 0) {
             // BBS: if multiple objects are selected, move them as a whole after copy
             if (i == 0) empty_cell_all = wxGetApp().plater()->canvas3D()->get_nearest_empty_cell({start_point(0), start_point(1)}, {bbox.size()(0)+1,bbox.size()(1)+1});
-            auto instance_shift = src_object->instances.front()->get_offset() - src_objects[0]->instances.front()->get_offset();
+            // get_offset() returns Vec3d by value; auto would bind to a lazy Eigen
+            // expression referencing both now-destroyed temporaries (same class of bug
+            // as SLAPrint.cpp's transformed_drainhole_points()) -- use a concrete Vec3d
+            // to force the subtraction to materialize into an owned copy.
+            Vec3d instance_shift = src_object->instances.front()->get_offset() - src_objects[0]->instances.front()->get_offset();
             displacement        = {shift_all.x() + empty_cell_all.x() + instance_shift.x(), shift_all.y() + empty_cell_all.y() + instance_shift.y(), start_offset(2)};
         } else {
             // BBS: if only one object is copied, find an empty cell to put it

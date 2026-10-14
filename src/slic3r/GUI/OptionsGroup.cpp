@@ -451,7 +451,10 @@ void OptionsGroup::activate_line(Line& line)
         const auto& field  = build_field(option);
 
         if (!custom_ctrl) {
-            int flags = option.opt.full_width ? wxEXPAND : wxALIGN_CENTER_VERTICAL;
+            // wxEXPAND (wxStretch) and wxALIGN_CENTER_VERTICAL (wxAlignment) are different
+            // enum types that both convert to plain int sizer flags -- explicit casts avoid
+            // the ternary trying to unify them as a single enum type.
+            int flags = option.opt.full_width ? (int)wxEXPAND : (int)wxALIGN_CENTER_VERTICAL;
             if (m_labels_hidden)
                 flags &= ~wxALIGN_CENTER_VERTICAL;
             int border = (wxOSX || !staticbox) ? 0 : 2;

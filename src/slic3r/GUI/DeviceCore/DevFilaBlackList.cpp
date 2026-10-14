@@ -283,30 +283,37 @@ void check_filaments(const DevFilaBlacklist::CheckFilamentInfo& check_info, DevF
             result.action_items[result_item.action].push_back(result_item);
             continue;
 
-            // Error in description
-            L("TPU is not supported by AMS.");
-            L("AMS does not support 'Bambu Lab PET-CF'.");
-            L("The current filament doesn't support the E3D high-flow nozzle and can't be used.");
-            L("The current filament doesn't support the TPU high-flow nozzle and can't be used.");
-            L("Auto dynamic flow calibration is not supported for TPU filament.");
-            L("Bambu TPU 85A is not supported for printing with 0.4 mm Standard or High Flow nozzles.");
+            // Unreachable (after the `continue` above): these `description` values only
+            // ever reach _L() at runtime as the `description` variable, not as a string
+            // literal, so xgettext's static scan can't pick them up there. Listed here as
+            // an initializer (rather than bare `L("...");` statements, which trip
+            // -Werror=unused-value) purely so the translation-extraction scan sees them.
+            static const char* const untranslated_filament_blacklist_notices[] = {
+                // Error in description
+                L("TPU is not supported by AMS."),
+                L("AMS does not support 'Bambu Lab PET-CF'."),
+                L("The current filament doesn't support the E3D high-flow nozzle and can't be used."),
+                L("The current filament doesn't support the TPU high-flow nozzle and can't be used."),
+                L("Auto dynamic flow calibration is not supported for TPU filament."),
+                L("Bambu TPU 85A is not supported for printing with 0.4 mm Standard or High Flow nozzles."),
 
-            // Warning in description
-            L("How to feed TPU filament.");
-            L("How to feed TPU filament on X2D.");
-            L("Please cold pull before printing TPU to avoid clogging. You may use cold pull maintenance on the printer.");
-            L("Damp PVA will become flexible and get stuck inside AMS, please take care to dry it before use.");
-            L("Damp PVA is flexible and may get stuck in extruder. Dry it before use.");
-            L("The rough surface of PLA Glow can accelerate wear on the AMS system, particularly on the internal components of the AMS Lite.");
-            L("PLA Glow may wear the AMS first stage feeder. Use an external spool instead.");
-            L("CF/GF filaments are hard and brittle, it's easy to break or get stuck in AMS, please use with caution.");
-            L("PPS-CF is brittle and could break in bended PTFE tube above Toolhead.");
-            L("PPA-CF is brittle and could break in bended PTFE tube above Toolhead.");
-            L("Default settings may affect print quality. Adjust as needed for best results.");
-            L("%s has a risk of nozzle clogging when using 0.4mm high-flow nozzles. Use with caution.");
-            L("%s filaments are hard and brittle and could break in AMS, and there is also a risk of nozzle clogging when using 0.4mm high-flow nozzles. Use with caution.");
-            L("%s has a risk of nozzle clogging when using 0.4, 0.6, 0.8mm high-flow nozzles. Use with caution.");
-            L("%s may fail to load or unload due to the Filament Track Switch. If you wish to continue.");
+                // Warning in description
+                L("How to feed TPU filament."),
+                L("How to feed TPU filament on X2D."),
+                L("Please cold pull before printing TPU to avoid clogging. You may use cold pull maintenance on the printer."),
+                L("Damp PVA will become flexible and get stuck inside AMS, please take care to dry it before use."),
+                L("Damp PVA is flexible and may get stuck in extruder. Dry it before use."),
+                L("The rough surface of PLA Glow can accelerate wear on the AMS system, particularly on the internal components of the AMS Lite."),
+                L("PLA Glow may wear the AMS first stage feeder. Use an external spool instead."),
+                L("CF/GF filaments are hard and brittle, it's easy to break or get stuck in AMS, please use with caution."),
+                L("PPS-CF is brittle and could break in bended PTFE tube above Toolhead."),
+                L("PPA-CF is brittle and could break in bended PTFE tube above Toolhead."),
+                L("Default settings may affect print quality. Adjust as needed for best results."),
+                L("%s has a risk of nozzle clogging when using 0.4mm high-flow nozzles. Use with caution."),
+                L("%s filaments are hard and brittle and could break in AMS, and there is also a risk of nozzle clogging when using 0.4mm high-flow nozzles. Use with caution."),
+                L("%s has a risk of nozzle clogging when using 0.4, 0.6, 0.8mm high-flow nozzles. Use with caution."),
+                L("%s may fail to load or unload due to the Filament Track Switch. If you wish to continue."),
+            };
         }
     }
 }
