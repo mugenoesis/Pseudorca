@@ -129,7 +129,16 @@ _3MF_STAMP = re.compile(rb'(<metadata name="(?:CreationDate|ModificationDate)">)
 
 
 def normalise_3mf_member(name: str, data: bytes) -> bytes:
-    return _3MF_STAMP.sub(rb"\1<date>\2", data)
+    data = _3MF_STAMP.sub(rb"\1<date>\2", data)
+    if name == "Metadata/model_settings.config":
+        # The engine lists objects, parts and assemble items in an order that depends on pointer values, so it changes
+        # with any rebuild of the binary (and so do the ids handed out in that order). Compare them as a multiset of
+        # lines with the ids masked: the content must match, the order need not.
+        text = data.decode("utf-8", "replace")
+        text = re.sub(r'\b((?:object_|source_object_|identify_)?id)="\d+"', r'\1="#"', text)
+        text = re.sub(r'(key="source_object_id" value=")\d+', r"\1#", text)
+        data = "\n".join(sorted(text.splitlines())).encode()
+    return data
 
 
 def sha(data: bytes) -> str:

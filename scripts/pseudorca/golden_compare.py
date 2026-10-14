@@ -1,6 +1,6 @@
 """Compare two golden_cases.py outputs: baseline vs candidate.
 
-    python3 golden_compare.py <baseline-dir> <candidate-dir> [--allow-new-cases]
+    python3 golden_compare.py <baseline-dir> <candidate-dir> [--allow-new-cases] [--only=case,case]
 
 Exit status 0 only when every baseline case is identical in the candidate. --help-json may gain options (new SLA
 settings) but no baseline option may disappear or change. Where G-code differs, the first differing lines are shown.
@@ -59,7 +59,11 @@ def compare_help(base: Path, cand: Path) -> list[str]:
 def main() -> int:
     base, cand = Path(sys.argv[1]), Path(sys.argv[2])
     allow_new = "--allow-new-cases" in sys.argv
+    only = next((arg.split("=", 1)[1].split(",") for arg in sys.argv if arg.startswith("--only=")), None)
     a, b = load(base), load(cand)
+    if only:
+        a = {k: v for k, v in a.items() if k in only}
+        b = {k: v for k, v in b.items() if k in only}
     failures = 0
     for case in sorted(a):
         if case == "help_json":
@@ -76,7 +80,7 @@ def main() -> int:
     for case in sorted(set(b) - set(a)):
         print(f"{'note' if allow_new else 'FAIL'} {case}: not in the baseline")
         failures += not allow_new
-    if "help_json" in a and "help_json" in b:
+    if "help_json" in a and "help_json" in b and not only:
         problems = compare_help(base, cand)
         print(f"{'FAIL' if problems else 'ok  '} help_json")
         for line in problems:
