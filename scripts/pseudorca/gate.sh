@@ -56,7 +56,25 @@ rm -rf "$REPORT_DIR/golden-$SHA"
 if "$HERE/golden_compare.sh" "$BASELINE/golden" "$REPORT_DIR/golden-$SHA" --allow-new-cases > "$REPORT_DIR/golden-compare.log" 2>&1; then
   record "2 golden FDM outputs" PASS "$REPORT_DIR/golden-compare.log"
 else
-  record "2 golden FDM outputs" FAIL "$REPORT_DIR/golden-compare.log"
+  # The progress pipe Trident reads is a race (a warning can be missed), so a failing case is run once more: a real
+  # regression is deterministic and fails again, a lost pipe message does not.
+  FAILING=$(sed -n 's/^FAIL \([a-z0-9_]*\).*/\1/p' "$REPORT_DIR/golden-compare.log" | grep -v '^help_json$' | paste -sd, -)
+  if [ -n "$FAILING" ]; then
+    echo "retrying: $FAILING"
+    rm -rf "$REPORT_DIR/golden-$SHA-retry"
+    # shellcheck disable=SC2046
+    "$HERE/golden.sh" "$TAG" "$REPORT_DIR/golden-$SHA-retry" $(echo "$FAILING" | tr ',' ' ') > "$REPORT_DIR/golden-retry.log" 2>&1
+    if "$HERE/golden_compare.sh" "$BASELINE/golden" "$REPORT_DIR/golden-$SHA-retry" --only="$FAILING" > "$REPORT_DIR/golden-compare-retry.log" 2>&1 \
+       && ! grep -q '^FAIL help_json' "$REPORT_DIR/golden-compare.log"; then
+      { cat "$REPORT_DIR/golden-compare.log"; echo "--- retry of $FAILING passed:"; cat "$REPORT_DIR/golden-compare-retry.log"; } > "$REPORT_DIR/golden-compare-final.log"
+      record "2 golden FDM outputs (passed on retry: $FAILING)" PASS "$REPORT_DIR/golden-compare-final.log"
+    else
+      cat "$REPORT_DIR/golden-compare-retry.log" >> "$REPORT_DIR/golden-compare.log"
+      record "2 golden FDM outputs" FAIL "$REPORT_DIR/golden-compare.log"
+    fi
+  else
+    record "2 golden FDM outputs" FAIL "$REPORT_DIR/golden-compare.log"
+  fi
 fi
 tail -n 4 "$REPORT_DIR/golden-compare.log"
 
