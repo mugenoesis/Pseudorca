@@ -3553,7 +3553,20 @@ Vec3d PartPlate::get_center_origin()
 
 void PartPlate::generate_plate_name_texture()
 {
-	auto canvas = this->m_partplate_list->m_plater->get_view3D_canvas3D();
+	// This used to fetch the canvas unconditionally and rely on the check below to bail out
+	// once it had it - but m_partplate_list and m_plater are both null for a PartPlate that
+	// exists outside a GUI session (e.g. one built by the CLI's --slice path), so the fetch
+	// itself would dereference null before the guard ever ran. Check for a Plater before
+	// asking it for a canvas instead of fetching first and checking after. Same defect and
+	// same fix as Snapmaker/OrcaSlicer#839 ("Make the CLI able to slice: fix the version check
+	// and two null GUI crashes"), ported here defensively: on this branch render_plate_name_texture()
+	// is only ever reached via GLCanvas3D's interactive repaint path (which itself requires
+	// wxGetApp().plater()), and the CLI's own thumbnail rendering explicitly skips PartPlate::render()
+	// ("don't render plate in thumbnail", GLCanvas3D.cpp), so this is not a currently-reachable
+	// crash on this branch - but the bug is real and cheap to close off.
+	auto canvas = (m_partplate_list != nullptr && m_partplate_list->m_plater != nullptr)
+	                  ? m_partplate_list->m_plater->get_view3D_canvas3D()
+	                  : nullptr;
 	if (canvas == nullptr)
 		return;
 

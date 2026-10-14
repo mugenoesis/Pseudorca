@@ -2644,6 +2644,14 @@ public:
         std::ostream& out, bool show_defaults,
         std::function<bool(const ConfigOptionDef &)> filter = [](const ConfigOptionDef &){ return true; }) const;
 
+    // Iterate through all of the CLI options and write them as a JSON array to a
+    // stream, for machine consumption (e.g. an HTTP API auto-generating a settings
+    // schema). Always includes each option's default value: unlike print_cli_help(),
+    // there's no human deciding whether the extra text is worth the space.
+    std::ostream&           print_cli_help_json(
+        std::ostream& out,
+        std::function<bool(const ConfigOptionDef &)> filter = [](const ConfigOptionDef &){ return true; }) const;
+
 protected:
     ConfigOptionDef*        add(const t_config_option_key &opt_key, ConfigOptionType type);
     ConfigOptionDef*        add_nullable(const t_config_option_key &opt_key, ConfigOptionType type);

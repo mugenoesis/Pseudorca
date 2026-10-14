@@ -12744,6 +12744,12 @@ CLIActionsConfigDef::CLIActionsConfigDef()
     def->tooltip = L("Show the full list of SLA print configuration options.");
     def->set_default_value(new ConfigOptionBool(false));*/
 
+    def = this->add("help_json", coBool);
+    def->label = L("Help (JSON)");
+    def->tooltip = L("Show the full list of print/G-code configuration options as JSON, for machine consumption.");
+    def->cli = "help-json";
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("info", coBool);
     def->label = L("Output Model Info");
     def->tooltip = L("This outputs the model\u2019s information.");
@@ -13083,6 +13089,15 @@ CLIMiscConfigDef::CLIMiscConfigDef()
     def->tooltip = L("Load filament IDs for each object.");
     def->cli_params = "\"1,2,3,1\"";
     def->set_default_value(new ConfigOptionInts());
+
+    def = this->add("remap_filament_extruder", coString);
+    def->label = L("Remap filament extruder");
+    def->tooltip = L("Comma-separated old:new 1-based extruder/slot reassignments to apply to the "
+                      "loaded model before slicing, e.g. \"1:4,2:2\" -- rewrites both the plain "
+                      "per-object/volume extruder assignment and any per-triangle MMU-painted color "
+                      "assignment.");
+    def->cli_params = "\"1:4,2:2\"";
+    def->set_default_value(new ConfigOptionString(""));
 
     def = this->add("allow_multicolor_oneplate", coBool);
     def->label = L("Allow multiple colors on one plate");

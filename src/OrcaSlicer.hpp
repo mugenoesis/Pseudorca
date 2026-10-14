@@ -77,6 +77,9 @@ private:
     /// Prints usage of the CLI.
     void print_help(bool include_print_options = false, PrinterTechnology printer_technology = ptAny) const;
 
+    /// Prints the full print/G-code configuration option list as JSON (--help-json).
+    void print_help_json() const;
+
     /// Exports loaded models to a file of the specified format, according to the options affecting output filename.
     bool export_models(IO::ExportFormat format, std::string path = std::string());
     //BBS: add export_project function
