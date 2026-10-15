@@ -9478,6 +9478,40 @@ void PrintConfigDef::init_sla_params()
     def->min = 0;
     def->set_default_value(new ConfigOptionFloat(15));
 
+    def = this->add("bottom_layer_count", coInt);
+    def->label = L("Bottom layers");
+    def->tooltip = L("Number of first layers that are exposed for the initial exposure time. Only used by the archive formats that store it (CTB).");
+    def->min = 0;
+    def->set_default_value(new ConfigOptionInt(4));
+
+    def = this->add("lift_distance", coFloat);
+    def->label = L("Lift distance");
+    def->tooltip = L("How far the build plate lifts between layers to peel the cured layer off the film. Used by the archive formats that store it (CTB).");
+    def->sidetext = L("mm");
+    def->min = 0;
+    def->set_default_value(new ConfigOptionFloat(6.));
+
+    def = this->add("lift_speed", coFloat);
+    def->label = L("Lift speed");
+    def->tooltip = L("Speed of the build plate while it lifts. Used by the archive formats that store it (CTB).");
+    def->sidetext = L("mm/min");
+    def->min = 0;
+    def->set_default_value(new ConfigOptionFloat(65.));
+
+    def = this->add("retract_speed", coFloat);
+    def->label = L("Retract speed");
+    def->tooltip = L("Speed of the build plate while it returns to the next layer. Used by the archive formats that store it (CTB).");
+    def->sidetext = L("mm/min");
+    def->min = 0;
+    def->set_default_value(new ConfigOptionFloat(150.));
+
+    def = this->add("light_pwm", coInt);
+    def->label = L("Light intensity");
+    def->tooltip = L("Light source power as a value from 0 (off) to 255 (full power). Used by the archive formats that store it (CTB).");
+    def->min = 0;
+    def->max = 255;
+    def->set_default_value(new ConfigOptionInt(255));
+
     def = this->add("material_correction", coFloats);
     def->full_label = L("Correction for expansion");
     def->tooltip  = L("Correction for expansion");
