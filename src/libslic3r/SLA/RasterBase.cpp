@@ -1,25 +1,21 @@
+///|/ Copyright (c) Prusa Research 2020 - 2022 Tomáš Mészáros @tamasmeszaros
+///|/ Copyright (c) 2022 ole00 @ole00
+///|/
+///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/
 #ifndef SLARASTER_CPP
 #define SLARASTER_CPP
 
-#include <cstddef>
-#include <cstdint>
-#include <algorithm>
-#include <cstdlib>
-#include <agg/agg_gamma_functions.h>
-#include <functional>
-
-#include <iterator>
-#include <ios>
 #include <libslic3r/SLA/RasterBase.hpp>
 #include <libslic3r/SLA/AGGRaster.hpp>
-
 // minz image write:
-#include <memory>
 #include <miniz.h>
-#include <vector>
-#include <utility>
-#include <ostream>
-#include <string>
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <cstdlib>
+
+#include "agg/agg_gamma_functions.h"
 
 namespace Slic3r { namespace sla {
 

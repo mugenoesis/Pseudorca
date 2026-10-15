@@ -541,6 +541,31 @@ extern Eigen::Quaterniond rotation_xyz_diff(const Vec3d &rot_xyz_from, const Vec
 // This should only be called if it is known, that the two rotations only differ in rotation around the Z axis.
 extern double rotation_diff_z(const Vec3d &rot_xyz_from, const Vec3d &rot_xyz_to);
 
+template <class Tout = double, class Tin>
+std::pair<Tout, Tout> dir_to_spheric(const Vec<3, Tin> &n, Tout norm = 1.)
+{
+    Tout z       = n.z();
+    Tout r       = norm;
+    Tout polar   = std::acos(z / r);
+    Tout azimuth = std::atan2(n(1), n(0));
+    return {polar, azimuth};
+}
+
+template <class T = double>
+Vec<3, T> spheric_to_dir(double polar, double azimuth)
+{
+    return {T(std::cos(azimuth) * std::sin(polar)),
+            T(std::sin(azimuth) * std::sin(polar)), T(std::cos(polar))};
+}
+
+template <class T = double, class Pair>
+Vec<3, T> spheric_to_dir(const Pair &v)
+{
+    double plr = std::get<0>(v), azm = std::get<1>(v);
+    return spheric_to_dir<T>(plr, azm);
+}
+
+
 // Is the angle close to a multiple of 90 degrees?
 inline bool is_rotation_ninety_degrees(double a)
 {

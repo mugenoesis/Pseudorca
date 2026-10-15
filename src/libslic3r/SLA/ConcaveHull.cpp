@@ -1,18 +1,15 @@
-#include "libslic3r/Point.hpp"
-#include "libslic3r/libslic3r.h"
-#include <algorithm>
-#include <iterator>
-#include "libslic3r/Polygon.hpp"
-#include <cmath>
-#include "libslic3r/ExPolygon.hpp"
+///|/ Copyright (c) Prusa Research 2019 - 2023 Vojtěch Bubník @bubnikv, Tomáš Mészáros @tamasmeszaros
+///|/
+///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/
 #include <libslic3r/SLA/ConcaveHull.hpp>
 #include <libslic3r/SLA/SpatIndex.hpp>
-
-#include <libslic3r/ClipperUtils.hpp>
-
-#include <boost/log/trivial.hpp>
+#include <cmath>
+#include <iterator>
 #include <limits>
-#include <vector>
+
+#include "libslic3r/ClipperUtils.hpp"
+#include "libslic3r/ExPolygon.hpp"
 #include "libslic3r/Line.hpp"
 
 namespace Slic3r {

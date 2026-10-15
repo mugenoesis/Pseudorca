@@ -1614,14 +1614,18 @@ static std::vector<std::string> s_Preset_sla_print_options {
     "layer_height",
     "faded_layers",
     "supports_enable",
+    "support_tree_type",
+
     "support_head_front_diameter",
     "support_head_penetration",
     "support_head_width",
     "support_pillar_diameter",
     "support_small_pillar_diameter_percent",
     "support_max_bridges_on_pillar",
+    "support_max_weight_on_model",
     "support_pillar_connection_mode",
     "support_buildplate_only",
+    "support_enforcers_only",
     "support_pillar_widening_factor",
     "support_base_diameter",
     "support_base_height",
@@ -1630,9 +1634,28 @@ static std::vector<std::string> s_Preset_sla_print_options {
     "support_max_bridge_length",
     "support_max_pillar_link_distance",
     "support_object_elevation",
+
+    "branchingsupport_head_front_diameter",
+    "branchingsupport_head_penetration",
+    "branchingsupport_head_width",
+    "branchingsupport_pillar_diameter",
+    "branchingsupport_small_pillar_diameter_percent",
+    "branchingsupport_max_bridges_on_pillar",
+    "branchingsupport_max_weight_on_model",
+    "branchingsupport_pillar_connection_mode",
+    "branchingsupport_buildplate_only",
+    "branchingsupport_pillar_widening_factor",
+    "branchingsupport_base_diameter",
+    "branchingsupport_base_height",
+    "branchingsupport_base_safety_distance",
+    "branchingsupport_critical_angle",
+    "branchingsupport_max_bridge_length",
+    "branchingsupport_max_pillar_link_distance",
+    "branchingsupport_object_elevation",
+
     "support_points_density_relative",
-    "support_points_minimal_distance",
     "slice_closing_radius",
+    "slicing_mode",
     "pad_enable",
     "pad_wall_thickness",
     "pad_wall_height",
@@ -1657,11 +1680,12 @@ static std::vector<std::string> s_Preset_sla_print_options {
     "inherits"
 };
 
-static std::vector<std::string> s_Preset_sla_material_options {
+static std::vector<std::string> s_Preset_sla_material_options{
     "material_colour",
     "material_type",
     "initial_layer_height",
     "bottle_cost",
+    "material_uuid",
     "bottle_volume",
     "bottle_weight",
     "material_density",
@@ -1671,20 +1695,55 @@ static std::vector<std::string> s_Preset_sla_material_options {
     "material_correction_x",
     "material_correction_y",
     "material_correction_z",
+    "material_notes",
     "material_vendor",
     "material_print_speed",
+    "area_fill",
     "default_sla_material_profile",
-    "compatible_prints", "compatible_prints_condition",
-    "compatible_printers", "compatible_printers_condition", "inherits"
+    "zcorrection_layers",
+    "compatible_prints",
+    "compatible_prints_condition",
+    "compatible_printers",
+    "compatible_printers_condition",
+    "inherits",
+
+    // overriden options
+
+
+
 };
+
+static std::vector<std::string> s_Preset_sla_tilt_options{
+     "delay_before_exposure"
+    ,"delay_after_exposure"
+    ,"delay_to_reflood"
+    ,"tower_hop_height"
+    ,"use_tilt"
+    ,"tilt_down_offset_steps"
+    ,"tilt_down_offset_delay"
+    ,"tilt_down_cycles"
+    ,"tilt_down_delay"
+    ,"tilt_up_offset_steps"
+    ,"tilt_up_offset_delay"
+    ,"tilt_up_cycles"
+    ,"tilt_up_delay"
+    ,"dynamic_delay_before_timeout"
+};
+const std::vector<std::string>& tilt_options() { return s_Preset_sla_tilt_options; }
+
+static std::vector<std::string> s_Preset_sla_material_options_all = [] {
+    std::vector<std::string> all = s_Preset_sla_material_options;
+    all.insert(all.end(), s_Preset_sla_tilt_options.begin(), s_Preset_sla_tilt_options.end());
+    return all;
+}();
 
 static std::vector<std::string> s_Preset_sla_printer_options {
     "printer_technology",
-    "printable_area","bed_custom_texture", "bed_custom_model", "printable_height",
+    "printable_area", "bed_custom_texture", "bed_custom_model", "printable_height",
     "display_width", "display_height", "display_pixels_x", "display_pixels_y",
     "display_mirror_x", "display_mirror_y",
     "display_orientation",
-    "fast_tilt_time", "slow_tilt_time", "area_fill",
+    "fast_tilt_time", "slow_tilt_time", "high_viscosity_tilt_time",
     "relative_correction",
     "relative_correction_x",
     "relative_correction_y",
@@ -1694,7 +1753,10 @@ static std::vector<std::string> s_Preset_sla_printer_options {
     "elefant_foot_min_width",
     "gamma_correction",
     "min_exposure_time", "max_exposure_time",
-    "min_initial_exposure_time", "max_initial_exposure_time",
+    "min_initial_exposure_time", "max_initial_exposure_time", "sla_archive_format", "sla_output_precision",
+    //FIXME the print host keys are left here just for conversion from the Printer preset to Physical Printer preset.
+    "print_host", "printhost_apikey", "printhost_cafile",
+    "printer_notes",
     "inherits"
 };
 
@@ -1705,7 +1767,7 @@ const std::vector<std::string>& Preset::machine_limits_options() { return s_Pres
 // of the nozzle_diameter vector.
 const std::vector<std::string>& Preset::nozzle_options()         { return print_config_def.extruder_option_keys(); }
 const std::vector<std::string>& Preset::sla_print_options()      { return s_Preset_sla_print_options; }
-const std::vector<std::string>& Preset::sla_material_options()   { return s_Preset_sla_material_options; }
+const std::vector<std::string>& Preset::sla_material_options()   { return s_Preset_sla_material_options_all; }
 const std::vector<std::string>& Preset::sla_printer_options()    { return s_Preset_sla_printer_options; }
 
 const std::vector<std::string>& Preset::printer_options()

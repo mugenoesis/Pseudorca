@@ -361,6 +361,8 @@ set(lisbslic3r_sources
     miniz_extension.hpp
     ModelArrange.cpp
     ModelArrange.hpp
+    MeshNormals.hpp
+    MeshNormals.cpp
     Model.cpp
     Model.hpp
     MTUtils.hpp
@@ -439,44 +441,106 @@ set(lisbslic3r_sources
     ShortEdgeCollapse.hpp
     ShortestPath.cpp
     ShortestPath.hpp
-    SLA/AGGRaster.hpp
-    SLA/BoostAdapter.hpp
-    SLA/Clustering.cpp
-    SLA/Clustering.hpp
-    SLA/ConcaveHull.cpp
-    SLA/ConcaveHull.hpp
-    SLA/Concurrency.hpp
-    SLA/Hollowing.cpp
-    SLA/Hollowing.hpp
-    SLA/IndexedMesh.cpp
-    SLA/IndexedMesh.hpp
-    SLA/JobController.hpp
-    SLA/Pad.cpp
-    SLA/Pad.hpp
     SLAPrint.cpp
-    SLAPrint.hpp
     SLAPrintSteps.cpp
     SLAPrintSteps.hpp
-    SLA/RasterBase.cpp
-    SLA/RasterBase.hpp
-    SLA/RasterToPolygons.cpp
-    SLA/RasterToPolygons.hpp
-    SLA/ReprojectPointsOnMesh.hpp
-    SLA/Rotfinder.cpp
-    SLA/Rotfinder.hpp
-    SLA/SpatIndex.cpp
-    SLA/SpatIndex.hpp
-    SLA/SupportPointGenerator.cpp
-    SLA/SupportPointGenerator.hpp
-    SLA/SupportPoint.hpp
-    SLA/SupportTreeBuilder.cpp
+    SLAPrint.hpp
+    SLA/Pad.hpp
+    SLA/Pad.cpp
+    SLA/PrinterCorrections.hpp
+    SLA/PrinterCorrections.cpp
     SLA/SupportTreeBuilder.hpp
-    SLA/SupportTreeBuildsteps.cpp
-    SLA/SupportTreeBuildsteps.hpp
-    SLA/SupportTree.cpp
-    SLA/SupportTree.hpp
-    SLA/SupportTreeMesher.cpp
     SLA/SupportTreeMesher.hpp
+    SLA/SupportTreeSlicer.hpp
+    SLA/SupportTreeSlicer.cpp
+    SLA/SupportSlicesCache.hpp
+    SLA/SupportSlicesCache.cpp
+    SLA/SupportTreeMesher.cpp
+    SLA/SupportTreeUtils.hpp
+    SLA/SupportTreeUtilsLegacy.hpp
+    SLA/SupportTreeBuilder.cpp
+    SLA/SupportTree.hpp
+    SLA/SupportTree.cpp
+    SLA/SupportTreeStrategies.hpp
+    SLA/Rotfinder.hpp
+    SLA/Rotfinder.cpp
+    SLA/SpatIndex.hpp
+    SLA/SpatIndex.cpp
+    SLA/RasterBase.hpp
+    SLA/RasterBase.cpp
+    SLA/AGGRaster.hpp
+    SLA/RasterToPolygons.hpp
+    SLA/MarchingSquaresSLA.hpp
+    SLA/RasterToPolygons.cpp
+    SLA/ConcaveHull.hpp
+    SLA/ConcaveHull.cpp
+    SLA/Hollowing.hpp
+    SLA/Hollowing.cpp
+    SLA/JobController.hpp
+    SLA/SupportPoint.hpp
+    SLA/SupportPointGenerator.hpp
+    SLA/SupportPointGenerator.cpp
+    SLA/Clustering.hpp
+    SLA/Clustering.cpp
+    SLA/ReprojectPointsOnMesh.hpp
+    SLA/DefaultSupportTree.hpp
+    SLA/DefaultSupportTree.cpp
+    SLA/BranchingTreeSLA.hpp
+    SLA/BranchingTreeSLA.cpp
+    SLA/ZCorrection.hpp
+    SLA/ZCorrection.cpp
+    SLA/Workflows.hpp
+    SLA/Workflows.cpp
+    SLA/SupportIslands/EvaluateNeighbor.cpp
+    SLA/SupportIslands/EvaluateNeighbor.hpp
+    SLA/SupportIslands/ExpandNeighbor.cpp
+    SLA/SupportIslands/ExpandNeighbor.hpp
+    SLA/SupportIslands/IStackFunction.hpp
+    SLA/SupportIslands/LineUtils.cpp
+    SLA/SupportIslands/LineUtils.hpp
+    SLA/SupportIslands/NodeDataWithResult.hpp
+    SLA/SupportIslands/Parabola.hpp
+    SLA/SupportIslands/ParabolaUtils.cpp
+    SLA/SupportIslands/ParabolaUtils.hpp
+    SLA/SupportIslands/PointUtils.cpp
+    SLA/SupportIslands/PointUtils.hpp
+    SLA/SupportIslands/PolygonUtils.cpp
+    SLA/SupportIslands/PolygonUtils.hpp
+    SLA/SupportIslands/PostProcessNeighbor.cpp
+    SLA/SupportIslands/PostProcessNeighbor.hpp
+    SLA/SupportIslands/PostProcessNeighbors.cpp
+    SLA/SupportIslands/PostProcessNeighbors.hpp
+    SLA/SupportIslands/SampleConfig.hpp
+    SLA/SupportIslands/SampleConfigFactory.cpp
+    SLA/SupportIslands/SampleConfigFactory.hpp
+    SLA/SupportIslands/SupportIslandPoint.cpp
+    SLA/SupportIslands/SupportIslandPoint.hpp
+    SLA/SupportIslands/UniformSupportIsland.cpp
+    SLA/SupportIslands/UniformSupportIsland.hpp
+    SLA/SupportIslands/VectorUtils.hpp
+    SLA/SupportIslands/VoronoiGraph.hpp
+    SLA/SupportIslands/VoronoiGraphUtils.cpp
+    SLA/SupportIslands/VoronoiGraphUtils.hpp
+    BranchingTree/BranchingTree.cpp
+    BranchingTree/BranchingTree.hpp
+    BranchingTree/PointCloud.cpp
+    BranchingTree/PointCloud.hpp
+    Format/SLAArchiveWriter.hpp
+    Format/SLAArchiveWriter.cpp
+    Format/SLAArchiveReader.hpp
+    Format/SLAArchiveReader.cpp
+    Format/SL1_SVG.hpp
+    Format/SL1_SVG.cpp
+    Format/AnycubicSLA.hpp
+    Format/AnycubicSLA.cpp
+    Format/SLAArchiveFormatRegistry.hpp
+    Format/SLAArchiveFormatRegistry.cpp
+    BoostAdapter.hpp
+    StaticMap.hpp
+    Utils/JsonUtils.hpp
+    Utils/JsonUtils.cpp
+    SLA/IndexedMesh.cpp
+    SLA/IndexedMesh.hpp
     SlicesToTriangleMesh.cpp
     SlicesToTriangleMesh.hpp
     SlicingAdaptive.cpp
@@ -630,6 +694,7 @@ add_library(libslic3r_cgal STATIC
     MeshRepair.hpp MeshRepair.cpp
     TryCatchSignal.hpp TryCatchSignal.cpp
     Triangulation.hpp Triangulation.cpp
+    SLA/SupportIslands/VoronoiDiagramCGAL.hpp SLA/SupportIslands/VoronoiDiagramCGAL.cpp
 )
 target_include_directories(libslic3r_cgal PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -754,6 +819,7 @@ target_link_libraries(libslic3r
         libnest2d
         miniz
         opencv_world
+        sla_time_estimate
         assimp::assimp
     PRIVATE
         ${CMAKE_DL_LIBS}
