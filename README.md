@@ -58,7 +58,7 @@
 > upstream instructions below; to see exactly what changed, compare this branch with upstream `main`.
 >
 > ## Resin printing: sources and credits
-The resin (MSLA) support is built on PrusaSlicer's SLA code and on the file format work of UVtools, mslicer and others; see [THIRD_PARTY_SOURCES.md](THIRD_PARTY_SOURCES.md).
+The resin (MSLA) support is built on PrusaSlicer's SLA code and on the file format work of UVtools, mslicer and others; see [THIRD_PARTY_SOURCES.md](THIRD_PARTY_SOURCES.md). Which printers and file formats are supported, and which have been tried on hardware, is in [docs/resin-formats.md](docs/resin-formats.md).
 
 # License
 >
