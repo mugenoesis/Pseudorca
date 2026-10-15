@@ -3065,7 +3065,7 @@ ModelVolumeType type_from_string(const std::string &s)
 
                 // Store the layer height profile as a single space separated list.
                 for (size_t i = 0; i < sla_support_points.size(); ++i) {
-                    sprintf(buffer, (i==0 ? "%f %f %f %f %f" : " %f %f %f %f %f"),  sla_support_points[i].pos(0), sla_support_points[i].pos(1), sla_support_points[i].pos(2), sla_support_points[i].head_front_radius, (float)sla_support_points[i].is_new_island);
+                    sprintf(buffer, (i==0 ? "%f %f %f %f %f" : " %f %f %f %f %f"),  sla_support_points[i].pos(0), sla_support_points[i].pos(1), sla_support_points[i].pos(2), sla_support_points[i].head_front_radius, (float)sla_support_points[i].is_island());
                     out += buffer;
                 }
                 out += "\n";

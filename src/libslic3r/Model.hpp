@@ -1709,6 +1709,8 @@ public:
     std::string stl_design_country;
     std::shared_ptr<ModelDesignInfo> design_info = nullptr;
     std::shared_ptr<ModelInfo> model_info = nullptr;
+    // Identifies the SLA workflow the model was prepared with (written to SLA archives).
+    std::string sla_workflow_uuid;
     std::shared_ptr<ModelProfileInfo> profile_info = nullptr;
 
     // Textured mesh data for texture-to-painting import. Populated by the loader when a mesh

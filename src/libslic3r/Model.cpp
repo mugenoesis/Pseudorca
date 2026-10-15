@@ -142,6 +142,7 @@ Model& Model::assign_copy(const Model &rhs)
     // BBS: for design info
     this->design_info = rhs.design_info;
     this->model_info = rhs.model_info;
+    this->sla_workflow_uuid = rhs.sla_workflow_uuid;
     this->stl_design_id = rhs.stl_design_id;
     this->stl_design_country = rhs.stl_design_country;
     this->profile_info = rhs.profile_info;
@@ -195,6 +196,7 @@ Model& Model::assign_copy(Model &&rhs)
     this->design_info = rhs.design_info;
     rhs.design_info.reset();
     this->model_info = rhs.model_info;
+    this->sla_workflow_uuid = rhs.sla_workflow_uuid;
     rhs.model_info.reset();
     this->profile_info = rhs.profile_info;
     rhs.profile_info.reset();

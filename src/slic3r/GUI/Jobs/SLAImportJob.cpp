@@ -1,6 +1,7 @@
 #include "SLAImportJob.hpp"
 
 #include "libslic3r/Format/SL1.hpp"
+#include "libslic3r/Format/SLAArchiveReader.hpp"
 
 #include "slic3r/GUI/GUI.hpp"
 #include "slic3r/GUI/Plater.hpp"
@@ -69,10 +70,10 @@ void SLAImportJob::process(Ctl &ctl)
         switch (p->sel) {
         case Sel::modelAndProfile:
         case Sel::modelOnly:
-            p->config_substitutions = import_sla_archive(path, p->win, p->mesh, p->profile, progr);
+            p->config_substitutions = import_sla_archive(path, "SL1", p->mesh, p->profile, SLAImportQuality::Balanced, progr);
             break;
         case Sel::profileOnly:
-            p->config_substitutions = import_sla_archive(path, p->profile);
+            p->config_substitutions = import_sla_archive(path, "SL1", p->profile);
             break;
         }
     } catch (MissingProfileError &) {

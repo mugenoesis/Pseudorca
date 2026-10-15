@@ -1,19 +1,25 @@
+///|/ Copyright (c) Prusa Research 2020 - 2022 Tomáš Mészáros @tamasmeszaros, Vojtěch Bubník @bubnikv
+///|/ Copyright (c) 2022 ole00 @ole00
+///|/
+///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/
 #ifndef SLA_RASTERBASE_HPP
 #define SLA_RASTERBASE_HPP
 
-#include <cstddef>
-#include <functional>
-#include "libslic3r/libslic3r.h"
-#include "libslic3r/Point.hpp"
+#include <libslic3r/ExPolygon.hpp>
+#include <stddef.h>
 #include <ostream>
 #include <memory>
-#include <string>
 #include <vector>
 #include <array>
 #include <utility>
 #include <cstdint>
+#include <functional>
+#include <string>
+#include <cstddef>
 
-#include <libslic3r/ExPolygon.hpp>
+#include "libslic3r/Point.hpp"
+#include "libslic3r/libslic3r.h"
 
 namespace Slic3r {
 
