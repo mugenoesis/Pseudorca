@@ -18,5 +18,5 @@
   "lift_speed": "600",
   "printable_height": "220",
   "retract_speed": "600",
-  "sla_archive_format": "chituboxzip"
+  "sla_archive_format": "klipperzip"
 }

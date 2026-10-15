@@ -119,6 +119,14 @@ class Registry {
                 nullptr
             },
             {
+                "CHITUBOXZIP",
+                L("Chitubox zip (run.gcode and numbered PNGs)"),
+                "zip",
+                {},
+                [] (const auto &cfg) { return std::make_unique<ChituboxZipArchive>(cfg); },
+                nullptr
+            },
+            {
                 "TINYMAKER",
                 L("TinyMaker image folder (zip of numbered PNGs)"),
                 "zip",
@@ -143,6 +151,7 @@ class Registry {
             anycubic_pw_format("pm3n", "Photon Mono 2",                       517, 517),
             anycubic_pw_format("pm5",  "Photon Mono M5",                      517, 517),
             anycubic_pw_format("px6s", "Photon Mono X 6Ks",                   517, 517),
+            anycubic_pw_format("pm4n", "Photon Mono 4",                       517, 518),
             anycubic_pw_format("pm5s", "Photon Mono M5s",                     518, 518),
             anycubic_pw_format("m5sp", "Photon Mono M5s Pro",                 518, 518),
 
