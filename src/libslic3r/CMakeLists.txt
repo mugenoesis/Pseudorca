@@ -535,6 +535,8 @@ set(lisbslic3r_sources
     Format/SL1_SVG.cpp
     Format/AnycubicSLA.hpp
     Format/AnycubicSLA.cpp
+    Format/CTB.cpp
+    Format/CTB.hpp
     Format/SLAArchiveFormatRegistry.hpp
     Format/SLAArchiveFormatRegistry.cpp
     BoostAdapter.hpp
