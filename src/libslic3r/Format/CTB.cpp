@@ -7,8 +7,10 @@
 #include <ctime>
 #include <fstream>
 #include <limits>
+#include <memory>
 
 #include <boost/log/trivial.hpp>
+#include <openssl/evp.h>
 
 #include "libslic3r/Exception.hpp"
 #include "libslic3r/GCode/ThumbnailData.hpp"
@@ -161,7 +163,7 @@ std::vector<uint8_t> encode_preview(const Preview &p)
     return out;
 }
 
-void write_preview(Buffer &b, const Preview &p, uint32_t default_w, uint32_t default_h)
+void write_preview(Buffer &b, const Preview &p, uint32_t default_w, uint32_t default_h, bool short_head = false)
 {
     Preview use = p;
     if (use.width == 0 || use.height == 0 || use.rgb.size() < size_t(use.width) * use.height * 3) {
@@ -172,9 +174,10 @@ void write_preview(Buffer &b, const Preview &p, uint32_t default_w, uint32_t def
     const std::vector<uint8_t> data = encode_preview(use);
     b.u32(use.width);
     b.u32(use.height);
-    b.u32(to_u32(b.pos() + PreviewHeadSize - 8));   // where the image starts
+    b.u32(to_u32(b.pos() + (short_head ? 8 : PreviewHeadSize - 8)));   // where the image starts
     b.u32(to_u32(data.size()));
-    b.zeros(16);
+    if (! short_head)
+        b.zeros(16);
     b.bytes(data.data(), data.size());
 }
 
@@ -396,6 +399,203 @@ std::vector<uint8_t> build_cbddlp(const FileParams &p, const std::vector<std::ve
         }
     }
     return b.take();
+}
+
+namespace {
+
+// The key and IV of the encrypted layout (the same ones UVtools derives and mslicer lists).
+const uint8_t EncKey[32] = {
+    0xD0, 0x5B, 0x8E, 0x33, 0x71, 0xDE, 0x3D, 0x1A, 0xE5, 0x4F, 0x22, 0xDD, 0xDF, 0x5B, 0xFD, 0x94,
+    0xAB, 0x5D, 0x64, 0x3A, 0x9D, 0x7E, 0xBF, 0xAF, 0x42, 0x03, 0xF3, 0x10, 0xD8, 0x52, 0x2A, 0xEA };
+const uint8_t EncIv[16] = {
+    0x0F, 0x01, 0x0A, 0x05, 0x05, 0x0B, 0x06, 0x07, 0x08, 0x06, 0x0A, 0x0C, 0x0C, 0x0D, 0x09, 0x0F };
+
+constexpr uint32_t MagicEncrypted   = 0x12FD0107;
+constexpr uint32_t EncryptedVersion = 5;
+constexpr uint32_t EncLayerXorKey   = 0xEFBEADDE;
+constexpr uint64_t EncChecksum      = 0xCAFEBABE;
+constexpr size_t   EncHeaderSize    = 48;
+constexpr size_t   EncSettingsSize  = 288;
+constexpr size_t   EncLayerDefSize  = 88;
+constexpr size_t   EncPointerSize   = 16;
+
+} // namespace
+
+std::vector<uint8_t> aes_cbc(const std::vector<uint8_t> &data, bool encrypt)
+{
+    if (data.size() % 16 != 0)
+        throw ExportError("AES input is not a multiple of the block size.");
+    std::vector<uint8_t> out(data.size());
+    if (data.empty())
+        return out;
+    std::unique_ptr<EVP_CIPHER_CTX, decltype(&EVP_CIPHER_CTX_free)> ctx(EVP_CIPHER_CTX_new(), &EVP_CIPHER_CTX_free);
+    int len = 0, total = 0;
+    if (! ctx || EVP_CipherInit_ex(ctx.get(), EVP_aes_256_cbc(), nullptr, EncKey, EncIv, encrypt ? 1 : 0) != 1)
+        throw ExportError("AES setup failed.");
+    EVP_CIPHER_CTX_set_padding(ctx.get(), 0);
+    if (EVP_CipherUpdate(ctx.get(), out.data(), &len, data.data(), int(data.size())) != 1)
+        throw ExportError("AES failed.");
+    total = len;
+    if (EVP_CipherFinal_ex(ctx.get(), out.data() + total, &len) != 1)
+        throw ExportError("AES failed.");
+    total += len;
+    out.resize(size_t(total));
+    return out;
+}
+
+std::vector<uint8_t> build_ctb_encrypted(const FileParams &p, const std::vector<std::vector<uint8_t>> &images)
+{
+    if (images.size() != p.layers.size())
+        throw ExportError("The encrypted CTB file needs one image for each layer.");
+    const size_t layer_count = p.layers.size();
+
+    Buffer b;
+    b.zeros(EncHeaderSize + EncSettingsSize);       // both are written at the end
+
+    // Previews, the machine name, the disclaimer and the resin parameters.
+    const size_t large_at = b.pos();
+    write_preview(b, p.large_preview, 400, 300, true);
+    const size_t small_at = b.pos();
+    write_preview(b, p.small_preview, 200, 125, true);
+
+    const size_t name_at = b.pos();
+    b.bytes(p.machine_name.data(), p.machine_name.size());
+    const size_t disclaimer_at = b.pos();
+    const std::string disclaimer = Disclaimer;
+    b.bytes(disclaimer.data(), disclaimer.size());
+
+    const size_t resin_at = b.pos();
+    const std::string resin_type = "Normal", resin_name = "Standard";
+    const size_t resin_fixed = 40;
+    const size_t machine_addr = resin_at + resin_fixed + resin_type.size() + resin_name.size();
+    const size_t name_addr    = resin_at + resin_fixed + resin_type.size();
+    const size_t type_addr    = resin_at + resin_fixed;
+    b.zeros(4);
+    b.u8(0); b.u8(0); b.u8(0); b.u8(0);             // resin color
+    b.u32(to_u32(machine_addr));
+    b.u32(to_u32(resin_type.size())); b.u32(to_u32(type_addr));
+    b.u32(to_u32(resin_name.size())); b.u32(to_u32(name_addr));
+    b.u32(to_u32(p.machine_name.size()));
+    b.f32(1.1f);
+    b.zeros(4);
+    b.bytes(resin_type.data(), resin_type.size());
+    b.bytes(resin_name.data(), resin_name.size());
+    b.bytes(p.machine_name.data(), p.machine_name.size());
+
+    // Layers: a table of pointers, then each layer's definition and image.
+    const size_t pointers_at = b.pos();
+    b.zeros(EncPointerSize * layer_count);
+    for (size_t i = 0; i < layer_count; ++i) {
+        const LayerParams &l = p.layers[i];
+        const std::vector<uint8_t> &img = images[i];
+        const uint64_t at = b.pos();
+        Buffer ptr;
+        ptr.u32(uint32_t(at % PageSize)); ptr.u32(uint32_t(at / PageSize));
+        ptr.u32(uint32_t(EncLayerDefSize)); ptr.u32(0);
+        const std::vector<uint8_t> ptr_bytes = ptr.take();
+        std::memcpy(b.data(pointers_at + EncPointerSize * i), ptr_bytes.data(), ptr_bytes.size());
+
+        const uint64_t data_at = at + EncLayerDefSize;
+        b.u32(uint32_t(EncLayerDefSize));
+        b.f32(l.z_mm); b.f32(l.exposure_s); b.f32(l.light_off_s);
+        b.u32(uint32_t(data_at % PageSize)); b.u32(uint32_t(data_at / PageSize));
+        b.u32(to_u32(img.size()));
+        b.u32(0);
+        b.u32(0); b.u32(0);                          // no encrypted part of the image
+        b.f32(l.lift_mm); b.f32(l.lift_mm_min);
+        b.f32(0.f); b.f32(0.f);                      // second stage lift
+        b.f32(l.retract_mm_min);
+        b.f32(0.f); b.f32(0.f);                      // second stage retract
+        b.f32(l.rest_before_lift_s); b.f32(l.rest_after_lift_s); b.f32(l.rest_after_retract_s);
+        b.f32(l.light_pwm);
+        b.u32(0);
+        const size_t img_at = b.pos();
+        b.bytes(img.data(), img.size());
+        layer_cipher(b.data(img_at), img.size(), EncLayerXorKey, uint32_t(i));
+    }
+
+    // The signature: the SHA-256 of the checksum value, encrypted.
+    b.u32(0x422052FA); b.u32(0);
+    uint64_t checksum = EncChecksum;
+    std::vector<uint8_t> digest(32);
+    unsigned int digest_len = 0;
+    if (EVP_Digest(&checksum, sizeof checksum, digest.data(), &digest_len, EVP_sha256(), nullptr) != 1 || digest_len != 32)
+        throw ExportError("SHA-256 failed.");
+    const std::vector<uint8_t> signature = aes_cbc(digest, true);
+    const size_t signature_at = b.pos();
+    b.bytes(signature.data(), signature.size());
+    b.u32(0x6D4232B3);
+
+    // The settings, encrypted.
+    Buffer s;
+    s.u32(uint32_t(checksum)); s.u32(uint32_t(checksum >> 32));
+    s.u32(to_u32(pointers_at));
+    s.f32(p.bed_x_mm); s.f32(p.bed_y_mm); s.f32(p.bed_z_mm);
+    s.zeros(8);
+    s.f32(layer_count ? p.layers.back().z_mm : 0.f);
+    s.f32(p.layer_height_mm);
+    s.f32(p.exposure_s); s.f32(p.bottom_exposure_s); s.f32(p.light_off_s);
+    s.u32(p.bottom_layer_count);
+    s.u32(p.res_x); s.u32(p.res_y);
+    s.u32(uint32_t(layer_count));
+    s.u32(to_u32(large_at)); s.u32(to_u32(small_at));
+    s.u32(p.print_time_s);
+    s.u32(p.projector_type);
+    s.f32(p.bottom_lift_mm); s.f32(p.bottom_lift_mm_min);
+    s.f32(p.lift_mm); s.f32(p.lift_mm_min);
+    s.f32(p.retract_mm_min);
+    s.f32(p.volume_ml); s.f32(p.weight_g); s.f32(p.cost);
+    s.f32(p.bottom_light_off_s);
+    s.u32(1);
+    s.u16(p.light_pwm); s.u16(p.bottom_light_pwm);
+    s.u32(EncLayerXorKey);
+    s.f32(0.f); s.f32(0.f); s.f32(0.f); s.f32(0.f); s.f32(0.f); s.f32(0.f);   // second stage lift and retract
+    s.f32(0.f);                                                               // rest time after lift
+    s.u32(to_u32(name_at)); s.u32(to_u32(p.machine_name.size()));
+    s.u8(0x0F);
+    s.zeros(2);
+    s.u8(0x40);
+    s.u32(p.timestamp_minutes);
+    s.u32(8);                                    // anti alias level
+    s.f32(p.rest_after_retract_s);
+    s.f32(0.f);
+    s.u32(p.transition_layer_count);
+    s.f32(p.bottom_retract_mm_min); s.f32(0.f);
+    s.zeros(4); s.f32(4.f); s.zeros(4); s.f32(4.f);
+    s.f32(p.rest_after_retract_s); s.f32(0.f); s.f32(0.f);
+    s.f32(0.f);                                  // bottom retract height 2
+    s.zeros(8);
+    s.u32(4);
+    s.u32(layer_count ? uint32_t(layer_count - 1) : 0);
+    s.zeros(16);
+    s.u32(to_u32(disclaimer_at)); s.u32(to_u32(disclaimer.size()));
+    s.u32(0);
+    s.u32(to_u32(resin_at));
+    s.zeros(8);
+    std::vector<uint8_t> settings = s.take();
+    if (settings.size() != EncSettingsSize)
+        throw ExportError("Encrypted CTB settings size mismatch.");
+    settings = aes_cbc(settings, true);
+
+    std::vector<uint8_t> file = b.take();
+    std::memcpy(&file[EncHeaderSize], settings.data(), settings.size());
+
+    Buffer h;
+    h.u32(MagicEncrypted);
+    h.u32(uint32_t(EncSettingsSize)); h.u32(uint32_t(EncHeaderSize));
+    h.u32(0);
+    h.u32(EncryptedVersion);
+    h.u32(uint32_t(signature.size())); h.u32(to_u32(signature_at));
+    h.u32(0);
+    h.u16(1); h.u16(1);
+    h.u32(0);
+    h.u32(0x2A);
+    h.u32(0);
+    const std::vector<uint8_t> head = h.take();
+    if (head.size() != EncHeaderSize)
+        throw ExportError("Encrypted CTB header size mismatch.");
+    std::memcpy(file.data(), head.data(), head.size());
+    return file;
 }
 
 std::vector<uint8_t> build_ctb_v4(const FileParams &p, const std::vector<std::vector<uint8_t>> &images)
@@ -694,7 +894,9 @@ void CTBArchive::export_print(const std::string     fname,
         images.emplace_back(data, data + m_layers[i].size());
     }
 
-    const std::vector<uint8_t> file = m_dialect == CTBDialect::Cbddlp ? ctb::build_cbddlp(p, images) : ctb::build_ctb_v4(p, images);
+    const std::vector<uint8_t> file = m_dialect == CTBDialect::Cbddlp   ? ctb::build_cbddlp(p, images) :
+                                      m_dialect == CTBDialect::Encrypted ? ctb::build_ctb_encrypted(p, images) :
+                                                                           ctb::build_ctb_v4(p, images);
     std::ofstream out(fname, std::ios::binary | std::ios::out | std::ios::trunc);
     if (! out)
         throw ExportError("Cannot open " + fname + " for writing.");

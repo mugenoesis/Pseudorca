@@ -75,6 +75,14 @@ class Registry {
                 nullptr
             },
             {
+                "CTBENCRYPTED",
+                L("Chitubox CTB, encrypted (version 5)"),
+                "ctb",
+                {},
+                [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::Encrypted); },
+                nullptr
+            },
+            {
                 "CBDDLP",
                 L("Chitubox CBDDLP / Photon (version 2)"),
                 "cbddlp",
