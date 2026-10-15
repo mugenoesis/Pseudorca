@@ -9,6 +9,7 @@
 #include "SL1_SVG.hpp"
 #include "AnycubicSLA.hpp"
 #include "CTB.hpp"
+#include "GOO.hpp"
 #include "TinyMaker.hpp"
 #include "libslic3r/I18N.hpp"
 #include "SLAArchiveFormatRegistry.hpp"
@@ -63,6 +64,14 @@ class Registry {
                 "ctb",
                 {},
                 [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::GKtwo); },
+                nullptr
+            },
+            {
+                "GOO",
+                L("Elegoo GOO (version 3.0)"),
+                "goo",
+                {},
+                [] (const auto &cfg) { return std::make_unique<GOOArchive>(cfg); },
                 nullptr
             },
             {
