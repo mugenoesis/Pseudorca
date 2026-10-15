@@ -10,6 +10,7 @@
 #include "AnycubicSLA.hpp"
 #include "CTB.hpp"
 #include "GOO.hpp"
+#include "ImageZip.hpp"
 #include "TinyMaker.hpp"
 #include "libslic3r/I18N.hpp"
 #include "SLAArchiveFormatRegistry.hpp"
@@ -88,6 +89,14 @@ class Registry {
                 "cbddlp",
                 {"photon"},
                 [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::Cbddlp); },
+                nullptr
+            },
+            {
+                "PHROZENZIP",
+                L("Phrozen zip (numbered PNGs)"),
+                "zip",
+                {},
+                [] (const auto &cfg) { return std::make_unique<PhrozenZipArchive>(cfg); },
                 nullptr
             },
             {

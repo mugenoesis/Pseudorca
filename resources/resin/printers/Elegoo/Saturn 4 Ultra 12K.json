@@ -17,5 +17,5 @@
   "light_pwm": "255",
   "printable_height": "220",
   "retract_speed": "0.05",
-  "sla_archive_format": "encryptedctb"
+  "sla_archive_format": "CTBENCRYPTED"
 }
