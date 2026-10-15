@@ -18,6 +18,7 @@ my %writer = (
 );
 my %supported = map { $_ => 1 } values %writer;
 $supported{TINYMAKER} = 1;
+$supported{$_} = 1 for qw(pw0 pwx pwmo pwmx pwms pmsq dlp pwma pm3 pm3m pwmb dl2p pmx2 pm3r pm3n pm5 px6s pm5s m5sp);
 
 sub num { my $v = shift; return defined $v ? $v + 0 : undef }
 
