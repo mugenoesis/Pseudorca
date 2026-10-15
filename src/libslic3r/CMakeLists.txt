@@ -443,6 +443,8 @@ set(lisbslic3r_sources
     ShortestPath.hpp
     SLAPrint.cpp
     SLAPrintSteps.cpp
+    SLAPrintJob.cpp
+    SLAPrintJob.hpp
     SLAPrintSteps.hpp
     SLAPrint.hpp
     SLA/Pad.hpp

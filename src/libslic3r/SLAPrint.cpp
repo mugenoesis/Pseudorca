@@ -250,7 +250,6 @@ SLAPrint::ApplyStatus SLAPrint::apply(
     config.option("sla_print_settings_id",        true);
     config.option("sla_material_settings_id",     true);
     config.option("printer_settings_id",          true);
-    config.option("physical_printer_settings_id", true);
     // Collect changes to print config.
     DynamicPrintConfig mat_overrides;
     t_config_option_keys print_diff    = m_print_config.diff(config);
@@ -292,10 +291,15 @@ SLAPrint::ApplyStatus SLAPrint::apply(
         // update_apply_status(this->invalidate_step(slapsRasterize));
         m_placeholder_parser.apply_config(config);
         // Set the profile aliases for the PrintBase::output_filename()
-        m_placeholder_parser.set("print_preset",            config.option("sla_print_settings_id")->clone());
-        m_placeholder_parser.set("material_preset",         config.option("sla_material_settings_id")->clone());
-        m_placeholder_parser.set("printer_preset",          config.option("printer_settings_id")->clone());
-        m_placeholder_parser.set("physical_printer_preset", config.option("physical_printer_settings_id")->clone());
+        // Not every one of these options exists in every build of the config (physical_printer_settings_id is PrusaSlicer-only).
+        auto set_preset_name = [this, &config](const char *placeholder, const char *key) {
+            if (const ConfigOption *opt = config.option(key))
+                m_placeholder_parser.set(placeholder, opt->clone());
+        };
+        set_preset_name("print_preset",            "sla_print_settings_id");
+        set_preset_name("material_preset",         "sla_material_settings_id");
+        set_preset_name("printer_preset",          "printer_settings_id");
+        set_preset_name("physical_printer_preset", "physical_printer_settings_id");
     }
 
     // It is also safe to change m_config now after this->invalidate_state_by_config_options() call.

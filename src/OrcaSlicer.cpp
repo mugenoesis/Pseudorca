@@ -105,6 +105,7 @@
 #include "libslic3r/Platform.hpp"
 #include "libslic3r/Print.hpp"
 #include "libslic3r/SLAPrint.hpp"
+#include "libslic3r/SLAPrintJob.hpp"
 #include "libslic3r/TriangleMesh.hpp"
 #include "libslic3r/Format/AMF.hpp"
 #include "libslic3r/Format/3mf.hpp"
@@ -2292,6 +2293,45 @@ int CLI::run(int argc, char **argv)
             record_exit_reson(outfile_dir, CLI_INVALID_PRINTER_TECH, 0, cli_errors[CLI_INVALID_PRINTER_TECH], sliced_info);
             flush_and_exit(CLI_INVALID_PRINTER_TECH);
         }
+    }
+
+    // A resin (SLA) printer: the FFF preset merge, arrange and G-code export below do not apply. SLA keys are taken straight
+    // from the loaded machine and process files, the first model is sliced and the printer archive is written.
+    // The technology is read from the machine file here, because `config` above has been moved from by now.
+    if (get_printer_technology(load_machine_config) == ptSLA) {
+        if (m_models.empty()) {
+            record_exit_reson(outfile_dir, CLI_FILE_NOTFOUND, 0, cli_errors[CLI_FILE_NOTFOUND], sliced_info);
+            flush_and_exit(CLI_FILE_NOTFOUND);
+        }
+        // result.json is written next to the archive, also when slicing fails.
+        boost::system::error_code sla_ec;
+        boost::filesystem::create_directories(outfile_dir.empty() ? std::string(".") : outfile_dir, sla_ec);
+        SLAJobParams sla_params;
+        sla_params.machine        = &load_machine_config;
+        sla_params.process        = &load_process_config;
+        sla_params.output_dir     = outfile_dir;
+        sla_params.keep_positions = m_config.has("keep_positions") && m_config.opt_bool("keep_positions");
+        sla_params.progress       = [](int percent, const std::string &text) {
+            boost::nowide::cout << "sla " << percent << "% " << text << std::endl;
+        };
+        const SLAJobResult sla = run_sla_job(m_models.front(), sla_params);
+        if (sla.code != CLI_SUCCESS) {
+            boost::nowide::cerr << "resin slicing failed: " << sla.error << std::endl;
+            record_exit_reson(outfile_dir, sla.code, 0, sla.error, sliced_info);
+            flush_and_exit(sla.code);
+        }
+        std::map<std::string, std::string> sla_result = {
+            {"printer_technology", "SLA"},
+            {"archive_file",       sla.archive_path},
+            {"archive_format",     sla.archive_format},
+            {"layer_count",        std::to_string(sla.layer_count)},
+            {"layer_height_mm",    std::to_string(sla.layer_height)},
+            {"estimated_print_time_s", std::to_string(sla.print_time_s)},
+            {"resin_used_ml",      std::to_string(sla.resin_used_ml)},
+        };
+        boost::nowide::cout << "sla exported " << sla.archive_path << " layers=" << sla.layer_count << std::endl;
+        record_exit_reson(outfile_dir, CLI_SUCCESS, 1, cli_errors[CLI_SUCCESS], sliced_info, sla_result);
+        return CLI_SUCCESS;
     }
 
     //load filaments files
