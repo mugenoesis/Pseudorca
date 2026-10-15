@@ -17,6 +17,7 @@
   "lift_speed": "30",
   "light_pwm": "255",
   "printable_height": "200",
+  "printer_settings_id": "Kelant S400",
   "retract_speed": "300",
   "sla_archive_format": "CHITUBOXZIP"
 }

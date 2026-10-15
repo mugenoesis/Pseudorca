@@ -444,6 +444,8 @@ set(lisbslic3r_sources
     SLAPrint.cpp
     SLAPrintSteps.cpp
     SLAPrintJob.cpp
+    ResinMaterial.cpp
+    ResinMaterial.hpp
     SLAPrintJob.hpp
     SLAPrintSteps.hpp
     SLAPrint.hpp

@@ -16,5 +16,6 @@
   "lift_distance": "4",
   "lift_speed": "150",
   "printable_height": "190",
+  "printer_settings_id": "Longer Orange 4K",
   "sla_archive_format": "lgs4k"
 }

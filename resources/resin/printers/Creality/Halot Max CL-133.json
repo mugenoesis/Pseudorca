@@ -17,6 +17,7 @@
   "lift_speed": "80",
   "light_pwm": "255",
   "printable_height": "300",
+  "printer_settings_id": "Creality Halot Max CL-133",
   "retract_speed": "150",
   "sla_archive_format": "CXDLP"
 }

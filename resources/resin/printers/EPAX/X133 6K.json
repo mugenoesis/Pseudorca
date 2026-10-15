@@ -18,6 +18,7 @@
   "lift_speed": "100",
   "light_pwm": "255",
   "printable_height": "400",
+  "printer_settings_id": "EPAX X133 6K",
   "retract_speed": "150",
   "sla_archive_format": "CTBENCRYPTED"
 }

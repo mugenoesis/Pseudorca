@@ -30,6 +30,10 @@ The resin printer catalogue in `resources/resin` is converted from UVtools' publ
 display sizes and resolutions, build heights, default lift, speed and wait values, and the file format each printer reads.
 The TinyMaker entry was measured by its owner. None of the printers is verified on hardware unless a note says so.
 
+### Resin materials
+
+`resources/resin/materials` holds the exposure settings Siraya Tech publishes for its resins in its user guides (https://siraya.tech/pages/...-user-guide); they are the maker's recommended values, entered with the link to their page and the date they were read (`scripts/pseudorca/resin-materials-siraya.pl`). Two test fixtures come from open sources: a Chitubox resin profile from [Photonsters/CBD-based-printers-list](https://github.com/Photonsters/CBD-based-printers-list) (The Unlicense) and a section of PrusaSlicer's `AnycubicSLA.ini` (AGPL-3.0); see `tests/data/resin/README.md`.
+
 ## Trademarks
 
 Chitubox, CBDDLP and CTB are formats of CBD Technology; the names of the printers, vendors and formats belong to their

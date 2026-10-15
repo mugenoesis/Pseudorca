@@ -17,6 +17,7 @@
   "lift_speed": "60",
   "light_pwm": "255",
   "printable_height": "200",
+  "printer_settings_id": "Voxelab Ceres 8.9",
   "retract_speed": "150",
   "sla_archive_format": "fdg"
 }

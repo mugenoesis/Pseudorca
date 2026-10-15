@@ -16,6 +16,7 @@
   "lift_distance": "6",
   "lift_speed": "60",
   "printable_height": "165",
+  "printer_settings_id": "Anycubic Photon S",
   "retract_speed": "150",
   "sla_archive_format": "pws"
 }

@@ -108,6 +108,7 @@
 #include "libslic3r/Print.hpp"
 #include "libslic3r/SLAPrint.hpp"
 #include "libslic3r/SLAPrintJob.hpp"
+#include "libslic3r/ResinMaterial.hpp"
 #include "libslic3r/TriangleMesh.hpp"
 #include "libslic3r/Format/AMF.hpp"
 #include "libslic3r/Format/3mf.hpp"
@@ -2308,9 +2309,36 @@ int CLI::run(int argc, char **argv)
         // result.json is written next to the archive, also when slicing fails.
         boost::system::error_code sla_ec;
         boost::filesystem::create_directories(outfile_dir.empty() ? std::string(".") : outfile_dir, sla_ec);
+        // A resin material (--load-filaments): the best settings row for this printer and layer height.
+        DynamicPrintConfig sla_material_config;
+        if (! load_filaments.empty()) {
+            std::string material_text;
+            {
+                std::ifstream material_in(load_filaments.front(), std::ios::binary);
+                material_text.assign(std::istreambuf_iterator<char>(material_in), std::istreambuf_iterator<char>());
+            }
+            if (material_text.empty()) {
+                boost::nowide::cerr << "cannot read the resin material " << load_filaments.front() << std::endl;
+                record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, "cannot read the resin material", sliced_info);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+            }
+            auto text_of = [](const DynamicPrintConfig &c, const char *key) { const ConfigOptionString *o = c.option<ConfigOptionString>(key); return o ? o->value : std::string(); };
+            const std::vector<std::string> names = { text_of(load_machine_config, "printer_model"), text_of(load_machine_config, "printer_settings_id") };
+            const ConfigOptionFloat *lh = load_process_config.option<ConfigOptionFloat>("layer_height");
+            if (lh == nullptr) lh = load_machine_config.option<ConfigOptionFloat>("layer_height");
+            const ResinMaterialChoice choice = choose_resin_material(material_text, names, lh ? lh->value : 0.05);
+            if (! choice.ok) {
+                boost::nowide::cerr << choice.error << std::endl;
+                record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, choice.error, sliced_info);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+            }
+            apply_resin_material(choice, sla_material_config);
+            boost::nowide::cout << "resin material " << choice.name << ": layer height " << choice.layer_height << (choice.exact_layer_height ? "" : " (nearest)") << ", " << (choice.printer_match == ResinMaterialChoice::PrinterMatch::Exact ? "this printer" : choice.printer_match == ResinMaterialChoice::PrinterMatch::Vendor ? "this vendor" : "any printer") << std::endl;
+        }
         SLAJobParams sla_params;
         sla_params.machine        = &load_machine_config;
         sla_params.process        = &load_process_config;
+        sla_params.material       = load_filaments.empty() ? nullptr : &sla_material_config;
         sla_params.output_dir     = outfile_dir;
         sla_params.keep_positions = m_config.has("keep_positions") && m_config.opt_bool("keep_positions");
         sla_params.progress       = [](int percent, const std::string &text) {

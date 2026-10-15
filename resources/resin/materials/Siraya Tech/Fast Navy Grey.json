@@ -1,0 +1,304 @@
+{
+  "name" : "Siraya Tech Fast Navy Grey",
+  "resin_type" : "abs-like",
+  "settings" : [
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 10,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 65,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars 2"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars 2 Pro"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars 3"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 45,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Saturn"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 15,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 90,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 1.9,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon Mono"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 1.9,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon Mono SE"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon Mono X"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 12,
+      "lift_speed" : 48,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Peopoly Phenom Noir"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 10,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 65,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X1"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X10"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.6,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality LD-002H"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 10,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 65,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality LD-002R"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 45,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality Halot One CL-60"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 45,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality Halot Sky CL-89"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 15,
+      "initial_exposure_time" : 90,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Peopoly Phenom"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "exposure_time" : 10,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon S"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/fast-navy-grey-user-guide"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Siraya Tech"
+}

@@ -16,6 +16,7 @@
   "lift_distance": "5",
   "lift_speed": "100",
   "printable_height": "175",
+  "printer_settings_id": "Zortrax Inkspire",
   "retract_speed": "100",
   "sla_archive_format": "zcodex"
 }

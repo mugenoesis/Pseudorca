@@ -1,0 +1,314 @@
+{
+  "name" : "Siraya Tech Easy Obsidian Black",
+  "resin_type" : "plant-based",
+  "settings" : [
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 10,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 63,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 38,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars 2"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars 2 Pro"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars 3"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.9,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 32,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Saturn"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 12.5,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 69,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 23,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon Mono"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 23,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon Mono SE"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.3,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 23,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon Mono X"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3.2,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 38,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Phrozen Sonic Mini 4K"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3.2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 47,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Phrozen Sonic Mighty 4K"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 3,
+      "exposure_time" : 3.8,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 44,
+      "layer_height" : 0.05,
+      "lift_distance" : 10,
+      "lift_speed" : 45,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Phrozen Sonic Mega 8K"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 10,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 57,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X1"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 38,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 50,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X10"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 42,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality LD-002H"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 12.5,
+      "faded_layers" : 4,
+      "initial_exposure_time" : 63,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality LD-002R"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3.8,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 44,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality Halot One CL-60"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3.8,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 44,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 60,
+      "notes" : "Chitubox profile values in Siraya Tech's guide",
+      "printers" : [
+        "Creality Halot Sky CL-89"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/easy-user-guide"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Siraya Tech"
+}

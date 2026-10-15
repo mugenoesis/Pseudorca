@@ -87,6 +87,8 @@ SLAJobResult run_sla_job(Model &model, const SLAJobParams &params)
 
     SLAFullPrintConfig sla_cfg;
     sla_cfg.apply(*params.machine, true);
+    if (params.material != nullptr)
+        sla_cfg.apply(*params.material, true);
     sla_cfg.apply(*params.process, true);
 
     const double width  = sla_cfg.display_width.getFloat();
