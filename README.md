@@ -57,7 +57,10 @@
 > which wraps this slicer in a web UI and publishes a Docker image. To build the slicer yourself, follow the
 > upstream instructions below; to see exactly what changed, compare this branch with upstream `main`.
 >
-> ## License
+> ## Resin printing: sources and credits
+The resin (MSLA) support is built on PrusaSlicer's SLA code and on the file format work of UVtools, mslicer and others; see [THIRD_PARTY_SOURCES.md](THIRD_PARTY_SOURCES.md).
+
+# License
 >
 > OrcaSlicer is licensed under the **GNU AGPL v3.0**, and so are the changes in this fork. See `LICENSE.txt`.
 > This fork is not affiliated with or endorsed by the OrcaSlicer project.
