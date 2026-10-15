@@ -40,8 +40,16 @@
 #include "slic3r/GUI/3DScene.hpp"
 #include <vector>
 #include <utility>
-#include "slic3r/GUI/ImGuiWrapper.hpp"
 #include <queue>
+#include "libslic3r/Color.hpp"
+#include "libslic3r/ObjectID.hpp"
+#include "libslic3r/Preset.hpp"
+#include "slic3r/GUI/GLShader.hpp"
+#include "slic3r/GUI/MeshUtils.hpp"
+#include "slic3r/GUI/Selection.hpp"
+
+namespace Slic3r::GUI { class ImGuiWrapper; }
+namespace cereal { class BinaryInputArchive; }
 
 namespace Slic3r::GUI {
 
@@ -102,17 +110,10 @@ GLGizmoPainterBase::ClippingPlaneDataWrapper GLGizmoPainterBase::get_clipping_pl
 
 Vec3f GLGizmoPainterBase::get_tilt_up_direction() const
 {
-    const DynamicPrintConfig& cfg = wxGetApp().preset_bundle->printers.get_edited_preset().config;
-    double tilt_x_deg = cfg.opt_float("build_plate_tilt_x");
-    double tilt_y_deg = cfg.opt_float("build_plate_tilt_y");
-    if (tilt_x_deg == 0. && tilt_y_deg == 0.)
-        return Vec3f::UnitZ();
-    double tilt_x_rad = Geometry::deg2rad(tilt_x_deg);
-    double tilt_y_rad = Geometry::deg2rad(tilt_y_deg);
-    return Vec3f(float(tan(tilt_y_rad)), float(tan(tilt_x_rad)), 1.f).normalized();
+    return build_plate_tilt_up_direction().cast<float>();
 }
 
-void GLGizmoPainterBase::render_triangles(const Selection& selection) const
+void GLGizmoPainterBase::render_triangles(const Selection& selection, const ModelVolume* skip) const
 {
     auto* shader = wxGetApp().get_shader("mm_gouraud");
     if (!shader)
@@ -134,6 +135,8 @@ void GLGizmoPainterBase::render_triangles(const Selection& selection) const
             continue;
 
         ++mesh_id;
+        if (mv == skip)
+            continue;
 
         Transform3d trafo_matrix;
         if (m_parent.get_canvas_type() == GLCanvas3D::CanvasAssembleView) {
@@ -751,7 +754,7 @@ bool GLGizmoPainterBase::gizmo_event(SLAGizmoEventType action, const Vec2d& mous
                         mi->get_assemble_transformation().get_matrix() * mo->volumes[m_rr.mesh_id]->get_matrix() :
                         mi->get_transformation().get_matrix() * mo->volumes[m_rr.mesh_id]->get_matrix();
                     m_triangle_selectors[m_rr.mesh_id]->seed_fill_select_triangles(m_rr.hit, int(m_rr.facet), trafo_matrix_not_translate, this->get_clipping_plane_in_volume_coordinates(trafo_matrix), m_smart_fill_angle,
-                                                                                   m_paint_on_overhangs_only ? m_highlight_by_angle_threshold_deg : 0.f, true, get_tilt_up_direction());
+                                                                                   m_paint_on_overhangs_only ? m_highlight_by_angle_threshold_deg : 0.f, get_tilt_up_direction(), true);
                     m_triangle_selectors[m_rr.mesh_id]->request_update_render_data();
                     m_seed_fill_last_mesh_id = m_rr.mesh_id;
                 }
@@ -901,7 +904,7 @@ bool GLGizmoPainterBase::gizmo_event(SLAGizmoEventType action, const Vec2d& mous
                     m_triangle_selectors[mesh_idx]->seed_fill_apply_on_triangles(new_state);
                     if (m_tool_type == ToolType::SMART_FILL)
                         m_triangle_selectors[mesh_idx]->seed_fill_select_triangles(mesh_hit, facet_idx, trafo_matrix_not_translate, clp, m_smart_fill_angle,
-                                                                                       m_paint_on_overhangs_only ? m_highlight_by_angle_threshold_deg : 0.f, true, get_tilt_up_direction());
+                                                                                       m_paint_on_overhangs_only ? m_highlight_by_angle_threshold_deg : 0.f, get_tilt_up_direction(), true);
                     else if (m_tool_type == ToolType::BRUSH && m_cursor_type == TriangleSelector::CursorType::POINTER)
                         // BBS: add infill_angle parameter
                         m_triangle_selectors[mesh_idx]->bucket_fill_select_triangles(mesh_hit, facet_idx, clp, -1.f, false, true);
@@ -999,7 +1002,7 @@ bool GLGizmoPainterBase::gizmo_event(SLAGizmoEventType action, const Vec2d& mous
         const TriangleSelector::ClippingPlane &clp = this->get_clipping_plane_in_volume_coordinates(trafo_matrix);
         if (m_tool_type == ToolType::SMART_FILL)
             m_triangle_selectors[m_rr.mesh_id]->seed_fill_select_triangles(m_rr.hit, int(m_rr.facet), trafo_matrix_not_translate, clp, m_smart_fill_angle,
-                                                                           m_paint_on_overhangs_only ? m_highlight_by_angle_threshold_deg : 0.f, false, get_tilt_up_direction());
+                                                                           m_paint_on_overhangs_only ? m_highlight_by_angle_threshold_deg : 0.f, get_tilt_up_direction(), false);
         else if (m_tool_type == ToolType::BRUSH && m_cursor_type == TriangleSelector::CursorType::POINTER)
             // BBS: add infill_angle parameter
             m_triangle_selectors[m_rr.mesh_id]->bucket_fill_select_triangles(m_rr.hit, int(m_rr.facet), clp, -1.f, false);
@@ -1033,6 +1036,11 @@ bool GLGizmoPainterBase::on_mouse(const wxMouseEvent &mouse_event)
     Vec2d mouse_pos = mouse_coord.cast<double>();
 
     if (mouse_event.Moving()) {
+        // No button is down, yet a stroke is still open: its release went elsewhere, as a paint drag does not
+        // capture the mouse. End the stroke as that release would have.
+        if (m_button_down != Button::None)
+            gizmo_event(m_button_down == Button::Left ? SLAGizmoEventType::LeftUp : SLAGizmoEventType::RightUp, mouse_pos,
+                        mouse_event.ShiftDown(), mouse_event.AltDown(), false);
         gizmo_event(SLAGizmoEventType::Moving, mouse_pos, mouse_event.ShiftDown(), mouse_event.AltDown(), false);
         return false;
     }
@@ -1202,6 +1210,10 @@ void GLGizmoPainterBase::on_set_state()
         m_old_mo_id = -1;
         //m_iva.release_geometry();
         m_triangle_selectors.clear();
+        // A stroke still open goes with the selectors. Its state must not carry into the next session, where the
+        // first move would end it as if released and the first press would paint a line from its last position.
+        m_button_down      = Button::None;
+        m_last_mouse_click = Vec2d::Zero();
 
         //Camera& camera = wxGetApp().plater()->get_camera();
         //camera.look_at(camera.get_position(), m_previous_target, Vec3d::UnitZ());

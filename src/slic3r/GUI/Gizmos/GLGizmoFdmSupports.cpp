@@ -45,6 +45,19 @@
 #include "libslic3r/ExtrusionEntity.hpp"
 #include "slic3r/GUI/3DScene.hpp"
 #include <wx/event.h>
+#include "libslic3r/Color.hpp"
+#include "libslic3r/Config.hpp"
+#include "libslic3r/CutUtils.hpp"
+#include "libslic3r/ExtrusionEntityCollection.hpp"
+#include "libslic3r/ObjectID.hpp"
+#include "libslic3r/Preset.hpp"
+#include "libslic3r/PresetBundle.hpp"
+#include "libslic3r/Print.hpp"
+#include "slic3r/GUI/Gizmos/GLGizmosCommon.hpp"
+#include "slic3r/GUI/Gizmos/GLGizmosManager.hpp"
+#include "slic3r/GUI/I18N.hpp"
+#include "slic3r/GUI/Selection.hpp"
+#include "slic3r/GUI/GUI_Utils.hpp"
 
 namespace Slic3r::GUI {
 
@@ -532,14 +545,6 @@ int GLGizmoFdmSupports::get_selection_support_threshold_angle()
     return auto_support ? support_threshold_angle : 0;
 }
 
-std::pair<double, double> GLGizmoFdmSupports::get_build_plate_tilt()
-{
-    const DynamicPrintConfig& cfg = wxGetApp().preset_bundle->printers.get_edited_preset().config;
-    double tilt_x = cfg.opt_float("build_plate_tilt_x");
-    double tilt_y = cfg.opt_float("build_plate_tilt_y");
-    return {tilt_x, tilt_y};
-}
-
 void GLGizmoFdmSupports::select_facets_by_angle(float threshold_deg, bool block)
 {
     float threshold = (float(M_PI)/180.f)*threshold_deg;
@@ -548,15 +553,9 @@ void GLGizmoFdmSupports::select_facets_by_angle(float threshold_deg, bool block)
     const ModelInstance* mi = mo->instances[selection.get_instance_idx()];
 
     // Compute gravity direction accounting for build plate tilt
-    auto [tilt_x_deg, tilt_y_deg] = get_build_plate_tilt();
-    double tilt_x_rad = tilt_x_deg * M_PI / 180.0;
-    double tilt_y_rad = tilt_y_deg * M_PI / 180.0;
-    const bool has_tilt = (tilt_x_deg != 0. || tilt_y_deg != 0.);
-    // NB: use an if, not a ?:, so each branch converts to Vec3d independently
-    // (the two Eigen expression types don't unify in a ternary).
-    Vec3d gravity_dir = -Vec3d::UnitZ();
-    if (has_tilt)
-        gravity_dir = Vec3d(-tan(tilt_y_rad), -tan(tilt_x_rad), -1.0).normalized();
+    const Vec3d up_dir      = build_plate_tilt_up_direction();
+    const bool  has_tilt    = up_dir != Vec3d::UnitZ();
+    const Vec3d gravity_dir = -up_dir;
 
     int mesh_id = -1;
     for (const ModelVolume* mv : mo->volumes) {
@@ -645,7 +644,8 @@ void GLGizmoFdmSupports::update_from_model_object(bool first_update)
         const TriangleMesh* mesh = &mv->mesh();
         m_triangle_selectors.emplace_back(std::make_unique<TriangleSelectorPatch>(*mesh, ebt_colors));
         // Reset of TriangleSelector is done inside TriangleSelectorGUI's constructor, so we don't need it to perform it again in deserialize().
-        m_triangle_selectors.back()->deserialize(mv->supported_facets.get_data(), false);
+        // The colour table has NONE/ENFORCER/BLOCKER only: a higher state in the file is reset to NONE.
+        m_triangle_selectors.back()->deserialize(mv->supported_facets.get_data(), false, EnforcerBlockerType::BLOCKER);
         m_triangle_selectors.back()->request_update_render_data();
 
         //BBS: add timestamp logic

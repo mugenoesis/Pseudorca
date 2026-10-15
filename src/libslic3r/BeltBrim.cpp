@@ -1,3 +1,4 @@
+#include <limits>
 #include "BeltBrim.hpp"
 
 #include "ClipperUtils.hpp"
@@ -7,8 +8,22 @@
 #include "Print.hpp"
 #include "ShortestPath.hpp"
 #include "Support/BeltFloorContext.hpp"
+#include "BoundingBox.hpp"
+#include "ExPolygon.hpp"
+#include "ExtrusionEntity.hpp"
+#include "ExtrusionEntityCollection.hpp"
+#include "Point.hpp"
+#include "Polyline.hpp"
+#include "PrintConfig.hpp"
+#include "libslic3r.h"
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <utility>
+#include <vector>
 
 namespace Slic3r {
 
@@ -215,6 +230,19 @@ static Polygon band_box(const BoundingBox &bounds, int from_axis, coordf_t u_lo,
     return poly;
 }
 
+ExPolygons belt_brim_clip_leading_edge(const ExPolygons &region, const BeltBrimFrame &frame, coordf_t u_cut)
+{
+    if (region.empty())
+        return region;
+    BoundingBox keep_bb = get_extents(region);
+    keep_bb.offset(scale_(1.));
+    const bool    low_side = frame.downhill_sign() < 0;   // downhill is -u
+    const Polygon keep = band_box(keep_bb, frame.from_axis,
+        low_side ? unscale<double>(frame.from_axis == 0 ? keep_bb.min.x() : keep_bb.min.y()) : u_cut,
+        low_side ? u_cut : unscale<double>(frame.from_axis == 0 ? keep_bb.max.x() : keep_bb.max.y()));
+    return keep.empty() ? ExPolygons{} : intersection_ex(region, Polygons{ keep });
+}
+
 // Everything the per-band line generator needs, gathered once per object.
 struct BeltBrimContext
 {
@@ -252,7 +280,10 @@ static void belt_brim_band_paths(const BeltBrimContext      &bc,
     std::vector<coord_t> us;
     double uniform_clearance = 0.;   // 0 => derive per line from its own position
     double line_pitch        = bc.in_plane_pitch;
-    if (band_in_plane <= bc.in_plane_pitch + EPSILON) {
+    // One line also serves a band up to half a bead wider than the nominal pitch (a 0.3 mm
+    // first layer at 45 degrees): its flow is matched to the band, so the bead is that much
+    // wider. Two lattice lines in such a band would land almost on top of each other.
+    if (band_in_plane <= 1.5 * bc.in_plane_pitch + EPSILON) {
         // Steep belt, which is the normal case: the band is narrower than one bead, so
         // exactly one line fits.  Place it at a FIXED fraction of the band rather than
         // on a nominal-spacing lattice.  On a lattice each line lands at an arbitrary
@@ -284,7 +315,34 @@ static void belt_brim_band_paths(const BeltBrimContext      &bc,
     // must not be pooled before the flow is resolved.
     // Overshoot the region so the clip, not the line's ends, decides the extent.
     const coord_t margin = coord_t(SCALED_EPSILON) + 1;
-    for (const coord_t u : us) {
+    coord_t       u_prev = std::numeric_limits<coord_t>::min();
+    for (coord_t u : us) {
+        // Nozzle-to-belt clearance for this line.  Constant along the line, because the
+        // belt height depends only on the shear-axis coordinate.  Band-anchored lines
+        // share one clearance by construction; lattice lines (shallow belts, or a first
+        // layer thick enough that the band is wider than a bead) each get their own.
+        //
+        // A lattice line can fall where the belt is only a hair below the band's print_z.
+        // The bead there would be laid scraping the belt while its flow is sized for a
+        // taller cell, so it is moved uphill to the same fraction of the band the
+        // single-line case uses.  (The clearance is along slice Z; the real gap under the
+        // nozzle is clearance x cos(tilt), 0.53 h at 45 degrees for the 0.75 fraction.)
+        double clearance = uniform_clearance;
+        if (clearance <= 0.) {
+            const Point probe = bc.frame.from_axis == 0 ? Point(u, 0) : Point(0, u);
+            clearance = print_z - bc.ctx.floor_print_z(probe);
+            if (clearance < BAND_CLEARANCE_FRACTION * height) {
+                clearance = BAND_CLEARANCE_FRACTION * height;
+                u         = scale_(bc.ctx.cutoff_u(print_z - clearance));
+            }
+            clearance = std::min(clearance, height);
+        }
+        // A line moved uphill can land on, or almost on, its neighbour; two beads closer
+        // than half a pitch would be laid into the same cell.
+        if (u_prev != std::numeric_limits<coord_t>::min() && std::abs(u - u_prev) < bc.pitch_u / 2)
+            continue;
+        u_prev = u;
+
         Polyline line;
         if (bc.frame.from_axis == 0)
             line.points = { Point(u, coord_t(bc.region_bbox.min.y() - margin)),
@@ -298,17 +356,6 @@ static void belt_brim_band_paths(const BeltBrimContext      &bc,
             pieces = diff_pl(pieces, obstacles);
         if (pieces.empty())
             continue;
-
-        // Nozzle-to-belt clearance for this line.  Constant along the line, because the
-        // belt height depends only on the shear-axis coordinate.  Band-anchored lines
-        // share one clearance by construction; lattice lines (shallow belts) each get
-        // their own, clamped so neither end of a band yields an unprintable bead.
-        double clearance = uniform_clearance;
-        if (clearance <= 0.) {
-            const Point probe = bc.frame.from_axis == 0 ? Point(u, 0) : Point(0, u);
-            clearance = print_z - bc.ctx.floor_print_z(probe);
-            clearance = std::min(std::max(clearance, 0.5 * height), height);
-        }
 
         // with_cross_section, not with_height: it reaches the prescribed volume while
         // KEEPING the extrusion spacing, so the bead is sized to fill exactly one
@@ -329,15 +376,14 @@ static void belt_brim_band_paths(const BeltBrimContext      &bc,
 // overhang outside the belt footprint and land in the brim ring, which the flattened
 // brim_object_gap - a belt-plane separation - does not cover.
 //
-// THREADING: this runs inside posSupportMaterial, which Print::process() executes for all
-// objects in a tbb::parallel_for (Print.cpp).  Object slices are finished by then and safe
-// to read across objects, but SUPPORT layers are not: another object's thread may be
-// inside clear_support_layers() - which deletes the SupportLayer pointers - right now, so
-// touching a foreign object's support_layers() here is a use-after-free.  Only this
-// object's own supports are consulted; they are complete, because make_belt_brim() runs at
-// the tail of this object's own generate_support_material().  The cost is that the brim
-// does not dodge a *different* object's support at the same Z, which needs the objects to
-// overlap in the belt direction in the first place.
+// SEQUENCING: this reads every object's layers and this object's own support layers.
+// Another object's support step shifts that object's layer Z into the object frame for
+// the duration of the run (PrintObject::_generate_support_material()), so the brims must
+// not overlap with the parallel support step: Print::process() generates them one object
+// after the other once that step is over (PrintObject::generate_belt_brim()), and an
+// object that arrives on or leaves the plate invalidates the other brim owners' support
+// step (PrintApply.cpp) so their brims are clipped against what is there now.  Only this
+// object's supports are dodged; another object's support at the same Z is not.
 // `region_bbox` bounds the brim; anything outside it cannot clip a brim line, so whole
 // objects are skipped without materialising their polygons.  On a typical plate the
 // objects do not overlap and every foreign object drops out here, which matters because
@@ -397,6 +443,8 @@ void make_belt_brim(PrintObject &object)
     //    own contact band.  This is the object's bottom face, which on a belt is
     //    spread over every layer instead of sitting in layer 0.
     ExPolygons footprint_acc;
+    // The first layer that touches the belt: where the leading-edge brim is cut.
+    const Layer *first_contact = nullptr;
     for (size_t i = 0; i < nlayers; ++ i) {
         const Layer &layer = *object.layers()[i];
         if (layer.lslices.empty())
@@ -412,7 +460,12 @@ void make_belt_brim(PrintObject &object)
         const Polygon band = band_box(bb, bc.frame.from_axis, u_lo, u_hi);
         if (band.empty())
             continue;
-        expolygons_append(footprint_acc, intersection_ex(layer.lslices, Polygons{ band }));
+        ExPolygons contact = intersection_ex(layer.lslices, Polygons{ band });
+        if (contact.empty())
+            continue;
+        if (first_contact == nullptr)
+            first_contact = &layer;
+        expolygons_append(footprint_acc, std::move(contact));
     }
     const ExPolygons footprint = union_ex(footprint_acc);
     if (footprint.empty())
@@ -442,20 +495,13 @@ void make_belt_brim(PrintObject &object)
                          width, gap, leading, lateral, bc.frame),
         bc.frame);
 
-    if (bt == btLeadingEdgeOnly && ! bc.region.empty()) {
-        // Keep only what lies at or downhill of the object's FIRST contact with the
-        // belt, so the part is supported as it lands and nothing is printed alongside
-        // it afterwards.  The cut is the uphill edge of the first layer's contact band:
-        // everything past it belongs to later contacts.
-        const coordf_t u_cut   = bc.ctx.cutoff_u(object.layers().front()->print_z);
-        BoundingBox    keep_bb = get_extents(bc.region);
-        keep_bb.offset(scale_(1.));
-        const bool     low_side = bc.frame.shear > 0.;   // downhill is -u
-        const Polygon  keep = band_box(keep_bb, bc.frame.from_axis,
-            low_side ? unscale<double>(bc.frame.from_axis == 0 ? keep_bb.min.x() : keep_bb.min.y()) : u_cut,
-            low_side ? u_cut : unscale<double>(bc.frame.from_axis == 0 ? keep_bb.max.x() : keep_bb.max.y()));
-        bc.region = keep.empty() ? ExPolygons{} : intersection_ex(bc.region, Polygons{ keep });
-    }
+    if (bt == btLeadingEdgeOnly && first_contact != nullptr && ! bc.region.empty())
+        // The cut is the uphill edge of the first contact's band: everything past it
+        // belongs to later contacts.  The first contact is the first layer that touches
+        // the belt (step 1), neither layers().front(), an empty lead-in layer, nor the
+        // first layer with geometry, which is an overhang's tip when the part overhangs
+        // its leading end: both lie ahead of the part.
+        bc.region = belt_brim_clip_leading_edge(bc.region, bc.frame, bc.ctx.cutoff_u(first_contact->print_z));
 
     if (bc.region.empty())
         return;

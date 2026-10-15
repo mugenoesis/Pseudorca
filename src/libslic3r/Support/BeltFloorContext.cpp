@@ -1,8 +1,15 @@
 #include "BeltFloorContext.hpp"
-#include "../Print.hpp"
+#include "../Point.hpp"
+#include "../Polygon.hpp"
+#include "../PrintConfig.hpp"
+#include "../Slicing.hpp"
+#include "../libslic3r.h"
 
 #include <cmath>
 #include <limits>
+#include <cstddef>
+#include <functional>
+#include <vector>
 
 namespace Slic3r {
 
@@ -60,23 +67,6 @@ std::vector<Polygons> BeltFloorContext::compute_per_layer_floors(
     for (size_t i = 0; i < num_layers; ++i)
         result[i] = surface_polygon(layer_print_z(i));
     return result;
-}
-
-size_t belt_organic_raft_layer_count(const PrintObject &print_object, double extra_depth)
-{
-    const SlicingParameters &sp   = print_object.slicing_parameters();
-    const PrintConfig       &pcfg = print_object.print()->config();
-    BeltFloorContext ctx;
-    ctx.init_local(sp, pcfg, print_object.belt_global_z_offset());
-    if (!ctx.is_active() || std::abs(print_object.belt_global_z_offset()) <= EPSILON
-        || pcfg.belt_support_floor_mode.value != BeltSupportFloorMode::GeneratorOnly)
-        return 0;
-    // Distance from the pre-shear bbox min Z to the part's post-shear min Z,
-    // plus 10mm headroom so the base expansion and build-plate termination
-    // happen inside the belt region and get clipped, plus whatever the caller
-    // measured it still needs (see belt_root_shortfall() in TreeSupport3D.cpp).
-    const double depth = std::abs(belt_remapped_bbox(*print_object.model_object(), pcfg).min.z()) + 10. + std::max(0., extra_depth);
-    return size_t(std::max(0, int(std::ceil(depth / sp.layer_height))));
 }
 
 Polygons BeltFloorContext::half_plane(coordf_t print_z, bool belt_surface) const
