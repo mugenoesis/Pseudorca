@@ -415,7 +415,7 @@ TEST_CASE("A built CTB file is deterministic", "[CTB]")
 
 TEST_CASE("The CTB archives are registered", "[CTB]")
 {
-    for (const char *id : {"CTB", "CTBGKTWO", "CBDDLP"}) {
+    for (const char *id : {"CTB", "CTBGKTWO", "CBDDLP", "CTBENCRYPTED"}) {
         INFO(id);
         const ArchiveEntry *entry = get_archive_entry(id);
         REQUIRE(entry != nullptr);
@@ -597,4 +597,92 @@ TEST_CASE("A cube sliced to cbddlp is a version 2 file with one table per bit pl
     REQUIRE(ctb::cbddlp_decode(planes, img.data(), img.size()));
     const double lit = std::count_if(img.begin(), img.end(), [](uint8_t v) { return v > 127; });
     CHECK(lit == Catch::Approx((20. / (120. / 2560)) * (20. / (68. / 1440))).epsilon(0.02));
+}
+
+TEST_CASE("The encrypted CTB layout keeps its AES round trip and rejects partial blocks", "[CTB][CTBEncrypted]")
+{
+    std::vector<uint8_t> plain(64);
+    std::iota(plain.begin(), plain.end(), uint8_t(1));
+    const std::vector<uint8_t> enc = ctb::aes_cbc(plain, true);
+    REQUIRE(enc.size() == plain.size());
+    CHECK(enc != plain);
+    CHECK(ctb::aes_cbc(enc, false) == plain);
+    // CBC chains the blocks: the same plain block twice does not give the same cipher block twice.
+    std::vector<uint8_t> twice(32, 0x5A);
+    const std::vector<uint8_t> twice_enc = ctb::aes_cbc(twice, true);
+    CHECK(! std::equal(twice_enc.begin(), twice_enc.begin() + 16, twice_enc.begin() + 16));
+    CHECK_THROWS(ctb::aes_cbc(std::vector<uint8_t>(20), true));
+}
+
+TEST_CASE("A cube sliced to encrypted CTB is a version 5 file with decryptable settings and layers", "[CTB][CTBEncrypted]")
+{
+    boost::filesystem::path dir = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path("ctbe-job-%%%%%%%%");
+    struct Cleanup { boost::filesystem::path p; ~Cleanup() { boost::system::error_code ec; boost::filesystem::remove_all(p, ec); } } cleanup{dir};
+
+    const SLAJobResult res = slice_cube_to("CTBENCRYPTED", dir);
+    REQUIRE(res.code == CLI_SUCCESS);
+    CHECK(boost::filesystem::path(res.archive_path).filename() == "plate_1.ctb");
+
+    const Bytes f = read_file(res.archive_path);
+    // The 48 byte header
+    CHECK(u32_at(f, 0) == 0x12FD0107u);
+    CHECK(u32_at(f, 4) == 288u);                       // settings size
+    CHECK(u32_at(f, 8) == 48u);                        // settings offset
+    CHECK(u32_at(f, 16) == 5u);                        // version
+    const uint32_t sig_size = u32_at(f, 20), sig_at = u32_at(f, 24);
+    CHECK(sig_size == 32u);
+    REQUIRE(sig_at + sig_size <= f.size());
+
+    // The settings decrypt to the print's values.
+    const Bytes settings = ctb::aes_cbc(Bytes(f.begin() + 48, f.begin() + 48 + 288), false);
+    const uint64_t checksum = uint64_t(u32_at(settings, 0)) | (uint64_t(u32_at(settings, 4)) << 32);
+    CHECK(checksum == 0xCAFEBABEull);
+    const uint32_t pointers_at = u32_at(settings, 8);
+    CHECK(f32_at(settings, 12) == Catch::Approx(120.f));
+    CHECK(f32_at(settings, 16) == Catch::Approx(68.f));
+    CHECK(f32_at(settings, 20) == Catch::Approx(150.f));
+    CHECK(f32_at(settings, 36) == Catch::Approx(0.05f));    // layer height
+    CHECK(f32_at(settings, 40) == Catch::Approx(2.5f));
+    CHECK(f32_at(settings, 44) == Catch::Approx(30.f));
+    CHECK(u32_at(settings, 52) == 3u);                      // bottom layers
+    const uint32_t res_x = u32_at(settings, 56), res_y = u32_at(settings, 60), layer_count = u32_at(settings, 64);
+    CHECK(res_x == 2560u); CHECK(res_y == 1440u);
+    CHECK(layer_count == res.layer_count);
+    CHECK(u16_at(settings, 124) == 180);                    // light pwm
+    const uint32_t xor_key = u32_at(settings, 128);
+    CHECK(xor_key != 0u);
+    CHECK(f32_at(settings, 84) == Catch::Approx(7.f));      // bottom lift
+
+    // The signature is the encrypted SHA-256 of the checksum, which anyone can recompute.
+    const Bytes sig_plain = ctb::aes_cbc(Bytes(f.begin() + sig_at, f.begin() + sig_at + 32), false);
+    CHECK(sig_plain.size() == 32);
+    CHECK(ctb::aes_cbc(sig_plain, true) == Bytes(f.begin() + sig_at, f.begin() + sig_at + 32));
+
+    // A middle layer: the pointer finds a definition of 88 bytes, then an image that the key unscrambles.
+    const size_t mid = layer_count / 2;
+    const size_t ptr = pointers_at + 16 * mid;
+    const uint32_t layer_at = u32_at(f, ptr);
+    CHECK(u32_at(f, ptr + 4) == 0u);                        // page
+    CHECK(u32_at(f, ptr + 8) == 88u);
+    CHECK(u32_at(f, layer_at) == 88u);
+    CHECK(f32_at(f, layer_at + 4) == Catch::Approx(0.05f * (mid + 1)).margin(0.01));
+    CHECK(f32_at(f, layer_at + 8) == Catch::Approx(2.5f));
+    const uint32_t data_at = u32_at(f, layer_at + 16), data_len = u32_at(f, layer_at + 24);
+    CHECK(data_at == layer_at + 88);
+    CHECK(u32_at(f, layer_at + 32) == 0u);                  // no separately encrypted part
+    REQUIRE(data_at + data_len <= f.size());
+    Bytes rle(f.begin() + data_at, f.begin() + data_at + data_len);
+    ctb::layer_cipher(rle.data(), rle.size(), xor_key, uint32_t(mid));
+    Bytes img(size_t(res_x) * res_y);
+    REQUIRE(ctb::rle_decode(rle.data(), rle.size(), img.data(), img.size()));
+    const double lit = std::count_if(img.begin(), img.end(), [](uint8_t v) { return v > 127; });
+    CHECK(lit == Catch::Approx((20. / (120. / 2560)) * (20. / (68. / 1440))).epsilon(0.02));
+
+    // The machine name and disclaimer sections point inside the file.
+    const uint32_t name_at = u32_at(settings, 160), name_len = u32_at(settings, 164);
+    REQUIRE(name_at + name_len <= f.size());
+    const uint32_t disclaimer_at = u32_at(settings, 264), disclaimer_len = u32_at(settings, 268);
+    CHECK(disclaimer_len == 320u);
+    REQUIRE(disclaimer_at + disclaimer_len <= f.size());
+    CHECK(std::string(f.begin() + disclaimer_at, f.begin() + disclaimer_at + 6) == "Layout");
 }

@@ -20,7 +20,7 @@ namespace Slic3r {
 // The magic number selects the dialect: the UniFormation GKtwo wants its own magic and disclaimer text.
 // Cbddlp is the older layout of the Chitubox, Photon and Elegoo Mars families (.cbddlp, .photon): version 2, unencrypted,
 // with the anti aliasing done by several one bit images per layer.
-enum class CTBDialect { Chitubox, GKtwo, Cbddlp };
+enum class CTBDialect { Chitubox, GKtwo, Cbddlp, Encrypted };
 
 class CTBArchive : public SLAArchiveWriter
 {
@@ -101,6 +101,13 @@ std::vector<uint8_t> cbddlp_encode(const uint8_t *pixels, size_t count);
 bool cbddlp_split(const std::vector<uint8_t> &blob, std::vector<std::vector<uint8_t>> &planes);
 // Rebuilds the gray image from the planes: each lit plane adds one gray step (the writer's coarse levels).
 bool cbddlp_decode(const std::vector<std::vector<uint8_t>> &planes, uint8_t *pixels, size_t count);
+
+// AES-256-CBC without padding, with the key and IV Chitubox uses for the encrypted layout (the length must be a multiple of 16).
+std::vector<uint8_t> aes_cbc(const std::vector<uint8_t> &data, bool encrypt);
+
+// `images` are rle_encode()d layers, like for build_ctb_v4(). Writes version 5 of the encrypted layout, the one the
+// Elegoo Mars 3 / Saturn and similar printers read: the settings and the signature are AES encrypted.
+std::vector<uint8_t> build_ctb_encrypted(const FileParams &params, const std::vector<std::vector<uint8_t>> &images);
 
 // `images` are cbddlp_encode()d layers. Writes version 2 of the layout.
 std::vector<uint8_t> build_cbddlp(const FileParams &params, const std::vector<std::vector<uint8_t>> &images);
