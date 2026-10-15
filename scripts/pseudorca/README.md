@@ -7,6 +7,7 @@ Trident relies on come out byte-for-byte the same?
 | Script | What it does |
 |---|---|
 | `sync-builder.sh` | Copy this checkout into an incremental-build container and verify it by checksum (the builder image can be stale against the commit under test). |
+| `sync-sources.sh` | Merge OrcaSlicer `main` into each `topic/*` branch, build the integration branch and rewrite `PSEUDORCA_SOURCES` (see the README section "Keeping up with upstream"). |
 | `build-candidate.sh` | `sync-builder` + incremental build + layer the binary and `resources/` onto a Trident image as a candidate. |
 | `golden.sh` / `golden_cases.py` | Slice/convert a fixed set of models (plain, tree supports, belt printer, painted multi-colour projects, convert/orient/arrange...) through Trident's own `cli_runner` inside an image and record the normalised results. |
 | `golden_compare.sh` / `golden_compare.py` | Compare two golden runs (G-code and 3MF content, `result.json`, progress fields, `--help-json`). |

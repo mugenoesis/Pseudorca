@@ -1,3 +1,69 @@
+> # Pseudorca
+>
+> Pseudorca is a fork of [OrcaSlicer](https://github.com/OrcaSlicer/OrcaSlicer) that powers
+> [Trident](https://github.com/mugenoesis/Trident), a self-hosted slicer you run in Docker.
+>
+> - **`headless-orca`** (the default branch) is the one Trident builds from.
+> - **`main`** is never committed to: it only mirrors upstream OrcaSlicer `main`, so it can be synced with one click
+>   and never conflicts.
+> - **`topic/*`** hold our own changes, one theme per branch, each cut from `main`: `topic/build` (compiler fixes),
+>   `topic/cli` (headless command-line additions) and `topic/belt-fixes` (belt printer fixes on top of upstream's
+>   belt support). `PSEUDORCA_SOURCES` records which upstream commit and topic commits the integration is built from.
+> - **`pseudorca-next`** is where work is gathered before it goes to `headless-orca`.
+>
+> Everything in the desktop app still works as upstream. The additions below are aimed at running the slicer
+> headless (no display) from the command line, and at printing on belt (conveyor) printers. Belt printing itself is
+> upstream OrcaSlicer's.
+>
+> <details>
+> <summary>Keeping up with upstream (for maintainers)</summary>
+>
+> 1. Sync `main`: press **Sync fork** on the `main` branch on GitHub, or run
+>    `gh repo sync mugenoesis/Pseudorca --branch main`.
+> 2. Run `scripts/pseudorca/sync-sources.sh`. It merges `main` into each topic in scratch worktrees (`git rerere`
+>    replays resolutions you made before), merges the topics into `integration/<orca-sha>`, and rewrites
+>    `PSEUDORCA_SOURCES`. It stops at the first conflict and names the files; fix them in the printed worktree,
+>    commit, and rerun. Add `--push-topics` to push the updated topic branches.
+> 3. Build and gate the integration with the other scripts in `scripts/pseudorca/` (see its README), then open a PR
+>    into `pseudorca-next` whose tree is the integration's tree. `headless-orca` is never force-pushed: Trident's
+>    older submodule pins must keep resolving.
+> 4. New changes of ours go to the matching topic branch, never straight onto an integration branch.
+>
+> </details>
+>
+> ## What this fork adds
+>
+> **Belt (conveyor) printer fixes**, on top of upstream's belt printing
+> - Organic tree supports that grow down to the belt, and a layer-gap check that accepts material resting on the belt.
+> - Default placement near the prime line, with the auto-arrange span capped to the belt origin.
+> - `belt_printer_infinite_y` defaults to off, so ordinary printers are not treated as belt printers.
+>
+> **Command-line additions** (all usable with `--slice`)
+> - `--help-json`: print every setting as machine-readable JSON.
+> - `--remap-filament-extruder old:new,...`: remap which extruder a file's colours print on (including painted
+>   multi-colour regions), for tool changers such as the Snapmaker U1.
+> - `--keep-positions=1`: keep every object where it is (belt printers otherwise move them to a default spot).
+> - `--belt-shift-y <mm>`: move the belt printer's default placement along the belt.
+>
+> **Fixes found while running headless**
+> - A crash slicing a 3MF that has no `printable_height`.
+> - `filament_count` staying stale when a 3MF is loaded with more filaments than it was saved with.
+> - A crash from a degenerate support fragment (the height is now clamped in the shared `Flow` constructor).
+> - A null guard when generating plate-name textures without a canvas, and several GCC `-Werror` build fixes.
+>
+> ## Using it
+>
+> For most people the easiest way to use these features is [Trident](https://github.com/mugenoesis/Trident),
+> which wraps this slicer in a web UI and publishes a Docker image. To build the slicer yourself, follow the
+> upstream instructions below; to see exactly what changed, compare this branch with upstream `main`.
+>
+> ## License
+>
+> OrcaSlicer is licensed under the **GNU AGPL v3.0**, and so are the changes in this fork. See `LICENSE.txt`.
+> This fork is not affiliated with or endorsed by the OrcaSlicer project.
+
+---
+
 <div align="center">
 
 <picture>
