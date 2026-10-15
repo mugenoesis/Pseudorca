@@ -16,7 +16,8 @@ add_executable(${_TEST_NAME}_tests ${_TEST_NAME}_tests_main.cpp
     sla_ctb_tests.cpp
     sla_tinymaker_tests.cpp
     sla_goo_tests.cpp
-    sla_resin_catalogue_tests.cpp)
+    sla_resin_catalogue_tests.cpp
+    sla_imagezip_tests.cpp)
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r Catch2::Catch2WithMain)
 set_property(TARGET ${_TEST_NAME}_tests PROPERTY FOLDER "tests")
 
