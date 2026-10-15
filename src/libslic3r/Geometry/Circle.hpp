@@ -2,8 +2,13 @@
 #define slic3r_Geometry_Circle_hpp_
 
 #include "../Point.hpp"
+#include "libslic3r/libslic3r.h"
 
+#include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <cassert>
+#include <cstddef>
+#include <utility>
 
 namespace Slic3r { namespace Geometry {
 
@@ -89,8 +94,6 @@ struct Circle {
 
 using Circlef = Circle<Vec2f>;
 using Circled = Circle<Vec2d>;
-using CircleSqf = CircleSq<Vec2f>;
-using CircleSqd = CircleSq<Vec2d>;
 
 /// Find the center of the circle corresponding to the vector of Points as an arc.
 Point circle_center_taubin_newton(const Points::const_iterator& input_start, const Points::const_iterator& input_end, size_t cycles = 20);
@@ -179,7 +182,7 @@ int ray_circle_intersections(T r, T a, T b, T c, std::pair<Eigen::Matrix<T, 2, 1
         // What if the line touches the circle?
         return false;
     }
-    return ray_circle_intersections_r2_lv2_c2(r * r, a, b, a * a + b * b, c, out);
+    return ray_circle_intersections_r2_lv2_c(r * r, a, b, a * a + b * b, c, out);
 }
 
 } } // namespace Slic3r::Geometry

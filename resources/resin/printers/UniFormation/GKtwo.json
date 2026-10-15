@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "UniFormation GKtwo",
+  "printer_technology": "SLA",
+  "printer_model": "GKtwo",
+  "delay_after_exposure": "1",
+  "delay_before_exposure": "1.5",
+  "display_height": "128.3",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "7680",
+  "display_pixels_y": "4320",
+  "display_width": "228.089",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "150",
+  "printable_height": "245",
+  "retract_speed": "150",
+  "sla_archive_format": "CTBGKTWO"
+}

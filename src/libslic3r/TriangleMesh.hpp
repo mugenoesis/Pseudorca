@@ -3,7 +3,13 @@
 
 #include "libslic3r.h"
 #include <admesh/stl.h>
+#include <cstdint>
+#include <cstddef>
+#include <cassert>
+#include <array>
+#include <cereal/specialize.hpp>
 #include <functional>
+#include <utility>
 #include <vector>
 #include "BoundingBox.hpp"
 #include "Line.hpp"
@@ -319,6 +325,21 @@ inline stl_normal its_unnormalized_normal(const indexed_triangle_set &its,
 }
 
 float its_volume(const indexed_triangle_set &its);
+// Mass, volume and center of mass of a solid, and the mean over its mass of (x - center)(x - center)^T, from which its
+// moments of inertia about axes through the center follow.
+struct MassProperties
+{
+    double   mass{ 0. };
+    double   volume{ 0. };
+    Vec3d    center{ Vec3d::Zero() };
+    Matrix3d spread{ Matrix3d::Zero() };
+
+    // Under an affine map, which scales mass and volume by its determinant.
+    MassProperties transformed(const Transform3d &trafo) const;
+};
+// The solid a closed mesh bounds at unit density, whichever way its faces turn; nothing for a zero volume.
+MassProperties its_mass_properties(const indexed_triangle_set &its);
+float its_area(const indexed_triangle_set &its);
 float its_average_edge_length(const indexed_triangle_set &its);
 
 void its_merge(indexed_triangle_set &A, const indexed_triangle_set &B);
@@ -372,6 +393,22 @@ inline BoundingBoxf3 bounding_box(const indexed_triangle_set& its)
     for (const Vec3f &p : its.vertices) {
         bmin = p.cwiseMin(bmin);
         bmax = p.cwiseMax(bmax);
+    }
+
+    return {bmin.cast<double>(), bmax.cast<double>()};
+}
+
+inline BoundingBoxf3 bounding_box(const indexed_triangle_set& its, const Transform3f &tr)
+{
+    if (its.vertices.empty())
+        return {};
+
+    Vec3f bmin = tr * its.vertices.front(), bmax = tr * its.vertices.front();
+
+    for (const Vec3f &p : its.vertices) {
+        Vec3f pp = tr * p;
+        bmin = pp.cwiseMin(bmin);
+        bmax = pp.cwiseMax(bmax);
     }
 
     return {bmin.cast<double>(), bmax.cast<double>()};

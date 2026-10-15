@@ -12,23 +12,48 @@
 #include "BuildVolume.hpp"
 #include "ClipperUtils.hpp"
 #include "EdgeGrid.hpp"
+#include "libslic3r/Exception.hpp"
+#include "libslic3r/ExPolygon.hpp"
 #include "Fill/Fill.hpp"
+#include "libslic3r/Flow.hpp"
+#include "libslic3r/Fill/FillBase.hpp"
 #include "Layer.hpp"
+#include "libslic3r/Point.hpp"
+#include "libslic3r/Line.hpp"
 #include "Print.hpp"
 #include "MultiPoint.hpp"
 #include "Polygon.hpp"
 #include "Polyline.hpp"
 #include "MutablePolygon.hpp"
 #include "BeltFloorContext.hpp"
+#include "libslic3r/Support/TreeSupportCommon.hpp"
+#include "libslic3r/PrintConfig.hpp"
+#include "libslic3r/Support/TreeModelVolumes.hpp"
+#include "libslic3r/Support/SupportParameters.hpp"
+#include "libslic3r/Support/SupportLayer.hpp"
 #include "SupportCommon.hpp"
-#include "TriangleMesh.hpp"
+#include "libslic3r/Surface.hpp"
 #include "TriangleMeshSlicer.hpp"
 #include "TreeSupport.hpp"
 #include "I18N.hpp"
+#include "libslic3r/libslic3r.h"
+#include "libslic3r/Utils.hpp"
 
+#include <algorithm>
+#include <Eigen/Geometry>
 #include <atomic>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
+#include <functional>
+#include <cstdlib>
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <math.h>
+#include <mutex>
+#include <numeric>
+#include <iterator>
 #include <optional>
 #include <stdio.h>
 #include <string>
@@ -39,6 +64,14 @@
 #include <tbb/parallel_for.h>
 #include <tbb/parallel_for_each.h>
 #include <tbb/spin_mutex.h>
+#include <vector>
+#include <utility>
+#include <unordered_set>
+#include <tuple>
+#include "libslic3r/BoundingBox.hpp"
+#include "libslic3r/Config.hpp"
+#include "libslic3r/MultiMaterialSegmentation.hpp"
+#include "libslic3r/Slicing.hpp"
 
 #if defined(TREE_SUPPORT_SHOW_ERRORS) && defined(_WIN32)
     #define TREE_SUPPORT_SHOW_ERRORS_WIN32
@@ -71,7 +104,7 @@ static inline void validate_range(const Point &pt)
 {
     static constexpr const int32_t hi = 65536 * 16384;
     if (pt.x() > hi || pt.y() > hi || -pt.x() > hi || -pt.y() > hi)
-      throw ClipperLib::clipperException("Coordinate outside allowed range");
+      throw RuntimeError("Coordinate outside allowed range");
 }
 
 static inline void validate_range(const Points &points)
@@ -213,9 +246,8 @@ static std::vector<std::pair<TreeSupportSettings, std::vector<size_t>>> group_me
     // +1 makes the threshold inclusive
     double                   tan_threshold          = support_threshold_auto ? 0. : tan(M_PI * double(support_threshold + 1) / 180.);
     // Build plate tilt: compute per-layer XY shift for tilted gravity direction
-    const double             tilt_x_rad             = Geometry::deg2rad(print_config.build_plate_tilt_x.value);
-    const double             tilt_y_rad             = Geometry::deg2rad(print_config.build_plate_tilt_y.value);
-    const bool               has_tilt               = std::abs(tilt_x_rad) > EPSILON || std::abs(tilt_y_rad) > EPSILON;
+    const Vec2d              tilt_slope             = build_plate_tilt_slope(print_config);
+    const bool               has_tilt               = tilt_slope.cwiseAbs().maxCoeff() > EPSILON;
     //FIXME this is a fudge constant!
     auto                     enforcer_overhang_offset = scaled<double>(config.tree_support_tip_diameter.value);
     const coordf_t radius_sample_resolution = g_config_tree_support_collision_resolution;
@@ -237,7 +269,7 @@ static std::vector<std::pair<TreeSupportSettings, std::vector<size_t>>> group_me
     size_t num_overhang_layers = support_auto ? num_object_layers : std::min(num_object_layers, std::max(size_t(support_enforce_layers), enforcers_layers.size()));
     tbb::parallel_for(tbb::blocked_range<LayerIndex>(1, num_overhang_layers),
         [&print_object, &config, &print_config, &enforcers_layers, &blockers_layers,
-         support_auto, support_enforce_layers, support_threshold_auto, tan_threshold, enforcer_overhang_offset, num_raft_layers, radius_sample_resolution, has_tilt, tilt_x_rad, tilt_y_rad, &throw_on_cancel, &out]
+         support_auto, support_enforce_layers, support_threshold_auto, tan_threshold, enforcer_overhang_offset, num_raft_layers, radius_sample_resolution, has_tilt, tilt_slope, &throw_on_cancel, &out]
         (const tbb::blocked_range<LayerIndex> &range) {
         for (LayerIndex layer_id = range.begin(); layer_id < range.end(); ++ layer_id) {
             const Layer   &current_layer  = *print_object.get_layer(layer_id);
@@ -265,10 +297,7 @@ static std::vector<std::pair<TreeSupportSettings, std::vector<size_t>>> group_me
                 Polygons lower_layer_offseted;
                 if (has_tilt) {
                     Polygons lower_src = to_polygons(lower_layer.lslices_extrudable);
-                    const double lh = lower_layer.height;
-                    Point tilt_shift(coord_t(scale_(lh * tan(tilt_y_rad))),
-                                     coord_t(scale_(lh * tan(tilt_x_rad))));
-                    translate(lower_src, tilt_shift);
+                    translate(lower_src, Point::new_scale(tilt_slope * lower_layer.height));
                     lower_layer_offseted = offset(lower_src, lower_layer_offset);
                 } else {
                     lower_layer_offseted = offset(lower_layer.lslices_extrudable, lower_layer_offset);
@@ -850,16 +879,16 @@ static std::optional<std::pair<Point, size_t>> polyline_sample_next_point_at_dis
     }
     // offset in steps
     for (int i = 0; i < steps; ++ i) {
-        ret = diff(offset(ret, step_size, ClipperLib::jtRound, scaled<float>(0.01)), collision_trimmed());
+        ret = diff(offset(ret, step_size, jtRound, scaled<float>(0.01)), collision_trimmed());
         // ensure that if many offsets are done the performance does not suffer extremely by the new vertices of jtRound.
         if (i % 10 == 7)
-            ret = polygons_simplify(ret, scaled<double>(0.015), polygons_strictly_simple);
+            ret = polygons_simplify(ret, scaled<double>(0.015));
     }
     // offset the remainder
     float last_offset = distance - steps * step_size;
     if (last_offset > SCALED_EPSILON)
-        ret = offset(ret, distance - steps * step_size, ClipperLib::jtRound, scaled<float>(0.01));
-    ret = polygons_simplify(ret, scaled<double>(0.015), polygons_strictly_simple);
+        ret = offset(ret, distance - steps * step_size, jtRound, scaled<float>(0.01));
+    ret = polygons_simplify(ret, scaled<double>(0.015));
 
     if (do_final_difference)
         ret = diff(ret, collision_trimmed());
@@ -1640,8 +1669,8 @@ static Point move_inside_if_outside(const Polygons &polygons, Point from, int di
                 safe_movement_distance, safe_movement_distance + radius, 1);
         }
         if (settings.no_error && settings.move)
-            // as ClipperLib::jtRound has to be used for offsets this simplify is VERY important for performance.
-            polygons_simplify(increased, scaled<float>(0.025), polygons_strictly_simple);
+            // as jtRound has to be used for offsets this simplify is VERY important for performance.
+            polygons_simplify(increased, scaled<float>(0.025));
     } else
         // if no movement is done the areas keep parent area as no move == offset(0)
         increased = parent.influence_area;
@@ -3410,46 +3439,14 @@ static void organic_smooth_branches_avoid_collisions(
 }
 #endif // TREE_SUPPORT_ORGANIC_NUDGE_NEW
 
-// Belt mode: how much deeper (mm) the virtual belt raft must reach so that
-// every build-plate root lies wholly below the belt surface -- its whole
-// bottom disc, plus a two-layer margin. Such a branch crosses the belt as a
-// full tube, which the belt-floor clip cuts into a flat foot. A root left
-// above that line ends with its tube in the air (a hovering trunk) or with
-// only its rim touching the belt (a sliver). Branches drift sideways on the
-// way down, so this is measured from the generated tree rather than predicted
-// from the object's footprint. Returns 0 when every root is deep enough.
-static double belt_root_shortfall(const PrintObject &print_object, const TreeSupportSettings &config, const std::vector<SupportElements> &move_bounds)
-{
-    BeltFloorContext ctx;
-    if (move_bounds.empty() || ! ctx.init_local(print_object.slicing_parameters(), print_object.print()->config(), print_object.belt_global_z_offset()))
-        return 0.;
-    const double root_z = layer_z(print_object.slicing_parameters(), config, 0);
-    const double margin = 2. * unscale<double>(config.layer_height);
-    double       shortfall = 0.;
-    for (const SupportElement &root : move_bounds.front()) {
-        if (root.state.deleted || ! root.state.to_buildplate)
-            continue;
-        // The belt floor is a plane tilted along from_axis; across a disc of
-        // radius r it dips |shear| * r below its height at the center.
-        const double radius      = unscale<double>(support_element_radius(config, root));
-        const double lowest_belt = ctx.floor_print_z(root.state.result_on_layer) - std::abs(ctx.shear_factor()) * radius;
-        shortfall = std::max(shortfall, root_z + margin - lowest_belt);
-    }
-    return shortfall;
-}
-
 /*!
  * \brief Create the areas that need support.
  *
  * These areas are stored inside the given SliceDataStorage object.
  * \param storage The data storage where the mesh data is gotten from and
  * where the resulting support areas are stored.
- * \param belt_extra_depth, belt_attempt Belt mode only: how much deeper than
- * the default the virtual belt raft goes, and which retry this is (see
- * belt_root_shortfall()).
  */
-static void generate_support_areas(Print &print, TreeSupport* tree_support, const BuildVolume &build_volume, const std::vector<size_t> &print_object_ids, std::function<void()> throw_on_cancel,
-                                   double belt_extra_depth = 0., int belt_attempt = 0)
+static void generate_support_areas(Print &print, TreeSupport* tree_support, const BuildVolume &build_volume, const std::vector<size_t> &print_object_ids, std::function<void()> throw_on_cancel)
 {
     // Settings with the indexes of meshes that use these settings.
     std::vector<std::pair<TreeSupportSettings, std::vector<size_t>>> grouped_meshes = group_meshes(print, print_object_ids);
@@ -3465,21 +3462,6 @@ static void generate_support_areas(Print &print, TreeSupport* tree_support, cons
         // this struct is used to easy retrieve setting. No other function except those in TreeModelVolumes and generate_initial_areas() have knowledge of the existence of multiple meshes being processed.
         //FIXME this is a copy
         // Contains config settings to avoid loading them in every function. This was done to improve readability of the code.
-        // Belt printer: add virtual "belt raft" layers below the object so
-        // organic branches can extend below the model's first layer and
-        // terminate at the belt surface instead of creating a flat base at Z=0.
-        const size_t num_belt_raft_layers = belt_organic_raft_layer_count(*print.get_object(processing.second.front()), belt_extra_depth);
-        if (num_belt_raft_layers > 0) {
-            const auto &sp = print.get_object(processing.second.front())->slicing_parameters();
-            // Insert belt raft layers at the front, from lowest Z to highest.
-            std::vector<coordf_t> belt_layers;
-            belt_layers.reserve(num_belt_raft_layers);
-            for (int i = int(num_belt_raft_layers); i >= 1; --i)
-                belt_layers.push_back(sp.first_object_layer_height - i * sp.layer_height);
-            // Prepend to existing raft_layers (if any).
-            auto &rl = processing.first.raft_layers;
-            rl.insert(rl.begin(), belt_layers.begin(), belt_layers.end());
-        }
         const TreeSupportSettings &config = processing.first;
         BOOST_LOG_TRIVIAL(info) << "Processing support tree mesh group " << counter + 1 << " of " << grouped_meshes.size() << " containing " << grouped_meshes[counter].second.size() << " meshes.";
         auto t_start = std::chrono::high_resolution_clock::now();
@@ -3505,7 +3487,6 @@ static void generate_support_areas(Print &print, TreeSupport* tree_support, cons
         PrintObject &print_object = *print.get_object(processing.second.front());
         // Generator for model collision, avoidance and internal guide volumes.
         TreeModelVolumes volumes{ print_object, build_volume, config.maximum_move_distance, config.maximum_move_distance_slow, processing.second.front(),
-            num_belt_raft_layers,
 #ifdef SLIC3R_TREESUPPORTS_PROGRESS
             m_progress_multiplier, m_progress_offset,
 #endif // SLIC3R_TREESUPPORTS_PROGRESS
@@ -3517,11 +3498,7 @@ static void generate_support_areas(Print &print, TreeSupport* tree_support, cons
 #if 1
         // use smart overhang detection
         std::vector<Polygons>        overhangs;
-        // A belt-raft retry (see belt_root_shortfall() below) reuses the first
-        // attempt's detection: overhangs depend only on the object, and
-        // detect_overhangs() never clears its pointer-keyed overhang_types map.
-        if (belt_attempt == 0)
-            tree_support->detect_overhangs();
+        tree_support->detect_overhangs();
         const int       num_raft_layers = int(config.raft_layers.size());
         const int       num_layers = int(print_object.layer_count()) + num_raft_layers;
         overhangs.resize(num_layers);
@@ -3648,26 +3625,6 @@ static void generate_support_areas(Print &print, TreeSupport* tree_support, cons
             create_nodes_from_area(volumes, config, move_bounds, throw_on_cancel);
             auto t_place = std::chrono::high_resolution_clock::now();
 
-            // Belt mode: if any root ended above the belt, regenerate this
-            // group with a deeper belt raft instead of drawing a trunk that
-            // hovers over (or barely touches) the belt. Nothing has been
-            // written to the print object yet, so abandoning this attempt is
-            // free. Roots can move between attempts, hence re-measuring.
-            if (num_belt_raft_layers > 0) {
-                static constexpr int max_belt_attempts = 4;
-                if (const double shortfall = belt_root_shortfall(print_object, config, move_bounds); shortfall > 0.) {
-                    if (belt_attempt + 1 < max_belt_attempts) {
-                        BOOST_LOG_TRIVIAL(info) << "Tree support: belt raft of " << num_belt_raft_layers << " layers leaves a root "
-                                                << shortfall << "mm short of the belt, regenerating deeper";
-                        generate_support_areas(print, tree_support, build_volume, processing.second, throw_on_cancel,
-                                               belt_extra_depth + shortfall, belt_attempt + 1);
-                        continue;
-                    }
-                    BOOST_LOG_TRIVIAL(warning) << "Tree support: after " << max_belt_attempts << " belt raft depths a root is still "
-                                               << shortfall << "mm short of the belt";
-                }
-            }
-
             // ### draw these points as circles
             // this new function give correct result when raft is also enabled
             organic_draw_branches(
@@ -3726,8 +3683,7 @@ static void generate_support_areas(Print &print, TreeSupport* tree_support, cons
             const auto &pcfg = print_object.print()->config();
             BeltFloorContext ctx;
             ctx.init_local(sp, pcfg, print_object.belt_global_z_offset());
-            if (ctx.is_active()
-                && pcfg.belt_support_floor_mode.value == BeltSupportFloorMode::GeneratorOnly) {
+            if (ctx.is_active()) {
                 tbb::parallel_for_each(layers_sorted.begin(), layers_sorted.end(), [&](SupportGeneratorLayer *layer) {
                     if (!layer || layer->polygons.empty())
                         return;
@@ -3989,7 +3945,7 @@ void organic_draw_branches(
     mesh_slicing_params.mode = MeshSlicingParams::SlicingMode::Positive;
 
     tbb::parallel_for(tbb::blocked_range<size_t>(0, trees.size(), 1),
-        [&trees, &volumes, &config, &slicing_params, &move_bounds, &mesh_slicing_params, &interface_placer, &throw_on_cancel, &print_object](const tbb::blocked_range<size_t> &range) {
+        [&trees, &volumes, &config, &slicing_params, &move_bounds, &mesh_slicing_params, &interface_placer, &throw_on_cancel](const tbb::blocked_range<size_t> &range) {
             indexed_triangle_set    partial_mesh;
             std::vector<float>      slice_z;
             std::vector<Polygons>   bottom_contacts;
@@ -3999,104 +3955,16 @@ void organic_draw_branches(
                     // Triangulate the tube.
                     partial_mesh.clear();
                     std::pair<float, float> zspan = extrude_branch(branch.path, config, slicing_params, move_bounds, branch.has_root, partial_mesh);
-
-                    // Belt mode: attach a genuine flat pad, lying flush in the
-                    // belt's own (tilted) plane, at this branch's belt-contact
-                    // point. Without this, a belt-terminating root branch has
-                    // no real flat footing -- only whatever crescent-shaped
-                    // sliver survives the belt's per-layer cutoff-line clip
-                    // (see the belt-floor clipping below) -- which is why the
-                    // printed base looks like a standing loop/arch instead of
-                    // a flat foot parallel to the belt. This reverses the
-                    // explicit prior design choice ("no solid support-floor
-                    // pad under these branches", see below) per direct user
-                    // request: a belt-terminating branch should end in a
-                    // flat, belt-parallel pad like a normal tree-support foot
-                    // on any other printer, not taper to a point mid-slice.
-                    double pad_min_z = std::numeric_limits<double>::infinity();
-                    double pad_max_z = -std::numeric_limits<double>::infinity();
-                    indexed_triangle_set pad_mesh;
-                    bool have_pad = false;
-                    if (branch.has_root && !volumes.m_belt_floor.empty()) {
-                        BeltFloorContext pad_ctx;
-                        if (pad_ctx.init_local(slicing_params, print_object.print()->config(), print_object.belt_global_z_offset())) {
-                            const Point  root_xy       = branch.path.front()->state.result_on_layer;
-                            const double pad_radius    = unscale<double>(support_element_radius(config, *branch.path.front()));
-                            const double pad_thickness = std::max(1.0, 2.0 * unscale<double>(config.layer_height));
-                            const double belt_z        = pad_ctx.floor_print_z(root_xy);
-                            const double shear         = pad_ctx.shear_factor();
-                            const double tilt          = std::atan(shear);
-                            // Outward normal: increasing Z at fixed XY always
-                            // moves away from the belt (floor_print_z's own
-                            // Z-gradient is exactly 1), regardless of the
-                            // sign of shear_factor, so this is always
-                            // correctly oriented into valid/printable space.
-                            const Vec3d normal = pad_ctx.from_axis() == 0
-                                ? Vec3d(-shear, 0., 1.).normalized()
-                                : Vec3d(0., -shear, 1.).normalized();
-                            // Small overlap into the belt so the pad's bottom
-                            // face isn't left exactly tangent (a hairline
-                            // float-precision gap); the belt-floor clip below
-                            // trims it back to the true surface regardless.
-                            constexpr double overlap = 0.1;
-                            const Vec3d center = to_3d(unscaled<double>(root_xy), belt_z) - overlap * normal;
-
-                            pad_mesh = its_make_cylinder(pad_radius, pad_thickness + overlap, 2. * M_PI / 24.);
-                            Transform3d t = Transform3d::Identity();
-                            t.translate(center);
-                            t.rotate(pad_ctx.from_axis() == 0
-                                ? Eigen::AngleAxisd(-tilt, Vec3d::UnitY())
-                                : Eigen::AngleAxisd(tilt, Vec3d::UnitX()));
-                            its_transform(pad_mesh, t);
-                            have_pad = true;
-
-                            // A disc of radius r tilted by `tilt` spans up to
-                            // 2*r*sin(tilt) in Z -- extend the slice range so
-                            // slice_mesh actually samples layers low enough
-                            // (and, via pad_max_z below, high enough) to
-                            // capture the whole pad instead of silently
-                            // truncating it. Confirmed necessary: for most
-                            // root branches, belt_z (this branch's own true
-                            // belt-contact height) sits ABOVE layer_end as
-                            // computed from this segment's own path -- the
-                            // branch's path-finding segment this root belongs
-                            // to simply doesn't reach that high on its own,
-                            // so without extending layer_end the pad is
-                            // computed correctly but has nowhere in the
-                            // sampled range to land.
-                            pad_min_z = center.z() - pad_radius * std::abs(std::sin(tilt));
-                            pad_max_z = center.z() + pad_thickness + pad_radius * std::abs(std::sin(tilt));
-                        }
-                    }
-
                     LayerIndex layer_begin = branch.has_root ?
-                        branch.path.front()->state.layer_idx :
+                        branch.path.front()->state.layer_idx : 
                         std::min(branch.path.front()->state.layer_idx, layer_idx_ceil(slicing_params, config, zspan.first));
-                    if (pad_min_z < std::numeric_limits<double>::infinity())
-                        layer_begin = std::max(LayerIndex(0), std::min(layer_begin, layer_idx_ceil(slicing_params, config, pad_min_z)));
                     LayerIndex layer_end   = (branch.has_tip ?
                         branch.path.back()->state.layer_idx :
                         std::max(branch.path.back()->state.layer_idx, layer_idx_floor(slicing_params, config, zspan.second))) + 1;
-                    if (pad_max_z > -std::numeric_limits<double>::infinity())
-                        layer_end = std::max(layer_end, layer_idx_floor(slicing_params, config, pad_max_z) + 1);
                     slice_z.clear();
                     for (LayerIndex layer_idx = layer_begin; layer_idx < layer_end; ++ layer_idx) {
                         const double print_z  = layer_z(slicing_params, config, layer_idx);
-                        // Belt mode: layer_idx==0 is NOT the real build plate (Z=0) --
-                        // it's the deepest virtual belt-raft layer, which can be many
-                        // mm below true Z=0 (e.g. -9.8mm). Using the hardcoded 0.
-                        // below for "the layer before layer 0" (correct on a normal
-                        // printer, where layer 0 genuinely starts at the bed) creates
-                        // a nonsensical, badly-placed first sample here -- confirmed
-                        // directly: this caused the belt-pad fix above to never
-                        // actually apply at layer index 0 on any root branch, because
-                        // the resulting slice_z[0] (the midpoint of 0 and a deeply
-                        // negative print_z) didn't correspond to where the pad or the
-                        // tube's own geometry actually exists. Estimate one layer_height
-                        // below layer 0's own print_z instead, matching how every other
-                        // layer_idx computes its own "previous" sample.
-                        const double bottom_z = layer_idx > 0 ? layer_z(slicing_params, config, layer_idx - 1)
-                            : (!volumes.m_belt_floor.empty() ? print_z - unscale<double>(config.layer_height) : 0.);
+                        const double bottom_z = layer_idx > 0 ? layer_z(slicing_params, config, layer_idx - 1) : 0.;
                         slice_z.emplace_back(float(0.5 * (bottom_z + print_z)));
                     }
 
@@ -4121,37 +3989,6 @@ void organic_draw_branches(
                         remove_small(slices[i], tiny_area);
                     }
 
-                    // Belt mode: REPLACE (not union) the branch tube's own
-                    // cross-sections with the flat belt-pad's cross-sections,
-                    // wherever the pad exists, sliced and clipped independently
-                    // of the tube above. Unioning was tried first and measured
-                    // to make almost no visible difference: the tube's own
-                    // natural taper already has substantial area at these
-                    // layers (it's just the wrong SHAPE -- a tilted cone-slice,
-                    // not a flat disc), so adding the pad on top of it left the
-                    // combined area essentially unchanged. Replacing the tube's
-                    // material with the pad's for this Z range is what actually
-                    // substitutes the tapering "standing arch" shape with a
-                    // genuine flat foot. The general getCollision() obstacle
-                    // map was precalculated before this pad ever existed and
-                    // does not reflect it, so the pad is clipped only against
-                    // the bed area and the belt surface -- the two constraints
-                    // that actually apply to a flush belt pad.
-                    if (have_pad) {
-                        std::vector<Polygons> pad_slices = slice_mesh(pad_mesh, slice_z, mesh_slicing_params, throw_on_cancel);
-                        for (LayerIndex i = 0; i < LayerIndex(std::min(slices.size(), pad_slices.size())); ++i) {
-                            if (pad_slices[i].empty())
-                                continue;
-                            pad_slices[i] = intersection(pad_slices[i], volumes.m_bed_area, ApplySafetyOffset::Yes);
-                            LayerIndex belt_idx = layer_begin + i;
-                            if (belt_idx < LayerIndex(volumes.m_belt_floor.size()) && !volumes.m_belt_floor[belt_idx].empty())
-                                pad_slices[i] = diff(pad_slices[i], volumes.m_belt_floor[belt_idx]);
-                            remove_small(pad_slices[i], tiny_area);
-                            if (!pad_slices[i].empty())
-                                slices[i] = std::move(pad_slices[i]);
-                        }
-                    }
-
                     size_t num_empty = 0;
 
                     if (slices.front().empty()) {
@@ -4173,18 +4010,7 @@ void organic_draw_branches(
 
                     if (branch.has_root) {
                         if (branch.path.front()->state.to_model_gracious) {
-                            // Belt mode: same reasoning as the non-gracious branch below (see its
-                            // comment) -- slice_front_contact here is the first slice that survives
-                            // belt-floor clipping, i.e. whatever crescent-shaped sliver is left just
-                            // as the belt's cutoff line finishes sweeping across this branch's
-                            // cross-section. It is NOT a flat footprint resting on the belt; most of
-                            // it can sit well above the belt at that same print_z, with only its
-                            // edge along the cutoff line actually at belt height. Turning that into a
-                            // solid support-floor/interface contact (the code this used to run
-                            // unconditionally) plants a wrongly-shaped, partially-unsupported patch
-                            // right at the belt. Skip it in belt mode, exactly like the other branch
-                            // already does, and let the branch taper naturally onto the belt instead.
-                            if (volumes.m_belt_floor.empty() && config.settings.support_floor_layers > 0) {
+                            if (config.settings.support_floor_layers > 0) {
                                 // If bottom Z gap is non-zero, keep bottom contacts even when not touching the model.
                                 Polygons contacts;
 
@@ -4240,28 +4066,29 @@ void organic_draw_branches(
                                 LayerIndex collision_layer = (layer_idx == layer_begin - 1) ? layer_begin : layer_idx;
                                 Polygons collision = volumes.getCollision(0, collision_layer, false);
                                 rest_support = diff_clipped(rest_support.empty() ? slice_front_contact : rest_support, collision, ApplySafetyOffset::Yes);
-                                // Belt floor: clip propagated support at belt surface. Keep
-                                // propagating through the belt region instead of stopping at the
-                                // first layer the belt line touches the branch -- the belt line
-                                // only cuts a *cross-section* of the branch (it's the tilted belt
-                                // plane's intersection with this one slicing layer), so the first
-                                // touch removes just a sliver, leaving a large, barely-clipped
-                                // shape as the "contact" that is mostly NOT actually against the
-                                // belt (confirmed visually: only one edge of that shape touches
-                                // the belt line, the rest of it sits above the belt at that same
-                                // print_z). Letting the loop continue lets the branch keep
-                                // narrowing, layer by layer, as the belt line sweeps further
-                                // across it, so it actually converges to a small tip seated at the
-                                // belt -- termination is still bounded by layer_bottommost below
-                                // and by the rest_support_area < support_area_stop check just below.
-                                if (layer_idx < LayerIndex(volumes.m_belt_floor.size()) && !volumes.m_belt_floor[layer_idx].empty())
+                                // Belt floor: clip propagated support at belt surface.
+                                bool belt_cut = false;
+                                if (layer_idx < LayerIndex(volumes.m_belt_floor.size()) && !volumes.m_belt_floor[layer_idx].empty()) {
+                                    double area_before = area(rest_support);
                                     rest_support = diff(rest_support, volumes.m_belt_floor[layer_idx]);
+                                    // The belt counts as "reached" only when it actually removes part
+                                    // of this branch's footprint. The belt half-plane is non-empty at
+                                    // every near-belt layer, so testing non-emptiness alone would
+                                    // terminate a laterally-distant branch ~1 layer above true contact,
+                                    // leaving a gap. Require a real area reduction instead.
+                                    belt_cut = belt_mode && area(rest_support) < area_before - tiny_area;
+                                }
                                 remove_small(rest_support, tiny_area);
                                 double rest_support_area = area(rest_support);
                                 if (rest_support_area < support_area_stop)
                                     // Don't propagate a fraction of the tree contact surface.
                                     break;
                                 bottom_extra_slices.push_back({ rest_support, rest_support_area });
+                                // Belt mode: once the belt surface actually starts cutting this branch
+                                // it has reached the belt — keep this last (belt-clipped) slice as the
+                                // contact and stop, rather than stamping the footprint further down.
+                                if (belt_cut)
+                                    break;
                             }
                             // Now remove those bottom slices that are not supported at all.
 #if 0
@@ -4450,7 +4277,7 @@ void organic_draw_branches(
                 base_layer_polygons = smooth_outward(union_(base_layer_polygons), config.support_line_width); //FIXME was .smooth(50);
                 //smooth_outward(closing(std::move(bottom), closing_distance + minimum_island_radius, closing_distance, SUPPORT_SURFACES_OFFSET_PARAMETERS), smoothing_distance) :
                 // simplify a bit, to ensure the output does not contain outrageous amounts of vertices. Should not be necessary, just a precaution.
-                base_layer_polygons = polygons_simplify(base_layer_polygons, std::min(scaled<double>(0.03), double(config.resolution)), polygons_strictly_simple);
+                base_layer_polygons = polygons_simplify(base_layer_polygons, std::min(scaled<double>(0.03), double(config.resolution)));
             }
 
             // Subtract top contact layer polygons from support base.

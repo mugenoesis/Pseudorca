@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Phrozen Sonic Mini 4K",
+  "printer_technology": "SLA",
+  "printer_model": "Sonic Mini 4K",
+  "delay_after_exposure": "0",
+  "display_height": "75.6",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "3840",
+  "display_pixels_y": "2160",
+  "display_width": "134.4",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "65",
+  "light_pwm": "255",
+  "printable_height": "130",
+  "retract_speed": "150",
+  "sla_archive_format": "CTB"
+}

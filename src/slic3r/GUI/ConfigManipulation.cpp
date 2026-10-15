@@ -1,4 +1,3 @@
-// #include "libslic3r/GCodeSender.hpp"
 #include "ConfigManipulation.hpp"
 #include "I18N.hpp"
 #include "GUI_App.hpp"
@@ -17,6 +16,7 @@
 #include "slic3r/GUI/GUI.hpp"
 #include "libslic3r/libslic3r.h"
 #include "slic3r/GUI/Field.hpp"
+#include "libslic3r/BeltBrim.hpp"
 #include <cstdlib>
 #include <set>
 #include <map>
@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 #include <wx/msgdlg.h>
+#include <wx/string.h>
 
 namespace Slic3r {
 namespace GUI {
@@ -350,6 +351,31 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         return;
 
     bool is_object_config = (!is_global_config && !is_plate_config);
+
+    // Belt printer: a raft and a draft shield are refused by Print::validate(), and
+    // the fields that would clear them are greyed out in belt mode, so a preset that
+    // carries either could not be sliced at all. Reset them instead of only disabling
+    // the fields.
+    if (GUI::wxGetApp().preset_bundle != nullptr) {
+        const auto *belt_opt = GUI::wxGetApp().preset_bundle->printers.get_edited_preset().config.option<ConfigOptionBool>("belt_printer");
+        const auto *raft_opt = config->option<ConfigOptionInt>("raft_layers");
+        const auto *shield_opt = config->option<ConfigOptionEnum<DraftShield>>("draft_shield");
+        const bool has_raft   = raft_opt != nullptr && raft_opt->value > 0;
+        const bool has_shield = shield_opt != nullptr && shield_opt->value != dsDisabled;
+        if (belt_opt != nullptr && belt_opt->value && (has_raft || has_shield)) {
+            const wxString msg_text = _(L("Raft and draft shield are not available on belt printers.\nThey have been disabled."));
+            MessageDialog dialog(m_msg_dlg_parent, msg_text, "", wxICON_WARNING | wxOK);
+            DynamicPrintConfig new_conf = *config;
+            is_msg_dlg_already_exist = true;
+            dialog.ShowModal();
+            if (has_raft)
+                new_conf.set_key_value("raft_layers", new ConfigOptionInt(0));
+            if (has_shield)
+                new_conf.set_key_value("draft_shield", new ConfigOptionEnum<DraftShield>(dsDisabled));
+            apply(config, &new_conf);
+            is_msg_dlg_already_exist = false;
+        }
+    }
 
     // layer_height shouldn't be equal to zero
     auto layer_height = config->opt_float("layer_height");
@@ -798,6 +824,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     bool have_infill = config->option<ConfigOptionPercent>("sparse_infill_density")->value > 0;
     // sparse_infill_filament_id uses the same logic as in Print::extruders()
     for (auto el : { "sparse_infill_pattern", "infill_combination", "fill_multiline","infill_direction",
+                     "infill_complete_top",
         "minimum_sparse_infill_area", "sparse_infill_filament_id","infill_shift_step","sparse_infill_rotate_template","symmetric_infill_y_axis"})
         toggle_line(el, have_infill);
 
@@ -816,9 +843,17 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     bool          have_multiline_infill_pattern = pattern == ipGyroid || pattern == ipGrid || pattern == ipRectilinear || pattern == ipTpmsD || pattern == ipTpmsFK || pattern == ipCrossHatch || pattern == ipHoneycomb || pattern == ipLateralLattice || pattern == ipLateralHoneycomb || pattern == ipConcentric ||
                                                   pattern == ipCubic || pattern == ipStars || pattern == ipAlignedRectilinear || pattern == ipLightning || pattern == ip3DHoneycomb || pattern == ipAdaptiveCubic || pattern == ipSupportCubic|| pattern == ipTriangles || pattern == ipQuarterCubic|| pattern == ipArchimedeanChords || pattern == ipHilbertCurve || pattern == ipOctagramSpiral;
 
-    // gyroid_optimized only applies when the sparse infill pattern is gyroid;
+    // The sparse infill density is the surface density of the adaptive TPMS infill; at 100% the infill is solid.
+    bool have_tpms_infill = have_infill && config->option<ConfigOptionPercent>("sparse_infill_density")->value < 100 &&
+                            is_tpms_adaptive_pattern(pattern);
+    toggle_line("tpms_adaptive", have_tpms_infill);
+    bool have_tpms_adaptive = have_tpms_infill && config->opt_enum<TpmsAdaptiveMode>("tpms_adaptive") != TpmsAdaptiveMode::Disabled;
+    toggle_line("tpms_interior_density", have_tpms_adaptive);
+    toggle_line("tpms_adaptive_gradient", have_tpms_adaptive);
+
+    // gyroid_optimized only applies when the sparse infill pattern is gyroid without adaptive density;
     // hide the whole line otherwise.
-    toggle_line("gyroid_optimized", have_infill && pattern == ipGyroid);
+    toggle_line("gyroid_optimized", have_infill && pattern == ipGyroid && !have_tpms_adaptive);
 
     // If there is infill, enable/disable fill_multiline according to whether the pattern supports multiline infill.
     if (have_infill) {
@@ -852,6 +887,9 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
 
     toggle_line("symmetric_infill_y_axis", is_zig_zag || is_cross_zag || is_locked_zig);
 
+    bool is_3Dhoneycomb = config->option<ConfigOptionEnum<InfillPattern>>("sparse_infill_pattern")->value == InfillPattern::ip3DHoneycomb;
+    toggle_line("infill_complete_top", have_infill && is_3Dhoneycomb);
+
     bool has_spiral_vase         = config->opt_bool("spiral_mode");
     toggle_line("spiral_mode_smooth", has_spiral_vase);
     toggle_line("spiral_mode_max_xy_smoothing", has_spiral_vase && config->opt_bool("spiral_mode_smooth"));
@@ -861,7 +899,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     bool has_top_shell    = has_top_shell_layers && config->option<ConfigOptionPercent>("top_surface_density")->value > 0;
     bool has_bottom_shell = config->opt_int("bottom_shell_layers") > 0;
     bool has_solid_infill = has_top_shell_layers || has_bottom_shell;
-    toggle_line("sparse_infill_smooth_factor", is_smoothable_infill_pattern(pattern, config->opt_int("fill_multiline")));
+    toggle_line("sparse_infill_smooth_factor", have_infill && is_smoothable_infill_pattern(pattern, config->opt_int("fill_multiline")));
     toggle_field("top_surface_pattern", has_top_shell);
     toggle_field("bottom_surface_pattern", has_bottom_shell);
     toggle_field("top_surface_density", has_top_shell_layers);
@@ -889,10 +927,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     toggle_line("center_of_surface_pattern", has_centered_surface);
 
     // Orca: separate infills
-    bool is_internal_infill_separable = is_separable_infill_pattern(config->option<ConfigOptionEnum<InfillPattern>>("sparse_infill_pattern")->value) ||
-                                        config->opt_string("sparse_infill_rotate_template") != "" ||
-                                        config->opt_string("solid_infill_rotate_template") != "";
-    toggle_line("separated_infills", is_internal_infill_separable);
+    toggle_line("separated_infills", is_separable_infill_pattern(pattern));
 
     // Fill order is only meaningful for the center-based surface fill patterns; hide it otherwise.
     auto is_centered_fill = [](InfillPattern p) { return p == ipConcentric || p == ipSpiralInset || p == ipArchimedeanChords || p == ipOctagramSpiral; };
@@ -985,7 +1020,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     const BrimType brim_type = config->opt_enum<BrimType>("brim_type");
     const bool have_auto_brim_ear = brim_type == btEar && !is_belt_tilted;
     const bool have_painted_brim_ear = brim_type == btPainted && !is_belt_tilted;
-    set_option_label("brim_width", have_auto_brim_ear ? _L("Brim ear radius") : _L("Brim width"));
+    set_option_label("brim_width", have_auto_brim_ear ? L("Brim ear radius") : L("Brim width"));
     const auto brim_width = config->opt_float("brim_width");
     // Automatic brim ear settings require a non-zero brim width.
     toggle_field("brim_ears_max_angle", brim_width > 0.0f);
@@ -1070,6 +1105,10 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     toggle_field("support_filament", have_support_material || have_skirt);
 
     toggle_line("raft_contact_distance", have_raft && !have_support_soluble);
+    // Orca:Hide raft expansion when raft is not enabled
+    toggle_line("raft_expansion", have_raft);
+    // Orca: Slim, Strong and Hybrid tree supports size their raft by first layer expansion only.
+    toggle_field("raft_expansion", !(is_tree(support_type) && (support_style == smsTreeSlim || support_style == smsTreeStrong || support_style == smsTreeHybrid)));
 
     // Orca: First-layer density is available for supports broadly.
     toggle_field("raft_first_layer_density", have_support_material);
@@ -1133,7 +1172,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     // Orca: both tower generators skip sparse layers, so this is not a wipe tower 2 exclusive.
     toggle_line("wipe_tower_no_sparse_layers", have_prime_tower && !is_belt_printer);
     // Dropping the sparse layers outright leaves nothing to combine, so the two are exclusive.
-    toggle_line("wipe_tower_sparse_layers_combination", have_prime_tower && !config->opt_bool("wipe_tower_no_sparse_layers"));
+    toggle_line("wipe_tower_sparse_layers_combination", have_prime_tower && !is_belt_printer && !config->opt_bool("wipe_tower_no_sparse_layers"));
 
     WipeTowerWallType wipe_tower_wall_type = config->opt_enum<WipeTowerWallType>("wipe_tower_wall_type");
     bool have_rib_wall = (wipe_tower_wall_type == WipeTowerWallType::wtwRib)&&have_prime_tower&&!is_belt_printer;
@@ -1239,8 +1278,10 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     toggle_line("small_area_infill_flow_compensation_model", have_small_area_infill_flow_compensation);
 
 
-    toggle_field("seam_slope_type", !has_spiral_vase);
-    bool has_seam_slope = !has_spiral_vase && config->opt_enum<SeamScarfType>("seam_slope_type") != SeamScarfType::None;
+    // Belt printers: the scarf would start one layer back along the belt, inside the
+    // previous layer (GCode::extrude_loop skips it there too).
+    toggle_field("seam_slope_type", !has_spiral_vase && !is_belt_printer);
+    bool has_seam_slope = !has_spiral_vase && !is_belt_printer && config->opt_enum<SeamScarfType>("seam_slope_type") != SeamScarfType::None;
     toggle_line("seam_slope_conditional", has_seam_slope);
     toggle_line("seam_slope_start_height", has_seam_slope);
     toggle_line("seam_slope_entire_loop", has_seam_slope);

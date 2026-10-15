@@ -1,10 +1,15 @@
 #ifndef SLIC3R_TEST_UTILS
 #define SLIC3R_TEST_UTILS
 
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+#include "libslic3r/BoundingBox.hpp"
 #include <libslic3r/TriangleMesh.hpp>
 #include <libslic3r/Format/OBJ.hpp>
 #include <libslic3r/SVG.hpp>
 #include <libslic3r/Utils.hpp>
+#include <libslic3r/MTUtils.hpp>
+#include <random>
 
 #include <boost/filesystem.hpp>
 
@@ -193,5 +198,23 @@ public:
 private:
     boost::filesystem::path m_previous;
 };
+
+template<class T>
+Slic3r::FloatingOnly<T> random_value(T minv, T maxv)
+{
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<T> dist(minv, maxv);
+
+    return dist(rng);
+}
+
+template<class T>
+Slic3r::IntegerOnly<T> random_value(T minv, T maxv)
+{
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<T> dist(minv, maxv);
+
+    return dist(rng);
+}
 
 #endif // SLIC3R_TEST_UTILS

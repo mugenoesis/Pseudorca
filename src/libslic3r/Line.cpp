@@ -1,9 +1,14 @@
 #include "Geometry.hpp"
 #include "Line.hpp"
-#include "Polyline.hpp"
+#include "Point.hpp"
+#include <Eigen/Core>
+#include "libslic3r.h"
 #include <algorithm>
 #include <cmath>
+#include <cstring>
+#include <limits>
 #include <sstream>
+#include "BoundingBox.hpp"
 
 namespace Slic3r {
 
@@ -48,6 +53,18 @@ double Line::perp_distance_to(const Point &point) const
     if (line.a == line.b)
         return va.norm();
     return std::abs(cross2(v, va)) / v.norm();
+}
+
+double Line::perp_signed_distance_to(const Point &point) const {
+    // Sign is dependent on the line orientation.
+    // For CCW oriented polygon is possitive distace into shape and negative outside.
+    // For Line({0,0},{0,2}) and point {1,1} the distance is negative one(-1).
+    const Line &line = *this;
+    const Vec2d v = (line.b - line.a).cast<double>();
+    const Vec2d va = (point - line.a).cast<double>();
+    if (line.a == line.b)
+        return va.norm();
+    return cross2(v, va) / v.norm();
 }
 
 double Line::orientation() const

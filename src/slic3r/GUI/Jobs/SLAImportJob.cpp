@@ -1,6 +1,7 @@
 #include "SLAImportJob.hpp"
 
 #include "libslic3r/Format/SL1.hpp"
+#include "libslic3r/Format/SLAArchiveReader.hpp"
 
 #include "slic3r/GUI/GUI.hpp"
 #include "slic3r/GUI/Plater.hpp"
@@ -15,11 +16,13 @@
 #include "libslic3r/Config.hpp"
 #include <memory>
 #include "slic3r/GUI/GUI_App.hpp"
-#include "slic3r/GUI/Gizmos/GLGizmoBase.hpp"
 #include <exception>
 #include "libslic3r/PrintConfig.hpp"
 #include <utility>
 #include <wx/filename.h>
+#include "libslic3r/SLAPrint.hpp"
+#include "libslic3r/TriangleMesh.hpp"
+#include "slic3r/GUI/I18N.hpp"
 
 namespace Slic3r { namespace GUI {
 
@@ -67,14 +70,14 @@ void SLAImportJob::process(Ctl &ctl)
         switch (p->sel) {
         case Sel::modelAndProfile:
         case Sel::modelOnly:
-            p->config_substitutions = import_sla_archive(path, p->win, p->mesh, p->profile, progr);
+            p->config_substitutions = import_sla_archive(path, "SL1", p->mesh, p->profile, SLAImportQuality::Balanced, progr);
             break;
         case Sel::profileOnly:
-            p->config_substitutions = import_sla_archive(path, p->profile);
+            p->config_substitutions = import_sla_archive(path, "SL1", p->profile);
             break;
         }
     } catch (MissingProfileError &) {
-        p->err = _L("The SLA archive doesn\'t contain any presets. Please activate some SLA printer presets first before importing that SLA archive.").ToStdString();
+        p->err = _u8L("The SLA archive doesn\'t contain any presets. Please activate some SLA printer presets first before importing that SLA archive.");
     } catch (std::exception &ex) {
         p->err = ex.what();
     }
@@ -122,8 +125,8 @@ void SLAImportJob::finalize(bool canceled, std::exception_ptr &eptr)
         p->plater->get_notification_manager()->push_notification(
         NotificationType::CustomNotification,
         NotificationManager::NotificationLevel::WarningNotificationLevel,
-            _L("The imported SLA archive did not contain any presets. "
-               "The current SLA presets were used as fallback.").ToStdString());
+            _u8L("The imported SLA archive did not contain any presets. "
+                 "The current SLA presets were used as fallback."));
     }
 
     if (p->sel != Sel::modelOnly) {

@@ -1,23 +1,49 @@
 #include "ClipperUtils.hpp"
+#include "libslic3r/ExPolygon.hpp"
 #include "ExtrusionEntity.hpp"
 #include "ExtrusionEntityCollection.hpp"
+#include "libslic3r/Flow.hpp"
 #include "Layer.hpp"
+#include "libslic3r/Polygon.hpp"
+#include "libslic3r/Polyline.hpp"
 #include "Print.hpp"
 #include "SupportMaterial.hpp"
+#include "libslic3r/Slicing.hpp"
+#include "libslic3r/Support/SupportLayer.hpp"
+#include "libslic3r/PrintConfig.hpp"
 #include "SupportCommon.hpp"
 #include "BeltFloorContext.hpp"
 #include "Geometry.hpp"
 #include "Point.hpp"
 #include "MutablePolygon.hpp"
+#include "libslic3r/libslic3r.h"
+#include "libslic3r/Surface.hpp"
+#include "libslic3r/TriangleSelector.hpp"
 
+#include <agg/agg_rendering_buffer.h>
+#include <agg/agg_renderer_base.h>
+#include <algorithm>
+#include <cfloat>
 #include <cmath>
+#include <iterator>
+#include <cstdint>
+#include <cstddef>
+#include <deque>
+#include <initializer_list>
+#include <limits>
+#include <map>
 #include <memory>
 #include <boost/log/trivial.hpp>
 #include <boost/container/static_vector.hpp>
 
+#include <set>
+#include <numeric>
 #include <tbb/parallel_for.h>
 #include <tbb/spin_mutex.h>
 #include <tbb/task_group.h>
+#include <vector>
+#include <utility>
+#include <tuple>
 
 #define SUPPORT_USE_AGG_RASTERIZER
 
@@ -49,6 +75,11 @@
 
 // #undef NDEBUG
 #include <cassert>
+#include "libslic3r/BoundingBox.hpp"
+#include "libslic3r/Line.hpp"
+#include "libslic3r/MultiMaterialSegmentation.hpp"
+#include "libslic3r/Support/SupportParameters.hpp"
+#include "libslic3r/SurfaceCollection.hpp"
 
 namespace Slic3r {
 
@@ -64,9 +95,9 @@ namespace Slic3r {
 #define PILLAR_SIZE (2.5)
 #define PILLAR_SPACING 10
 
-//#define SUPPORT_SURFACES_OFFSET_PARAMETERS ClipperLib::jtMiter, 3.
-//#define SUPPORT_SURFACES_OFFSET_PARAMETERS ClipperLib::jtMiter, 1.5
-#define SUPPORT_SURFACES_OFFSET_PARAMETERS ClipperLib::jtSquare, 0.
+//#define SUPPORT_SURFACES_OFFSET_PARAMETERS jtMiter, 3.
+//#define SUPPORT_SURFACES_OFFSET_PARAMETERS jtMiter, 1.5
+#define SUPPORT_SURFACES_OFFSET_PARAMETERS jtSquare, 0.
 
 static constexpr bool support_with_sheath = false;
 
@@ -1438,9 +1469,8 @@ static inline ExPolygons detect_overhangs(
     const bool bridge_no_support = object_config.bridge_no_support.value;
     const coordf_t xy_expansion = scale_(object_config.support_expansion.value);
     // Build plate tilt: compute per-layer XY shift for tilted gravity direction
-    const double tilt_x_rad = Geometry::deg2rad(print_config.build_plate_tilt_x.value);
-    const double tilt_y_rad = Geometry::deg2rad(print_config.build_plate_tilt_y.value);
-    const bool   has_tilt   = std::abs(tilt_x_rad) > EPSILON || std::abs(tilt_y_rad) > EPSILON;
+    const Vec2d  tilt_slope = build_plate_tilt_slope(print_config);
+    const bool   has_tilt   = tilt_slope.cwiseAbs().maxCoeff() > EPSILON;
     float lower_layer_offset = 0;
 
     if (layer_id == 0)
@@ -1480,10 +1510,7 @@ static inline ExPolygons detect_overhangs(
         Polygons tilted_lower;
         if (has_tilt) {
             tilted_lower = lower_layer_polygons;
-            const double lh = lower_layer.height;
-            Point tilt_shift(coord_t(scale_(lh * tan(tilt_y_rad))),
-                             coord_t(scale_(lh * tan(tilt_x_rad))));
-            translate(tilted_lower, tilt_shift);
+            translate(tilted_lower, Point::new_scale(tilt_slope * lower_layer.height));
             effective_lower = &tilted_lower;
         }
 
@@ -1695,7 +1722,7 @@ static inline std::tuple<Polygons, Polygons, double> detect_contacts(
                         offset(
                             diff_polygons,
                             scaled<float>(SUPPORT_MATERIAL_MARGIN / NUM_MARGIN_STEPS),
-                            ClipperLib::jtRound,
+                            jtRound,
                             // round mitter limit
                             scale_(0.05)),
                         slices_margin.polygons);
@@ -2210,7 +2237,7 @@ SupportGeneratorLayersPtr PrintObjectSupportMaterial::top_contact_layers(
 
     // check if the sharp tails should be extended higher
     bool detect_first_sharp_tail_only = false;
-    const coordf_t extrusion_width = m_object_config->line_width.get_abs_value(object.print()->config().nozzle_diameter.get_at(object.config().support_interface_filament-1));
+    const coordf_t extrusion_width = m_object_config->line_width.get_abs_value(nozzle_diameter_for_filament(object.print()->config(), object.config().support_interface_filament, object.print()->is_BBL_printer()));
     const coordf_t extrusion_width_scaled = scale_(extrusion_width);
     if (is_auto(m_object_config->support_type.value) && g_config_support_sharp_tails && !detect_first_sharp_tail_only) {
         for (size_t layer_nr = layer_id_start; layer_nr < num_layers; layer_nr++) {
@@ -2741,8 +2768,7 @@ SupportGeneratorLayersPtr PrintObjectSupportMaterial::bottom_contact_layers_and_
     //const auto   expansion_to_slice = m_support_material_flow.scaled_spacing() / 2 + 25;
     const SupportGridParams grid_params(*m_object_config, m_support_params.support_material_flow);
     const bool buildplate_only = ! buildplate_covered.empty();
-    const bool has_belt_floor  = std::abs(m_slicing_params.belt_floor_shear_factor) > EPSILON
-        && m_print_config->belt_support_floor_mode.value == BeltSupportFloorMode::GeneratorOnly;
+    const bool has_belt_floor  = std::abs(m_slicing_params.belt_floor_shear_factor) > EPSILON;
 
     // Allocate empty surface areas, one per object layer.
     layer_support_areas.assign(object.total_layer_count(), Polygons());
@@ -3283,8 +3309,6 @@ static void trim_support_layers_by_belt_floor(
 {
     BeltFloorContext ctx;
     if (!ctx.init(slicing_params, print_config))
-        return;
-    if (print_config.belt_support_floor_mode.value != BeltSupportFloorMode::GeneratorOnly)
         return;
 
     tbb::parallel_for(tbb::blocked_range<size_t>(0, support_layers.size()),

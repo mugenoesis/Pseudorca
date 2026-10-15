@@ -1,8 +1,28 @@
 #include "SVG.hpp"
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
+#include <cstdio>
+#include "BoundingBox.hpp"
+#include "libslic3r.h"
+#include "Line.hpp"
+#include "Point.hpp"
+#include <cmath>
+#include "ExPolygon.hpp"
+#include "Polygon.hpp"
+#include "Surface.hpp"
+#include "Polyline.hpp"
+#include "MultiPoint.hpp"
+#include <cstddef>
+#include <algorithm>
 #include <iostream>
 
 #include <boost/filesystem.hpp>
 #include <boost/nowide/cstdio.hpp>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <utility>
 
 namespace Slic3r {
 
@@ -110,6 +130,19 @@ void SVG::draw(const ExPolygon &expolygon, std::string fill, const float fill_op
     for (const Polygon &p : to_polygons(expolygon))
         d += this->get_path_d(p, true) + " ";
     this->path(d, true, 0, fill_opacity);
+}
+
+void SVG::draw_original(const ExPolygon &expolygon) {
+    std::ostringstream d;
+    auto write_d = [&d](const Points &pts) {
+        d << "M ";
+        for (const Point& p: pts)
+            d << p.x() << " " << p.y() << " ";
+        d << "z "; // closed path
+    };
+    for (const Polygon &p : to_polygons(expolygon))
+        write_d(p.points);
+    path(d.str(), false /*fill*/, 1 /*stroke_width*/, 0.f /*fill opacity*/);
 }
 
 void SVG::draw_outline(const ExPolygon &expolygon, std::string stroke_outer, std::string stroke_holes, coordf_t stroke_width)
@@ -230,15 +263,15 @@ void SVG::draw(const Points &points, std::string fill, coord_t radius)
         this->draw(*it, fill, radius);
 }
 
-void SVG::draw(const ClipperLib::Path &polygon, double scale, std::string stroke, coordf_t stroke_width)
+void SVG::draw(const Points &polygon, double scale, std::string stroke, coordf_t stroke_width)
 {
     this->stroke = stroke;
     this->path(this->get_path_d(polygon, scale, true), false, stroke_width, 1.f);
 }
 
-void SVG::draw(const ClipperLib::Paths &polygons, double scale, std::string stroke, coordf_t stroke_width)
+void SVG::draw(const VecOfPoints &polygons, double scale, std::string stroke, coordf_t stroke_width)
 {
-    for (ClipperLib::Paths::const_iterator it = polygons.begin(); it != polygons.end(); ++ it)
+    for (VecOfPoints::const_iterator it = polygons.begin(); it != polygons.end(); ++ it)
         draw(*it, scale, stroke, stroke_width);
 }
 
@@ -284,11 +317,11 @@ std::string SVG::get_path_d(const MultiPoint &mp, bool closed) const
     return d.str();
 }
 
-std::string SVG::get_path_d(const ClipperLib::Path &path, double scale, bool closed) const
+std::string SVG::get_path_d(const Points &path, double scale, bool closed) const
 {
     std::ostringstream d;
     d << "M ";
-    for (ClipperLib::Path::const_iterator p = path.begin(); p != path.end(); ++p) {
+    for (Points::const_iterator p = path.begin(); p != path.end(); ++p) {
         d << to_svg_x(scale * p->x() - origin(0)) << " ";
         d << to_svg_y(scale * p->y() - origin(1)) << " ";
     }

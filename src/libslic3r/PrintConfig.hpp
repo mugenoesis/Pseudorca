@@ -16,10 +16,14 @@
 #ifndef slic3r_PrintConfig_hpp_
 #define slic3r_PrintConfig_hpp_
 
+#include "Point.hpp"
 #include "libslic3r.h"
 #include "CommonDefs.hpp"
 #include "Config.hpp"
 #include "Polygon.hpp"
+#include "SLA/SupportTreeStrategies.hpp"
+#include <boost/container_hash/hash.hpp>
+#include <algorithm>
 #include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -27,6 +31,19 @@
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor/tuple/to_seq.hpp>
+#include <set>
+#include <unordered_map>
+#include <string>
+#include <vector>
+#include <map>
+#include <utility>
+#include <cstddef>
+#include <cassert>
+#include <cstdint>
+#include <cereal/access.hpp>
+#include <cmath>
+#include <cereal/specialize.hpp>
+#include <stdexcept>
 
 namespace Slic3r {
 
@@ -120,25 +137,31 @@ enum InfillPattern : int {
     ipCount,
 };
 
-// Orca: Infill patterns whose alignment origin follows the fill bounding box, so the
-// "separated_infills" option can re-center them per connected body. Patterns evaluated in
-// absolute/global coordinates (Gyroid, TPMS, Honeycomb, CrossHatch, ...) or that are shape-relative
-// (Concentric) ignore that bounding box and are therefore excluded.
+// Orca: Infill patterns that the "separated_infills" option can center on each connected body.
 inline bool is_separable_infill_pattern(InfillPattern pattern)
 {
     switch (pattern) {
+    case ipMonotonic:
+    case ipMonotonicLine:
     case ipRectilinear:
     case ipAlignedRectilinear:
     case ipZigZag:
     case ipCrossZag:
     case ipLockedZag:
+    case ipLine:
     case ipGrid:
     case ipTriangles:
     case ipStars:          // tri-hexagon
     case ipCubic:
     case ipQuarterCubic:
+    case ipHoneycomb:
+    case ip3DHoneycomb:
     case ipLateralHoneycomb:
     case ipLateralLattice:
+    case ipCrossHatch:
+    case ipTpmsD:
+    case ipTpmsFK:
+    case ipGyroid:
     case ipHilbertCurve:
     case ipArchimedeanChords:
     case ipOctagramSpiral:
@@ -147,6 +170,11 @@ inline bool is_separable_infill_pattern(InfillPattern pattern)
         return false;
     }
 }
+
+// Orca: Infill patterns laid out by an octree, which each connected body always gets of its own.
+inline bool is_octree_infill_pattern(InfillPattern pattern) { return pattern == ipAdaptiveCubic || pattern == ipSupportCubic; }
+// Orca: Infill patterns graded by the "tpms_adaptive" option.
+inline bool is_tpms_adaptive_pattern(InfillPattern pattern) { return pattern == ipGyroid || pattern == ipTpmsD || pattern == ipTpmsFK; }
 
 // Orca: Infill patterns that round their corners by the "sparse_infill_smooth_factor" option.
 // Grid, Triangles and Tri-hexagon only do so in their trapezoidal form, which is generated with more
@@ -223,6 +251,26 @@ enum class WallDirection
     Count,
 };
 
+// IMEX: physical bed corner where tool T0 sits. Determines how tool indices
+// map to bed zones (front = lower Y near operator, rear = higher Y).
+enum class ImexToolLayout {
+    FrontLeft,
+    FrontRight,
+    RearLeft,
+    RearRight,
+    Count,
+};
+
+// IMEX: color theme for the bed-zone visualization. Colorblind-friendly variants
+// are provided for users with color-vision differences.
+enum class ImexVizTheme {
+    Standard,
+    Deuteranopia,
+    Tritanopia,
+    HighContrast,
+    Count,
+};
+
 // Orca: print order of surface fill loops/fragments for center-based fill patterns
 // (Concentric, Archimedean Chords, Octagram Spiral).
 enum class SurfaceFillOrder {
@@ -230,6 +278,26 @@ enum class SurfaceFillOrder {
     Outward,
     Inward,
     Count,
+};
+
+// Orca: what the adaptive TPMS density follows: the 3D shape of the object, or its 2D sections normal to an axis.
+enum class TpmsAdaptiveMode {
+    Disabled,
+    DistanceWarp,
+    SmoothBlend,
+    SteppedShells,
+    Lobes,
+    NormalZ,
+    NormalY,
+    NormalX,
+    Count,
+};
+
+// Orca: how the adaptive TPMS density changes from the object surface to its deepest point.
+enum class TpmsAdaptiveGradient {
+    Linear,
+    Quadratic,
+    Exponential,
 };
 
 //BBS
@@ -251,9 +319,9 @@ enum class PrintOrder
 
 enum class SlicingMode
 {
-    // Regular, applying ClipperLib::pftNonZero rule when creating ExPolygons.
+    // Regular, applying pftNonZero rule when creating ExPolygons.
     Regular,
-    // Compatible with 3DLabPrint models, applying ClipperLib::pftEvenOdd rule when creating ExPolygons.
+    // Compatible with 3DLabPrint models, applying pftEvenOdd rule when creating ExPolygons.
     EvenOdd,
     // Orienting all contours CCW, thus closing all holes.
     CloseHoles,
@@ -276,42 +344,6 @@ enum class RemapAxis
     PosX = 0, PosY = 1, PosZ = 2,
     NegX = 3, NegY = 4, NegZ = 5,
     RevX = 6, RevY = 7, RevZ = 8,  // Reversed: max - pos
-};
-
-enum class BeltSupportFloorMode
-{
-    None,           // No belt floor awareness
-    GeneratorOnly,  // Only in tree support drop_nodes/contact_points
-    ClipOnly,       // Only post-processing clipping
-    Both,           // Both generator and clipping
-};
-
-enum class BeltSupportZOffsetMode
-{
-    None,           // Don't apply global_z_offset to support layers
-    Unconditional,  // Apply to all support layers
-    RaftOnly,       // Only apply to raft layers
-};
-
-// Selects which plane the slicer treats as the "first layer plane" — the
-// reference surface used to decide which extrusions get first-layer settings
-// (no fan, slow speed, initial-layer accel/jerk, deferred temperature drop).
-//
-// Auto resolves to:
-//   - XY (inactive, legacy behavior) for non-belt printers and for belt
-//     printers with no active belt-side transform.
-//   - BeltAffine for belt printers with any active belt-side affine
-//     transform (Z shear, slicing rotation, or both).
-//
-// XY is also used as an explicit "opt out" mode that forces legacy
-// per-layer first-layer detection even on belt printers.
-enum class FirstLayerPlaneMode
-{
-    Auto = 0,
-    XY,
-    YZ,
-    XZ,
-    BeltAffine,   // formerly BeltShear; renamed to reflect rotation support
 };
 
 enum SupportMaterialPattern {
@@ -407,11 +439,9 @@ enum SLADisplayOrientation {
     sladoPortrait
 };
 
-enum SLAPillarConnectionMode {
-    slapcmZigZag,
-    slapcmCross,
-    slapcmDynamic
-};
+using SLASupportTreeType = sla::SupportTreeType;
+using SLAPillarConnectionMode = sla::PillarConnectionMode;
+
 
 enum BrimType {
     btAutoBrim,  // BBS
@@ -760,9 +790,6 @@ CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(IroningType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SlicingMode)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(BeltRotationAxis)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(RemapAxis)
-CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(BeltSupportFloorMode)
-CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(BeltSupportZOffsetMode)
-CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(FirstLayerPlaneMode)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SupportMaterialPattern)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SupportMaterialStyle)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SupportMaterialInterfacePattern)
@@ -772,6 +799,7 @@ CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SeamPosition)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SeamScarfType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SLADisplayOrientation)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SLAPillarConnectionMode)
+CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SLASupportTreeType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(BrimType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(TimelapseType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(BedType)
@@ -788,6 +816,8 @@ CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(PerimeterGeneratorType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(ToolChangeOrderingType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(PowerLossRecoveryMode)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SurfaceFillOrder)
+CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(TpmsAdaptiveMode)
+CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(TpmsAdaptiveGradient)
 
 #undef CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS
 
@@ -816,7 +846,9 @@ private:
     void init_common_params();
     void init_fff_params();
     void init_extruder_option_keys();
+    void init_sla_support_params(const std::string &prefix);
     void init_sla_params();
+    void init_sla_tilt_params();
 
     std::vector<std::string>    m_extruder_option_keys;
     std::vector<std::string>    m_extruder_retract_keys;
@@ -836,6 +868,12 @@ class StaticPrintConfig;
 
 // Minimum object distance for arrangement, based on printer technology.
 double min_object_distance(const ConfigBase &cfg);
+
+// Whether any value is set, a nil value included.
+template<bool NULLABLE> bool any_enabled(const ConfigOptionBoolsTempl<NULLABLE> &option)
+{
+    return std::any_of(option.values.begin(), option.values.end(), [](unsigned char enabled) { return enabled != 0; });
+}
 
 // One (extruder type x nozzle volume type) parameter variant a filament prints through, plus a
 // representative physical extruder observed using it. Ordering (and set-dedup identity) covers
@@ -969,6 +1007,15 @@ void set_variant_override(ConfigOptionVectorBase &target, const ConfigOptionVect
 void normalize_filament_values_to_variants(DynamicPrintConfig &config);
 
 extern std::set<std::string> filament_dev_options;
+
+// Orca: a filament_dev_options option holds several values per filament, and how many is up to the
+// filament preset, so one filament's values cannot be replaced in place. This rebuilds each option from
+// filament_configs, one config per filament in slot order, as the filaments' values one after another.
+void set_filament_dev_options(DynamicPrintConfig &config, const std::vector<const DynamicPrintConfig *> &filament_configs);
+
+// Orca: sizes the per-slot mixed-colour metadata options to new_slot_count, keeping the first
+// old_slot_count values; an option the config lacks is created.
+void resize_mixed_filament_metadata(DynamicPrintConfig &config, size_t old_slot_count, size_t new_slot_count);
 
 extern void update_static_print_config_from_dynamic(ConfigBase& config, const DynamicPrintConfig& dest_config, std::vector<int> variant_index, std::set<std::string>& key_set1, int stride = 1);
 extern void compute_filament_override_value(const std::string& opt_key, const ConfigOption *opt_old_machine, const ConfigOption *opt_new_machine, const ConfigOption *opt_new_filament, const DynamicPrintConfig& new_full_config,
@@ -1371,6 +1418,13 @@ PRINT_CONFIG_CLASS_DEFINE(
 
     // Orca: internal use only
     ((ConfigOptionBool,  calib_flowrate_topinfill_special_order)) // ORCA: special flag for flow rate calibration
+
+    // IDEX/IQEX parallel print mode (per-print selection, stores mode name or "primary")
+    ((ConfigOptionString,              imex_parallel_mode))
+    // Per-plate head→filament override for MMU-equipped printers.
+    // Serialized as compact "phys:slot,phys:slot" (1-based filament slots, matches UI).
+    // Empty string means "use first_filament_for_physical_head defaults everywhere".
+    ((ConfigOptionString,              imex_head_filament_map))
 )
 
 // This object is mapped to Perl as Slic3r::Config::PrintRegion.
@@ -1405,6 +1459,7 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloat,                bottom_layer_direction))
     ((ConfigOptionString,               solid_infill_rotate_template))
     ((ConfigOptionBool,                 symmetric_infill_y_axis))
+    ((ConfigOptionBool,                 infill_complete_top))
     ((ConfigOptionFloat,                infill_shift_step))
     ((ConfigOptionString,               sparse_infill_rotate_template))
     ((ConfigOptionPercent,              sparse_infill_density))
@@ -1448,6 +1503,9 @@ PRINT_CONFIG_CLASS_DEFINE(
     // Orca:
     ((ConfigOptionFloatOrPercent,                infill_combination_max_layer_height))
     ((ConfigOptionInt,                  fill_multiline))
+    ((ConfigOptionEnum<TpmsAdaptiveMode>, tpms_adaptive))
+    ((ConfigOptionPercent,              tpms_interior_density))
+    ((ConfigOptionEnum<TpmsAdaptiveGradient>, tpms_adaptive_gradient))
     ((ConfigOptionBool,                 gyroid_optimized))
     // Ironing options
     ((ConfigOptionEnum<IroningType>, ironing_type))
@@ -1739,6 +1797,19 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionStrings,             filament_start_gcode))
     ((ConfigOptionBool,                single_extruder_multi_material))
     ((ConfigOptionBool,                manual_filament_change))
+    // IDEX/IQEX (independent X extruder) — parallel printing support for IDEX/IQEX printers
+    ((ConfigOptionBool,                is_imex))
+    ((ConfigOptionBool,                imex_firmware_managed_zones))
+    ((ConfigOptionInt,                 imex_gantry_count))
+    ((ConfigOptionInt,                 imex_tools_per_gantry))
+    ((ConfigOptionFloat,               imex_nozzle_clearance_x))
+    ((ConfigOptionFloat,               imex_nozzle_clearance_y))
+    ((ConfigOptionFloat,               imex_carriage_margin))
+    ((ConfigOptionEnum<ImexToolLayout>, imex_tool_layout))
+    ((ConfigOptionEnum<ImexVizTheme>,  imex_viz_theme))
+    ((ConfigOptionStrings,             imex_mode_names))
+    ((ConfigOptionStrings,             imex_mode_active_tools))
+    ((ConfigOptionStrings,             imex_mode_gcodes))
     ((ConfigOptionBool,                single_extruder_multi_material_priming))
     ((ConfigOptionEnum<ToolChangeOrderingType>, toolchange_ordering))
     ((ConfigOptionString,              toolchange_cyclic_order))
@@ -1877,26 +1948,14 @@ PRINT_CONFIG_CLASS_DERIVED_DEFINE(
     // g-code back-transform inverts the rotation before the machine-frame stage.
     ((ConfigOptionEnum<BeltRotationAxis>, belt_slice_rotation))
     ((ConfigOptionFloat,                  belt_slice_rotation_angle))
-    ((ConfigOptionBool,                   belt_slice_rotation_global))
     // Expert override: decouple the machine-frame tilt angle from the pre-slice
     // rotation angle.  When disabled, the machine frame uses belt_slice_rotation_angle.
     ((ConfigOptionBool,                   belt_frame_tilt_decouple))
     ((ConfigOptionFloat,                  belt_frame_tilt_angle))
-    ((ConfigOptionEnum<RemapAxis>,  preslice_remap_x))
-    ((ConfigOptionEnum<RemapAxis>,  preslice_remap_y))
-    ((ConfigOptionEnum<RemapAxis>,  preslice_remap_z))
-    ((ConfigOptionBool,             preslice_remap_global))
     ((ConfigOptionEnum<RemapAxis>,  gcode_remap_x))
     ((ConfigOptionEnum<RemapAxis>,  gcode_remap_y))
     ((ConfigOptionEnum<RemapAxis>,  gcode_remap_z))
-    ((ConfigOptionBool,                 gcode_back_transform))
-    ((ConfigOptionBool,                 belt_preslice_global))
-    ((ConfigOptionEnum<FirstLayerPlaneMode>, first_layer_plane))
-    ((ConfigOptionFloat,                first_layer_plane_offset))
-    ((ConfigOptionFloat,                first_layer_plane_thickness))
     ((ConfigOptionFloat,                          belt_support_floor_offset))
-    ((ConfigOptionEnum<BeltSupportFloorMode>,     belt_support_floor_mode))
-    ((ConfigOptionEnum<BeltSupportZOffsetMode>,   belt_support_z_offset_mode))
     // Width (machine X, across the belt) of the auto-generated belt purge prism.
     ((ConfigOptionFloat,                          belt_purge_tower_width))
     // Belt-printer-only "type" of purge tower: enables the auto-generated belt
@@ -2121,9 +2180,12 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionInt,  faded_layers))/*= 10*/
 
     ((ConfigOptionFloat, slice_closing_radius))
+    ((ConfigOptionEnum<SlicingMode>, slicing_mode))
 
     // Enabling or disabling support creation
     ((ConfigOptionBool,  supports_enable))
+
+    ((ConfigOptionEnum<sla::SupportTreeType>, support_tree_type))
 
     // Diameter in mm of the pointing side of the head.
     ((ConfigOptionFloat, support_head_front_diameter))/*= 0.2*/
@@ -2149,6 +2211,11 @@ PRINT_CONFIG_CLASS_DEFINE(
 
     // Generate only ground facing supports
     ((ConfigOptionBool, support_buildplate_only))
+
+    ((ConfigOptionFloat, support_max_weight_on_model))
+
+    // Generate only ground facing supports
+    ((ConfigOptionBool, support_enforcers_only))
 
     // TODO: unimplemented at the moment. This coefficient will have an impact
     // when bridges and pillars are merged. The resulting pillar should be a bit
@@ -2178,9 +2245,62 @@ PRINT_CONFIG_CLASS_DEFINE(
     // and the model object's bounding box bottom. Units in mm.
     ((ConfigOptionFloat, support_object_elevation))/*= 5.0*/
 
+
+    // Branching tree
+
+    // Diameter in mm of the pointing side of the head.
+    ((ConfigOptionFloat, branchingsupport_head_front_diameter))/*= 0.2*/
+
+    // How much the pinhead has to penetrate the model surface
+    ((ConfigOptionFloat, branchingsupport_head_penetration))/*= 0.2*/
+
+    // Width in mm from the back sphere center to the front sphere center.
+    ((ConfigOptionFloat, branchingsupport_head_width))/*= 1.0*/
+
+    // Radius in mm of the support pillars.
+    ((ConfigOptionFloat, branchingsupport_pillar_diameter))/*= 0.8*/
+
+    // The percentage of smaller pillars compared to the normal pillar diameter
+    // which are used in problematic areas where a normal pilla cannot fit.
+    ((ConfigOptionPercent, branchingsupport_small_pillar_diameter_percent))
+
+    // How much bridge (supporting another pinhead) can be placed on a pillar.
+    ((ConfigOptionInt,   branchingsupport_max_bridges_on_pillar))
+
+    // How the pillars are bridged together
+    ((ConfigOptionEnum<SLAPillarConnectionMode>, branchingsupport_pillar_connection_mode))
+
+    // Generate only ground facing supports
+    ((ConfigOptionBool, branchingsupport_buildplate_only))
+
+    ((ConfigOptionFloat, branchingsupport_max_weight_on_model))
+
+    ((ConfigOptionFloat, branchingsupport_pillar_widening_factor))
+
+    // Radius in mm of the pillar base.
+    ((ConfigOptionFloat, branchingsupport_base_diameter))/*= 2.0*/
+
+    // The height of the pillar base cone in mm.
+    ((ConfigOptionFloat, branchingsupport_base_height))/*= 1.0*/
+
+    // The minimum distance of the pillar base from the model in mm.
+    ((ConfigOptionFloat, branchingsupport_base_safety_distance)) /*= 1.0*/
+
+    // The default angle for connecting support sticks and junctions.
+    ((ConfigOptionFloat, branchingsupport_critical_angle))/*= 45*/
+
+    // The max length of a bridge in mm
+    ((ConfigOptionFloat, branchingsupport_max_bridge_length))/*= 15.0*/
+
+    // The max distance of two pillars to get cross linked.
+    ((ConfigOptionFloat, branchingsupport_max_pillar_link_distance))
+
+    // The elevation in Z direction upwards. This is the space between the pad
+    // and the model object's bounding box bottom. Units in mm.
+    ((ConfigOptionFloat, branchingsupport_object_elevation))/*= 5.0*/
+
     /////// Following options influence automatic support points placement:
     ((ConfigOptionInt, support_points_density_relative))
-    ((ConfigOptionFloat, support_points_minimal_distance))
 
     // Now for the base pool (pad) /////////////////////////////////////////////
 
@@ -2254,23 +2374,50 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloat, hollowing_closing_distance))
 )
 
-enum SLAMaterialSpeed { slamsSlow, slamsFast };
+enum SLAMaterialSpeed { slamsSlow, slamsFast, slamsHighViscosity };
 
 PRINT_CONFIG_CLASS_DEFINE(
     SLAMaterialConfig,
 
     ((ConfigOptionFloat,                       initial_layer_height))
     ((ConfigOptionFloat,                       bottle_cost))
+    ((ConfigOptionString,                      material_uuid))
     ((ConfigOptionFloat,                       bottle_volume))
     ((ConfigOptionFloat,                       bottle_weight))
     ((ConfigOptionFloat,                       material_density))
     ((ConfigOptionFloat,                       exposure_time))
     ((ConfigOptionFloat,                       initial_exposure_time))
+    ((ConfigOptionInt,                         bottom_layer_count))
+    ((ConfigOptionFloat,                       lift_distance))
+    ((ConfigOptionFloat,                       lift_speed))
+    ((ConfigOptionFloat,                       retract_speed))
+    ((ConfigOptionInt,                         light_pwm))
     ((ConfigOptionFloats,                      material_correction))
     ((ConfigOptionFloat,                       material_correction_x))
     ((ConfigOptionFloat,                       material_correction_y))
     ((ConfigOptionFloat,                       material_correction_z))
     ((ConfigOptionEnum<SLAMaterialSpeed>,      material_print_speed))
+    ((ConfigOptionInt,                         zcorrection_layers))
+
+    ((ConfigOptionFloat,                       area_fill))
+    
+
+    //tilt params
+    ((ConfigOptionFloats,                      delay_before_exposure))
+    ((ConfigOptionFloats,                      delay_after_exposure))
+    ((ConfigOptionFloats,                      delay_to_reflood))
+    ((ConfigOptionFloats,                      tower_hop_height))
+    ((ConfigOptionBools,                       use_tilt))
+    
+    ((ConfigOptionInts,                        tilt_down_offset_steps))
+    ((ConfigOptionFloats,                      tilt_down_offset_delay))
+    ((ConfigOptionInts,                        tilt_down_cycles))
+    ((ConfigOptionFloats,                      tilt_down_delay))
+    ((ConfigOptionInts,                        tilt_up_offset_steps))
+    ((ConfigOptionFloats,                      tilt_up_offset_delay))
+    ((ConfigOptionInts,                        tilt_up_cycles))
+    ((ConfigOptionFloats,                      tilt_up_delay))
+    ((ConfigOptionFloats,                      dynamic_delay_before_timeout))
 )
 
 PRINT_CONFIG_CLASS_DEFINE(
@@ -2296,11 +2443,14 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloat,                      gamma_correction))
     ((ConfigOptionFloat,                      fast_tilt_time))
     ((ConfigOptionFloat,                      slow_tilt_time))
-    ((ConfigOptionFloat,                      area_fill))
+    ((ConfigOptionFloat,                      high_viscosity_tilt_time))
     ((ConfigOptionFloat,                      min_exposure_time))
     ((ConfigOptionFloat,                      max_exposure_time))
     ((ConfigOptionFloat,                      min_initial_exposure_time))
     ((ConfigOptionFloat,                      max_initial_exposure_time))
+    ((ConfigOptionString,                     sla_archive_format))
+    ((ConfigOptionFloat,                      sla_output_precision))
+    ((ConfigOptionString,                     printer_model))
 )
 
 PRINT_CONFIG_CLASS_DERIVED_DEFINE0(
@@ -2641,6 +2791,8 @@ static bool has_zero_flush_volume_for_used_filaments(const std::vector<T> &fv_ma
 }
 
 size_t get_extruder_index(const GCodeConfig& config, unsigned int filament_id);
+
+double nozzle_diameter_for_filament(const PrintConfig& config, int filament_id, bool is_bbl_printer);
 
 } // namespace Slic3r
 

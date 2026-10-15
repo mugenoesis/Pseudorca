@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Point.hpp"
+#include "libslic3r.h"
 
 namespace Slic3r {
 
@@ -19,6 +20,10 @@ extern std::vector<Vec2d> triangulate_expolygon_2d (const ExPolygon  &poly,  boo
 extern std::vector<Vec2d> triangulate_expolygons_2d(const ExPolygons &polys, bool flip = NORMALS_UP);
 extern std::vector<Vec2f> triangulate_expolygon_2f (const ExPolygon  &poly,  bool flip = NORMALS_UP);
 extern std::vector<Vec2f> triangulate_expolygons_2f(const ExPolygons &polys, bool flip = NORMALS_UP);
+
+indexed_triangle_set wall_strip(const Polygon &poly,
+                                double         lower_z_mm,
+                                double         upper_z_mm);
 
 } // namespace Slic3r
 

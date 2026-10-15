@@ -1,8 +1,15 @@
 #ifndef slic3r_PrintBase_hpp_
 #define slic3r_PrintBase_hpp_
 
+#include "Config.hpp"
+#include "Polygon.hpp"
 #include "libslic3r.h"
+#include <exception>
+#include <cstddef>
+#include <cassert>
+#include <initializer_list>
 #include <set>
+#include <utility>
 #include <vector>
 #include <string>
 #include <functional>
@@ -633,6 +640,22 @@ public:
     bool            is_step_done(PrintObjectStepEnum step) const { return m_state.is_done(step, PrintObjectBase::state_mutex(m_print)); }
     PrintStateBase::StateWithTimeStamp step_state_with_timestamp(PrintObjectStepEnum step) const { return m_state.state_with_timestamp(step, PrintObjectBase::state_mutex(m_print)); }
     PrintStateBase::StateWithWarnings  step_state_with_warnings(PrintObjectStepEnum step) const { return m_state.state_with_warnings(step, PrintObjectBase::state_mutex(m_print)); }
+
+    // The last step that is done, or COUNT if no step has been completed.
+    PrintObjectStepEnum last_completed_step() const
+    {
+        static_assert(COUNT > 0, "Step count should be > 0");
+        int s = int(COUNT) - 1;
+
+        std::lock_guard<std::mutex> lk(PrintObjectBase::state_mutex(m_print));
+        while (s >= 0 && ! is_step_done_unguarded(PrintObjectStepEnum(s)))
+            --s;
+
+        if (s < 0)
+            s = int(COUNT);
+
+        return PrintObjectStepEnum(s);
+    }
 
 protected:
 	PrintObjectBaseWithState(PrintType *print, ModelObject *model_object) : PrintObjectBase(model_object), m_print(print) {}

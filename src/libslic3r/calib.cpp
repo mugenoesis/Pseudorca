@@ -1,10 +1,27 @@
 #include "calib.hpp"
-#include "BeltGCodeWriter.hpp"
+#include "GCode/BeltKinematics.hpp"
 #include "BoundingBox.hpp"
 #include "Config.hpp"
+#include "Flow.hpp"
+#include "GCodeWriter.hpp"
+#include "GCode/GCodeProcessor.hpp"
+#include "CustomGCode.hpp"
 #include "Model.hpp"
 #include "GCode.hpp"
+#include "PrintConfig.hpp"
+#include <algorithm>
+#include "Point.hpp"
+#include "libslic3r.h"
 #include <cmath>
+#include <string>
+#include <sstream>
+#include <math.h>
+#include <iomanip>
+#include <vector>
+#include <cstddef>
+#include <memory>
+#include <utility>
+#include "clonable_ptr.hpp"
 
 namespace Slic3r {
 
@@ -866,10 +883,8 @@ void CalibPressureAdvancePattern::_refresh_writer(bool is_bbl_machine, const Mod
     // needs the machine kinematics (axis remap + frame shear/scale) with the
     // coordinates interpreted as world points (see set_world_coordinates).
     if (print_config.belt_printer.value) {
-        auto belt_writer = std::make_shared<BeltGCodeWriter>();
-        belt_writer->set_belt_back_transform(print_config);
-        belt_writer->set_machine_frame_transform(print_config);
-        belt_writer->set_world_coordinates(true);
+        auto belt_writer = std::make_shared<GCodeWriter>();
+        install_belt_kinematics(*belt_writer, print_config, /*world_coordinates=*/true);
         const int rx = int(print_config.gcode_remap_x.value);
         const int ry = int(print_config.gcode_remap_y.value);
         const int rz = int(print_config.gcode_remap_z.value);
@@ -880,7 +895,8 @@ void CalibPressureAdvancePattern::_refresh_writer(bool is_bbl_machine, const Mod
                                                     print_config.printable_height.value));
         }
         m_writer = std::move(belt_writer);
-    } else if (dynamic_cast<BeltGCodeWriter*>(m_writer.get()) != nullptr) {
+    } else if (m_writer && dynamic_cast<const BeltKinematics *>(&m_writer->kinematics()) != nullptr) {
+        // Previously configured for a belt printer; drop back to a plain writer.
         m_writer = std::make_shared<GCodeWriter>();
     }
 

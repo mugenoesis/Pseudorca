@@ -1,0 +1,23 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Elegoo Jupiter 2",
+  "printer_technology": "SLA",
+  "printer_model": "Jupiter 2",
+  "delay_after_exposure": "1",
+  "delay_before_exposure": "2.5",
+  "display_height": "161.98",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "15120",
+  "display_pixels_y": "6230",
+  "display_width": "302.4",
+  "gamma_correction": "1",
+  "lift_distance": "7",
+  "lift_speed": "100",
+  "light_pwm": "255",
+  "printable_height": "300",
+  "retract_speed": "150",
+  "sla_archive_format": "GOO"
+}

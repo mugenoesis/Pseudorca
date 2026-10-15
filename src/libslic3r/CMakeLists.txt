@@ -89,15 +89,11 @@ set(lisbslic3r_sources
     BeltBrim.hpp
     BeltGCode.cpp
     BeltGCode.hpp
-    BeltGCodeWriter.cpp
-    BeltGCodeWriter.hpp
     BeltPurge.cpp
     BeltSliceStrategy.cpp
     BeltSliceStrategy.hpp
     BeltTransform.cpp
     BeltTransform.hpp
-    FirstLayerPlane.cpp
-    FirstLayerPlane.hpp
     Brim.cpp
     BrimEarsPoint.hpp
     Brim.hpp
@@ -107,18 +103,17 @@ set(lisbslic3r_sources
     calib.hpp
     Circle.cpp
     Circle.hpp
-    clipper.cpp
-    clipper.hpp
     ClipperUtils.cpp
     ClipperUtils.hpp
-    Clipper2Utils.cpp
-    Clipper2Utils.hpp
+    ClipperZUtils.cpp
     ClipperZUtils.hpp
     Color.cpp
     Color.hpp
     CommonDefs.hpp
     Config.cpp
     Config.hpp
+    ConnectedBodies.cpp
+    ConnectedBodies.hpp
     ContourZ.cpp
     CustomGCode.cpp
     CustomGCode.hpp
@@ -187,6 +182,8 @@ set(lisbslic3r_sources
     Fill/FillPlanePath.hpp
     Fill/FillRectilinear.cpp
     Fill/FillRectilinear.hpp
+    Fill/FillTpmsAdaptive.cpp
+    Fill/FillTpmsAdaptive.hpp
     Fill/FillTpmsD.cpp
     Fill/FillTpmsD.hpp
     Fill/FillTpmsFK.cpp
@@ -218,6 +215,8 @@ set(lisbslic3r_sources
     Format/3mf.hpp
     Format/AMF.cpp
     Format/AMF.hpp
+    Format/AssembleList.cpp
+    Format/AssembleList.hpp
     Format/DRC.cpp
     Format/DRC.hpp
     Format/bbs_3mf.cpp
@@ -250,6 +249,10 @@ set(lisbslic3r_sources
     GCode/BeltBackTransform.hpp
     GCode/MachineFrameTransform.cpp
     GCode/MachineFrameTransform.hpp
+    GCode/BeltKinematics.cpp
+    GCode/BeltKinematics.hpp
+    GCode/MachineKinematics.cpp
+    GCode/MachineKinematics.hpp
     GCode/ConflictChecker.cpp
     GCode/ConflictChecker.hpp
     GCode/CoolingBuffer.cpp
@@ -262,6 +265,8 @@ set(lisbslic3r_sources
     GCode/FanMover.hpp
     GCode/GCodeProcessor.cpp
     GCode/GCodeProcessor.hpp
+    GCode/GCodeStatistics.cpp
+    GCode/GCodeStatistics.hpp
     GCode/ElegooGCodeProcessorHelper.cpp
     GCode.hpp
     GCode/PchipInterpolatorHelper.cpp
@@ -278,8 +283,7 @@ set(lisbslic3r_sources
     GCode/SeamPlacer.hpp
     GCode/PreciseSeam.cpp
     GCode/PreciseSeam.hpp
-    #GCodeSender.cpp
-    #GCodeSender.hpp
+    GCode/PreciseSeamInternal.hpp
     GCode/SmallAreaInfillFlowCompensator.cpp
     GCode/SmallAreaInfillFlowCompensator.hpp
     GCode/SpiralVase.cpp
@@ -323,6 +327,12 @@ set(lisbslic3r_sources
     Geometry/VoronoiUtils.cpp
     Geometry/VoronoiUtils.hpp
     Geometry/VoronoiVisualUtils.hpp
+    IMEXArrange.cpp
+    IMEXArrange.hpp
+    IMEXHelpers.cpp
+    IMEXHelpers.hpp
+    IMEXZones.cpp
+    IMEXZones.hpp
     InstanceLock.cpp
     InstanceLock.hpp
     Int128.hpp
@@ -351,6 +361,8 @@ set(lisbslic3r_sources
     miniz_extension.hpp
     ModelArrange.cpp
     ModelArrange.hpp
+    MeshNormals.hpp
+    MeshNormals.cpp
     Model.cpp
     Model.hpp
     MTUtils.hpp
@@ -397,6 +409,7 @@ set(lisbslic3r_sources
     Polyline.hpp
     PresetBundle.cpp
     PresetBundle.hpp
+    PrinterBedAssets.hpp
     PresetCacheFormat.cpp
     PresetCacheFormat.hpp
     Preset.cpp
@@ -428,45 +441,122 @@ set(lisbslic3r_sources
     ShortEdgeCollapse.hpp
     ShortestPath.cpp
     ShortestPath.hpp
+    SLAPrint.cpp
+    SLAPrintSteps.cpp
+    SLAPrintJob.cpp
+    SLAPrintJob.hpp
+    SLAPrintSteps.hpp
+    SLAPrint.hpp
+    SLA/Pad.hpp
+    SLA/Pad.cpp
+    SLA/PrinterCorrections.hpp
+    SLA/PrinterCorrections.cpp
+    SLA/SupportTreeBuilder.hpp
+    SLA/SupportTreeMesher.hpp
+    SLA/SupportTreeSlicer.hpp
+    SLA/SupportTreeSlicer.cpp
+    SLA/SupportSlicesCache.hpp
+    SLA/SupportSlicesCache.cpp
+    SLA/SupportTreeMesher.cpp
+    SLA/SupportTreeUtils.hpp
+    SLA/SupportTreeUtilsLegacy.hpp
+    SLA/SupportTreeBuilder.cpp
+    SLA/SupportTree.hpp
+    SLA/SupportTree.cpp
+    SLA/SupportTreeStrategies.hpp
+    SLA/Rotfinder.hpp
+    SLA/Rotfinder.cpp
+    SLA/SpatIndex.hpp
+    SLA/SpatIndex.cpp
+    SLA/RasterBase.hpp
+    SLA/RasterBase.cpp
     SLA/AGGRaster.hpp
-    SLA/BoostAdapter.hpp
-    SLA/Clustering.cpp
-    SLA/Clustering.hpp
-    SLA/ConcaveHull.cpp
+    SLA/RasterToPolygons.hpp
+    SLA/MarchingSquaresSLA.hpp
+    SLA/RasterToPolygons.cpp
     SLA/ConcaveHull.hpp
-    SLA/Concurrency.hpp
-    SLA/Hollowing.cpp
+    SLA/ConcaveHull.cpp
     SLA/Hollowing.hpp
+    SLA/Hollowing.cpp
+    SLA/JobController.hpp
+    SLA/SupportPoint.hpp
+    SLA/SupportPointGenerator.hpp
+    SLA/SupportPointGenerator.cpp
+    SLA/Clustering.hpp
+    SLA/Clustering.cpp
+    SLA/ReprojectPointsOnMesh.hpp
+    SLA/DefaultSupportTree.hpp
+    SLA/DefaultSupportTree.cpp
+    SLA/BranchingTreeSLA.hpp
+    SLA/BranchingTreeSLA.cpp
+    SLA/ZCorrection.hpp
+    SLA/ZCorrection.cpp
+    SLA/Workflows.hpp
+    SLA/Workflows.cpp
+    SLA/SupportIslands/EvaluateNeighbor.cpp
+    SLA/SupportIslands/EvaluateNeighbor.hpp
+    SLA/SupportIslands/ExpandNeighbor.cpp
+    SLA/SupportIslands/ExpandNeighbor.hpp
+    SLA/SupportIslands/IStackFunction.hpp
+    SLA/SupportIslands/LineUtils.cpp
+    SLA/SupportIslands/LineUtils.hpp
+    SLA/SupportIslands/NodeDataWithResult.hpp
+    SLA/SupportIslands/Parabola.hpp
+    SLA/SupportIslands/ParabolaUtils.cpp
+    SLA/SupportIslands/ParabolaUtils.hpp
+    SLA/SupportIslands/PointUtils.cpp
+    SLA/SupportIslands/PointUtils.hpp
+    SLA/SupportIslands/PolygonUtils.cpp
+    SLA/SupportIslands/PolygonUtils.hpp
+    SLA/SupportIslands/PostProcessNeighbor.cpp
+    SLA/SupportIslands/PostProcessNeighbor.hpp
+    SLA/SupportIslands/PostProcessNeighbors.cpp
+    SLA/SupportIslands/PostProcessNeighbors.hpp
+    SLA/SupportIslands/SampleConfig.hpp
+    SLA/SupportIslands/SampleConfigFactory.cpp
+    SLA/SupportIslands/SampleConfigFactory.hpp
+    SLA/SupportIslands/SupportIslandPoint.cpp
+    SLA/SupportIslands/SupportIslandPoint.hpp
+    SLA/SupportIslands/UniformSupportIsland.cpp
+    SLA/SupportIslands/UniformSupportIsland.hpp
+    SLA/SupportIslands/VectorUtils.hpp
+    SLA/SupportIslands/VoronoiGraph.hpp
+    SLA/SupportIslands/VoronoiGraphUtils.cpp
+    SLA/SupportIslands/VoronoiGraphUtils.hpp
+    BranchingTree/BranchingTree.cpp
+    BranchingTree/BranchingTree.hpp
+    BranchingTree/PointCloud.cpp
+    BranchingTree/PointCloud.hpp
+    Format/SLAArchiveWriter.hpp
+    Format/SLAArchiveWriter.cpp
+    Format/SLAArchiveReader.hpp
+    Format/SLAArchiveReader.cpp
+    Format/SL1_SVG.hpp
+    Format/SL1_SVG.cpp
+    Format/AnycubicSLA.hpp
+    Format/AnycubicSLA.cpp
+    Format/CTB.cpp
+    Format/CTB.hpp
+    Format/SVGX.cpp
+    Format/SVGX.hpp
+    Format/CXDLP.cpp
+    Format/CXDLP.hpp
+    Format/AnycubicPW.cpp
+    Format/AnycubicPW.hpp
+    Format/ImageZip.cpp
+    Format/ImageZip.hpp
+    Format/GOO.cpp
+    Format/GOO.hpp
+    Format/TinyMaker.cpp
+    Format/TinyMaker.hpp
+    Format/SLAArchiveFormatRegistry.hpp
+    Format/SLAArchiveFormatRegistry.cpp
+    BoostAdapter.hpp
+    StaticMap.hpp
+    Utils/JsonUtils.hpp
+    Utils/JsonUtils.cpp
     SLA/IndexedMesh.cpp
     SLA/IndexedMesh.hpp
-    SLA/JobController.hpp
-    SLA/Pad.cpp
-    SLA/Pad.hpp
-    SLAPrint.cpp
-    SLAPrint.hpp
-    SLAPrintSteps.cpp
-    SLAPrintSteps.hpp
-    SLA/RasterBase.cpp
-    SLA/RasterBase.hpp
-    SLA/RasterToPolygons.cpp
-    SLA/RasterToPolygons.hpp
-    SLA/ReprojectPointsOnMesh.hpp
-    SLA/Rotfinder.cpp
-    SLA/Rotfinder.hpp
-    SLA/SpatIndex.cpp
-    SLA/SpatIndex.hpp
-    SLA/SupportPointGenerator.cpp
-    SLA/SupportPointGenerator.hpp
-    SLA/SupportPoint.hpp
-    SLA/SupportTreeBuilder.cpp
-    SLA/SupportTreeBuilder.hpp
-    SLA/SupportTreeBuildsteps.cpp
-    SLA/SupportTreeBuildsteps.hpp
-    SLA/SupportTree.cpp
-    SLA/SupportTree.hpp
-    #SLA/SupportTreeIGL.cpp
-    SLA/SupportTreeMesher.cpp
-    SLA/SupportTreeMesher.hpp
     SlicesToTriangleMesh.cpp
     SlicesToTriangleMesh.hpp
     SlicingAdaptive.cpp
@@ -604,10 +694,10 @@ set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE ON CACHE BOOL "" FORCE)
 
 cmake_policy(PUSH)
 cmake_policy(SET CMP0011 NEW)
-# CGAL's config resets policies (cmake_minimum_required ...3.23), so a plain SET
+# CGAL's config resets policies (cmake_minimum_required ...3.31), so a plain SET
 # can't reach it; the default opts its Boost lookup into BoostConfig (CMP0167).
 set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
-find_package(CGAL REQUIRED)
+find_package(CGAL 6.2 REQUIRED)
 find_package(OpenCV REQUIRED core)
 find_package(assimp REQUIRED)
 unset(CMAKE_POLICY_DEFAULT_CMP0167)
@@ -617,8 +707,10 @@ add_library(libslic3r_cgal STATIC
     CutSurface.hpp CutSurface.cpp
     IntersectionPoints.hpp IntersectionPoints.cpp
     MeshBoolean.hpp MeshBoolean.cpp
+    MeshRepair.hpp MeshRepair.cpp
     TryCatchSignal.hpp TryCatchSignal.cpp
     Triangulation.hpp Triangulation.cpp
+    SLA/SupportIslands/VoronoiDiagramCGAL.hpp SLA/SupportIslands/VoronoiDiagramCGAL.cpp
 )
 target_include_directories(libslic3r_cgal PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -644,7 +736,9 @@ if (IS_CLANG_CL)
     target_compile_options(libslic3r_cgal PRIVATE -Wno-overriding-option)
 endif ()
 
-target_link_libraries(libslic3r_cgal PRIVATE ${_cgal_tgt} admesh libigl mcut boost_libs)
+# Lets CGAL algorithms given CGAL::Parallel_if_available_tag run on TBB.
+target_compile_definitions(libslic3r_cgal PRIVATE CGAL_LINKED_WITH_TBB)
+target_link_libraries(libslic3r_cgal PRIVATE ${_cgal_tgt} admesh libigl mcut boost_libs TBB::tbb)
 
 if (MSVC AND "${CMAKE_SIZEOF_VOID_P}" STREQUAL "4") # 32 bit MSVC workaround
     target_compile_definitions(libslic3r_cgal PRIVATE CGAL_DO_NOT_USE_MPZF)
@@ -668,11 +762,8 @@ find_package(JPEG REQUIRED)
 find_package(Draco REQUIRED)
 
 set(OCCT_LIBS
-    TKXDESTEP
-    TKSTEP
-    TKSTEP209
-    TKSTEPAttr
-    TKSTEPBase
+    TKDESTEP
+    TKDE
     TKXCAF
     TKXSBase
     TKVCAF
@@ -719,6 +810,22 @@ if (SLIC3R_CAD)
 endif ()
 # Published for the Windows packaging step in the top-level CMakeLists.txt.
 set(OCCT_LIBS "${OCCT_LIBS}" CACHE INTERNAL "OCCT toolkits linked by libslic3r")
+if (WIN32)
+    # OCCT installs RelWithDebInfo and Debug builds to bin/occti and bin/occtd, so each build
+    # type's DLL directory is read from the imported target, falling back to the first installed
+    # build, as CMake does when linking.
+    get_target_property(_occt_configs TKernel IMPORTED_CONFIGURATIONS)
+    list(GET _occt_configs 0 _occt_fallback)
+    foreach (_build_config IN ITEMS DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+        set(_occt_config ${_occt_fallback})
+        if (_build_config IN_LIST _occt_configs)
+            set(_occt_config ${_build_config})
+        endif ()
+        get_target_property(_occt_dll TKernel IMPORTED_LOCATION_${_occt_config})
+        get_filename_component(_occt_bin "${_occt_dll}" DIRECTORY)
+        set(OCCT_BIN_DIR_${_build_config} "${_occt_bin}" CACHE INTERNAL "OCCT DLL directory for ${_build_config} builds")
+    endforeach ()
+endif ()
 
 target_link_libraries(libslic3r
     PUBLIC
@@ -728,6 +835,7 @@ target_link_libraries(libslic3r
         libnest2d
         miniz
         opencv_world
+        sla_time_estimate
         assimp::assimp
     PRIVATE
         ${CMAKE_DL_LIBS}
@@ -735,7 +843,6 @@ target_link_libraries(libslic3r
         ${OCCT_LIBS}
         boost_libs
         cereal::cereal
-        clipper
         Clipper2
         draco::draco
         glu-libtess
@@ -754,6 +861,12 @@ target_link_libraries(libslic3r
     )
 
 if(NOT WIN32)
+    # OCCT's static targets name FreeType as a bare "freetype", which the macOS linker cannot
+    # find; this target maps that name to FREETYPE_LIBRARIES.
+    if (NOT TARGET freetype)
+        add_library(freetype INTERFACE IMPORTED GLOBAL)
+        target_link_libraries(freetype INTERFACE ${FREETYPE_LIBRARIES})
+    endif ()
     # Link freetype for OCCT dependency (CAD operations need font rendering)
     target_link_libraries(libslic3r PRIVATE ${FREETYPE_LIBRARIES})
     if (NOT APPLE)

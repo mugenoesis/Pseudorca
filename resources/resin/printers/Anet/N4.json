@@ -1,0 +1,19 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Anet N4",
+  "printer_technology": "SLA",
+  "printer_model": "N4",
+  "display_height": "120.96",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "1440",
+  "display_pixels_y": "2560",
+  "display_width": "68.04",
+  "gamma_correction": "0",
+  "lift_distance": "6",
+  "lift_speed": "60",
+  "printable_height": "135",
+  "sla_archive_format": "n4"
+}

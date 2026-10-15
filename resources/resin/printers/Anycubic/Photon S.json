@@ -1,0 +1,21 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Anycubic Photon S",
+  "printer_technology": "SLA",
+  "printer_model": "Photon S",
+  "delay_before_exposure": "2.5",
+  "display_height": "120.96",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "1440",
+  "display_pixels_y": "2560",
+  "display_width": "68.04",
+  "gamma_correction": "1",
+  "lift_distance": "6",
+  "lift_speed": "60",
+  "printable_height": "165",
+  "retract_speed": "150",
+  "sla_archive_format": "pws"
+}

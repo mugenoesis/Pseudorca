@@ -5,17 +5,27 @@
 
 #include "../libslic3r.h"
 
+#include <cstdint>
+#include <cstddef>
+#include <algorithm>
 #include <functional>
 #include <map>
+#include <tuple>
+#include <set>
+#include <unordered_map>
+#include <string>
 #include <utility>
 
 #include <boost/container/small_vector.hpp>
-#include "../FilamentGroup.hpp"
+#include <vector>
 #include "../FilamentMixer.hpp"
 #include "../MultiNozzleUtils.hpp"
-#include "../ExtrusionEntity.hpp"
 #include "../ObjectID.hpp"
 #include "../PrintConfig.hpp"
+
+namespace Slic3r { class ExtrusionEntity; }
+namespace Slic3r { class ExtrusionEntityCollection; }
+namespace Slic3r { enum ExtrusionRole : uint8_t; }
 
 namespace Slic3r {
 
@@ -74,12 +84,16 @@ public:
 
     void set_layer_tools_ptr(const LayerTools* lt) { m_layer_tools = lt; }
 
-private:
-    // Returns true if entity is not printed with its usual extruder for a given copy.
+    // Returns true if entity is not printed with its usual extruder for a given
+    // copy -- i.e. it was claimed as a wiping/purge extrusion. Public because the
+    // belt purge prism uses it to tell which of its fills actually carry purge
+    // from the ones that are unclaimed waste (Print::_plan_belt_purge()).
     bool is_entity_overridden(const ExtrusionEntity* entity, const PrintObject *object, size_t copy_id) const {
         auto it = entity_map.find(std::make_tuple(entity, object));
         return it != entity_map.end() && copy_id < it->second.size() && it->second[copy_id] != -1;
     }
+
+private:
 
     int first_nonsoluble_extruder_on_layer(const PrintConfig& print_config) const;
     int last_nonsoluble_extruder_on_layer(const PrintConfig& print_config) const;
@@ -165,10 +179,6 @@ public:
     // Should a skirt be printed at this layer?
     // Layers are marked for infinite skirt aka draft shield. Not all the layers have to be printed.
     bool                        has_skirt = false;
-    // Belt printers: is this one of the brim-only apron layers below the object's
-    // first layer?  Kept separate from has_object so skirt marking and wiping
-    // overrides are unaffected.
-    bool                        has_belt_brim = false;
     // Will there be anything extruded on this layer for the wipe tower?
     // Due to the support layers possibly interleaving the object layers,
     // wipe tower will be disabled for some support only layers.

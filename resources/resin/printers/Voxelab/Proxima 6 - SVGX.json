@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Voxelab Proxima 6 - SVGX",
+  "printer_technology": "SLA",
+  "printer_model": "Proxima 6 - SVGX",
+  "delay_after_exposure": "0",
+  "display_height": "82.62",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "2560",
+  "display_pixels_y": "1620",
+  "display_width": "130.56",
+  "gamma_correction": "0",
+  "lift_distance": "5",
+  "lift_speed": "60",
+  "light_pwm": "255",
+  "printable_height": "155",
+  "retract_speed": "150",
+  "sla_archive_format": "SVGX"
+}

@@ -4,10 +4,15 @@
 #define slic3r_KDTreeIndirect_hpp_
 
 #include <algorithm>
+#include <cstddef>
+#include <cassert>
+#include <array>
 #include <limits>
+#include <utility>
 #include <vector>
 
 #include "Utils.hpp" // for next_highest_power_of_2()
+#include "libslic3r.h"
 
 namespace Slic3r {
 
@@ -36,6 +41,8 @@ public:
     KDTreeIndirect(KDTreeIndirect &&rhs) : m_nodes(std::move(rhs.m_nodes)), coordinate(std::move(rhs.coordinate)) {}
     KDTreeIndirect& operator=(KDTreeIndirect &&rhs) { m_nodes = std::move(rhs.m_nodes); coordinate = std::move(rhs.coordinate); return *this; }
     void clear() { m_nodes.clear(); }
+    const std::vector<size_t> &get_nodes() const { return m_nodes; }
+    KDTreeIndirect get_copy() const { KDTreeIndirect copy(coordinate); copy.m_nodes = m_nodes; return copy; }
 
     void build(size_t num_indices)
     {

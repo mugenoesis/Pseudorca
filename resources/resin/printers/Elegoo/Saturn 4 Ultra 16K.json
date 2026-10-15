@@ -1,0 +1,21 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Elegoo Saturn 4 Ultra 16K",
+  "printer_technology": "SLA",
+  "printer_model": "Saturn 4 Ultra 16K",
+  "display_height": "118.37",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "15120",
+  "display_pixels_y": "6230",
+  "display_width": "211.68",
+  "gamma_correction": "1",
+  "lift_distance": "0.05",
+  "lift_speed": "0.05",
+  "light_pwm": "255",
+  "printable_height": "220",
+  "retract_speed": "0.05",
+  "sla_archive_format": "CTBENCRYPTED"
+}

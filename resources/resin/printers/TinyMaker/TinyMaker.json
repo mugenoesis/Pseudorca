@@ -1,0 +1,19 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "TinyMaker TinyMaker",
+  "printer_technology": "SLA",
+  "printer_model": "TinyMaker",
+  "display_height": "30.6",
+  "display_mirror_x": "0",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "320",
+  "display_pixels_y": "240",
+  "display_width": "40.8",
+  "gamma_correction": "1",
+  "initial_layer_height": "0.05",
+  "layer_height": "0.05",
+  "printable_height": "60",
+  "sla_archive_format": "TINYMAKER"
+}

@@ -1,12 +1,20 @@
 #ifndef slic3r_SVG_hpp_
 #define slic3r_SVG_hpp_
 
+#include "Point.hpp"
+#include "Polygon.hpp"
+#include "Polyline.hpp"
+#include "MultiPoint.hpp"
 #include "libslic3r.h"
-#include "clipper.hpp"
 #include "ExPolygon.hpp"
 #include "Line.hpp"
 #include "TriangleMesh.hpp"
 #include "Surface.hpp"
+#include <string>
+#include <cstddef>
+#include <cstdio>
+#include <vector>
+#include <utility>
 
 namespace Slic3r {
 
@@ -47,6 +55,7 @@ public:
     void draw(const Lines &lines, std::string stroke = "black", coordf_t stroke_width = 0);
     
     void draw(const ExPolygon &expolygon, std::string fill = "grey", const float fill_opacity=1.f);
+    void draw_original(const ExPolygon &expolygon);
     void draw_outline(const ExPolygon &polygon, std::string stroke_outer = "black", std::string stroke_holes = "blue", coordf_t stroke_width = 0);
     void draw(const ExPolygons &expolygons, std::string fill = "grey", const float fill_opacity=1.f);
     void draw_outline(const ExPolygons &polygons, std::string stroke_outer = "black", std::string stroke_holes = "blue", coordf_t stroke_width = 0);
@@ -70,9 +79,9 @@ public:
     void draw(const Point &point, std::string fill = "black", coord_t radius = 0);
     void draw(const Points &points, std::string fill = "black", coord_t radius = 0);
 
-    // Support for rendering the ClipperLib paths
-    void draw(const ClipperLib::Path  &polygon, double scale, std::string fill = "grey", coordf_t stroke_width = 0);
-    void draw(const ClipperLib::Paths &polygons, double scale, std::string fill = "grey", coordf_t stroke_width = 0);
+    // Paths drawn with their coordinates multiplied by scale.
+    void draw(const Points      &polygon, double scale, std::string fill = "grey", coordf_t stroke_width = 0);
+    void draw(const VecOfPoints &polygons, double scale, std::string fill = "grey", coordf_t stroke_width = 0);
 
     void draw_text(const Point &pt, const char *text, const char *color, int font_size = 20);
     void draw_legend(const Point &pt, const char *text, const char *color);
@@ -88,7 +97,7 @@ public:
     
     void path(const std::string &d, bool fill, coordf_t stroke_width, const float fill_opacity);
     std::string get_path_d(const MultiPoint &mp, bool closed = false) const;
-    std::string get_path_d(const ClipperLib::Path &mp, double scale, bool closed = false) const;
+    std::string get_path_d(const Points &mp, double scale, bool closed = false) const;
 
 public:
     static void export_expolygons(const char *path, const BoundingBox &bbox, const Slic3r::ExPolygons &expolygons, std::string stroke_outer = "black", std::string stroke_holes = "blue", coordf_t stroke_width = 0);

@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Elegoo Saturn S",
+  "printer_technology": "SLA",
+  "printer_model": "Saturn S",
+  "delay_after_exposure": "0",
+  "display_height": "122.88",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "4098",
+  "display_pixels_y": "2560",
+  "display_width": "196.704",
+  "gamma_correction": "1",
+  "lift_distance": "7",
+  "lift_speed": "70",
+  "light_pwm": "255",
+  "printable_height": "210",
+  "retract_speed": "210",
+  "sla_archive_format": "CTBENCRYPTED"
+}

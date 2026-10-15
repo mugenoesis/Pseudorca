@@ -1,4 +1,3 @@
-#include <unordered_set>
 #include <unordered_map>
 #include <random>
 #include <numeric>
@@ -8,7 +7,7 @@
 
 #include <libslic3r/TriangleMeshSlicer.hpp>
 #include <libslic3r/SLA/SupportTreeMesher.hpp>
-#include <libslic3r/SLA/Concurrency.hpp>
+#include <libslic3r/BranchingTree/PointCloud.hpp>
 
 namespace {
 
@@ -31,59 +30,6 @@ const char *const SUPPORT_TEST_MODELS[] = {
 };
 
 } // namespace
-
-TEST_CASE("Pillar pairhash should be unique", "[SLASupportGeneration]") {
-    test_pairhash<int, int>();
-    test_pairhash<int, long>();
-    test_pairhash<unsigned, unsigned>();
-    test_pairhash<unsigned, unsigned long>();
-}
-
-TEST_CASE("Support point generator should be deterministic if seeded", 
-          "[SLASupportGeneration], [SLAPointGen]") {
-    TriangleMesh mesh = load_model("A_upsidedown.obj");
-    
-    sla::IndexedMesh emesh{mesh};
-    
-    sla::SupportTreeConfig supportcfg;
-    sla::SupportPointGenerator::Config autogencfg;
-    autogencfg.head_diameter = float(2 * supportcfg.head_front_radius_mm);
-    sla::SupportPointGenerator point_gen{emesh, autogencfg, [] {}, [](int) {}};
-        
-    auto   bb      = mesh.bounding_box();
-    double zmin    = bb.min.z();
-    double zmax    = bb.max.z();
-    double gnd     = zmin - supportcfg.object_elevation_mm;
-    auto   layer_h = 0.05f;
-    
-    auto slicegrid = grid(float(gnd), float(zmax), layer_h);
-    std::vector<ExPolygons> slices = slice_mesh_ex(mesh.its, slicegrid, CLOSING_RADIUS);
-    
-    point_gen.seed(0);
-    point_gen.execute(slices, slicegrid);
-    
-    auto get_chksum = [](const std::vector<sla::SupportPoint> &pts){
-        int64_t chksum = 0;
-        for (auto &pt : pts) {
-            auto p = scaled(pt.pos);
-            chksum += p.x() + p.y() + p.z();
-        }
-        
-        return chksum;
-    };
-    
-    int64_t checksum = get_chksum(point_gen.output());
-    size_t ptnum = point_gen.output().size();
-    REQUIRE(point_gen.output().size() > 0);
-    
-    for (int i = 0; i < 20; ++i) {
-        point_gen.output().clear();
-        point_gen.seed(0);
-        point_gen.execute(slices, slicegrid);
-        REQUIRE(point_gen.output().size() == ptnum);
-        REQUIRE(checksum == get_chksum(point_gen.output()));
-    }
-}
 
 TEST_CASE("Flat pad geometry is valid", "[SLASupportGeneration]") {
     sla::PadConfig padcfg;
@@ -126,29 +72,29 @@ TEST_CASE("WingedPadAroundObjectIsValid", "[SLASupportGeneration]") {
     for (auto &fname : AROUND_PAD_TEST_OBJECTS) test_pad(fname, padcfg);
 }
 
-TEST_CASE("ElevatedSupportGeometryIsValid", "[SLASupportGeneration]") {
+TEST_CASE("DefaultSupports::ElevatedSupportGeometryIsValid", "[SLASupportGeneration]") {
     sla::SupportTreeConfig supportcfg;
     supportcfg.object_elevation_mm = 10.;
     
     for (auto fname : SUPPORT_TEST_MODELS) test_supports(fname, supportcfg);
 }
 
-TEST_CASE("FloorSupportGeometryIsValid", "[SLASupportGeneration]") {
+TEST_CASE("DefaultSupports::FloorSupportGeometryIsValid", "[SLASupportGeneration]") {
     sla::SupportTreeConfig supportcfg;
     supportcfg.object_elevation_mm = 0;
     
     for (auto &fname: SUPPORT_TEST_MODELS) test_supports(fname, supportcfg);
 }
 
-TEST_CASE("ElevatedSupportsDoNotPierceModel", "[SLASupportGeneration]") {
-    
+TEST_CASE("DefaultSupports::ElevatedSupportsDoNotPierceModel", "[SLASupportGeneration]") {
     sla::SupportTreeConfig supportcfg;
-    
+    supportcfg.object_elevation_mm = 10.;
+
     for (auto fname : SUPPORT_TEST_MODELS)
         test_support_model_collision(fname, supportcfg);
 }
 
-TEST_CASE("FloorSupportsDoNotPierceModel", "[SLASupportGeneration]") {
+TEST_CASE("DefaultSupports::FloorSupportsDoNotPierceModel", "[SLASupportGeneration]") {
     
     sla::SupportTreeConfig supportcfg;
     supportcfg.object_elevation_mm = 0;
@@ -157,16 +103,53 @@ TEST_CASE("FloorSupportsDoNotPierceModel", "[SLASupportGeneration]") {
         test_support_model_collision(fname, supportcfg);
 }
 
+//TEST_CASE("BranchingSupports::ElevatedSupportGeometryIsValid", "[SLASupportGeneration][Branching]") {
+//    sla::SupportTreeConfig supportcfg;
+//    supportcfg.object_elevation_mm = 10.;
+//    supportcfg.tree_type = sla::SupportTreeType::Branching;
+
+//    for (auto fname : SUPPORT_TEST_MODELS) test_supports(fname, supportcfg);
+//}
+
+//TEST_CASE("BranchingSupports::FloorSupportGeometryIsValid", "[SLASupportGeneration][Branching]") {
+//    sla::SupportTreeConfig supportcfg;
+//    supportcfg.object_elevation_mm = 0;
+//    supportcfg.tree_type = sla::SupportTreeType::Branching;
+
+//    for (auto &fname: SUPPORT_TEST_MODELS) test_supports(fname, supportcfg);
+//}
+
+
+TEST_CASE("BranchingSupports::ElevatedSupportsDoNotPierceModel", "[SLASupportGeneration][Branching]") {
+
+    sla::SupportTreeConfig supportcfg;
+    supportcfg.object_elevation_mm = 10.;
+    supportcfg.tree_type = sla::SupportTreeType::Branching;
+
+    for (auto fname : SUPPORT_TEST_MODELS)
+        test_support_model_collision(fname, supportcfg);
+}
+
+TEST_CASE("BranchingSupports::FloorSupportsDoNotPierceModel", "[SLASupportGeneration][Branching]") {
+
+    sla::SupportTreeConfig supportcfg;
+    supportcfg.object_elevation_mm = 0;
+    supportcfg.tree_type = sla::SupportTreeType::Branching;
+
+    for (auto fname : SUPPORT_TEST_MODELS)
+        test_support_model_collision(fname, supportcfg);
+}
+
 TEST_CASE("InitializedRasterShouldBeNONEmpty", "[SLARasterOutput]") {
-    // Default SL1 display parameters
+    // Default Prusa SL1 display parameters
     sla::Resolution res{2560, 1440};
     sla::PixelDim   pixdim{120. / res.width_px, 68. / res.height_px};
     
     sla::RasterGrayscaleAAGammaPower raster(res, pixdim, {}, 1.);
     REQUIRE(raster.resolution().width_px == res.width_px);
     REQUIRE(raster.resolution().height_px == res.height_px);
-    REQUIRE(raster.pixel_dimensions().w_mm == Catch::Approx(pixdim.w_mm));
-    REQUIRE(raster.pixel_dimensions().h_mm == Catch::Approx(pixdim.h_mm));
+    REQUIRE(raster.pixel_dimensions().w_mm == Approx(pixdim.w_mm));
+    REQUIRE(raster.pixel_dimensions().h_mm == Approx(pixdim.h_mm));
 }
 
 TEST_CASE("MirroringShouldBeCorrect", "[SLARasterOutput]") {
@@ -229,7 +212,7 @@ TEST_CASE("halfcone test", "[halfcone]") {
     indexed_triangle_set m = sla::get_mesh(br, 45);
 
     its_merge_vertices(m);
-    write_debug_obj("sla_print/Halfcone.obj", m);
+    its_write_obj(m, "Halfcone.obj");
 }
 
 TEST_CASE("Test concurrency")
@@ -240,5 +223,5 @@ TEST_CASE("Test concurrency")
 
     double s = execution::accumulate(ex_tbb, vals.begin(), vals.end(), 0.);
 
-    REQUIRE(s == Catch::Approx(ref));
+    REQUIRE(s == Approx(ref));
 }

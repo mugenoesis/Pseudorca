@@ -2,33 +2,46 @@
 #define slic3r_GCodeWriter_hpp_
 
 #include "libslic3r.h"
+#include <cstddef>
+#include <cassert>
+#include <array>
+#include <cmath>
+#include <cstring>
 #include <string>
 #include <charconv>
+#include <vector>
+#include <functional>
+#include <utility>
 #include "Extruder.hpp"
 #include "Point.hpp"
 #include "Polygon.hpp"
 #include "PrintConfig.hpp"
-#include "GCode/CoolingBuffer.hpp"
+#include "Config.hpp"
+#include "GCode/MachineKinematics.hpp"
+#include <memory>
+
 namespace Slic3r {
+
 
 class GCodeWriter {
 public:
-    virtual ~GCodeWriter() = default;
     GCodeConfig config;
     bool multiple_extruders;
 
     GCodeWriter() :
-        multiple_extruders(false), m_curr_filament_extruder(MAXIMUM_EXTRUDER_NUMBER, nullptr),
-        m_curr_extruder_id (-1),
-        m_cached_extruder_idx(0),
-        m_single_extruder_multi_material(false),
-        m_last_acceleration(0), m_max_acceleration(0),m_last_travel_acceleration(0), m_max_travel_acceleration(0),
-        m_last_jerk(0), m_max_jerk_x(0), m_max_jerk_y(0),
-        m_last_bed_temperature(0), m_last_bed_temperature_reached(true),
+        multiple_extruders(false),
         m_lifted(0),
         m_to_lift(0),
         m_to_lift_type(LiftType::NormalLift),
-        m_current_speed(3600), m_is_first_layer(true)
+        m_is_first_layer(true), m_current_speed(3600),
+        m_kinematics(std::make_unique<CartesianKinematics>()),
+        m_cached_extruder_idx(0),
+        m_curr_filament_extruder(MAXIMUM_EXTRUDER_NUMBER, nullptr),
+        m_curr_extruder_id (-1),
+        m_single_extruder_multi_material(false),
+        m_last_acceleration(0), m_max_acceleration(0),m_last_travel_acceleration(0), m_max_travel_acceleration(0),
+        m_last_jerk(0), m_max_jerk_x(0), m_max_jerk_y(0),
+        m_last_bed_temperature(0), m_last_bed_temperature_reached(true)
         {}
     Extruder* filament(size_t extruder_id) { assert(extruder_id < m_curr_filament_extruder.size()); return m_curr_filament_extruder[extruder_id]; }
     const Extruder* filament(size_t extruder_id) const { assert(extruder_id < m_curr_filament_extruder.size()); return m_curr_filament_extruder[extruder_id]; }
@@ -59,7 +72,7 @@ public:
     // Orca: set acceleration and jerk in one command for Klipper
     std::string set_accel_and_jerk(unsigned int acceleration, double jerk);
     std::string set_junction_deviation(double junction_deviation); 
-    std::string set_pressure_advance(double pa) const;
+    std::string set_pressure_advance(double pa, int tool = -1) const;
     std::string set_input_shaping(char axis, float damp, float freq, std::string type) const;
     std::string reset_e(bool force = false);
     std::string update_progress(unsigned int num, unsigned int tot, bool allow_100 = false) const;
@@ -78,23 +91,32 @@ public:
     std::string set_speed(double F, const std::string &comment = std::string(), const std::string &cooling_marker = std::string());
     // SoftFever NOTE: the returned speed is mm/minute
     double      get_current_speed() const { return m_current_speed;}
-    virtual std::string travel_to_xy(const Vec2d &point, const std::string &comment = std::string());
-    virtual std::string travel_to_xyz(const Vec3d &point, const std::string &comment = std::string(), bool force_z = false);
+    std::string travel_to_xy(const Vec2d &point, const std::string &comment = std::string());
+    std::string travel_to_xyz(const Vec3d &point, const std::string &comment = std::string(), bool force_z = false);
     std::string travel_to_z(double z, const std::string &comment = std::string(), bool force = false);
     bool        will_move_z(double z) const;
-    virtual std::string extrude_to_xy(const Vec2d &point, double dE, const std::string &comment = std::string(), bool force_no_extrusion = false);
+    std::string extrude_to_xy(const Vec2d &point, double dE, const std::string &comment = std::string(), bool force_no_extrusion = false);
     //BBS: generate G2 or G3 extrude which moves by arc
     std::string extrude_arc_to_xy(const Vec2d &point, const Vec2d &center_offset, double dE, const bool is_ccw, const std::string &comment = std::string(), bool force_no_extrusion = false);
-    virtual std::string extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment = std::string(), bool force_no_extrusion = false);
+    // Linear approximation of an arc, used when the machine mapping cannot
+    // express a G2/G3. Must be called before m_pos is updated: center_offset is
+    // relative to the current position.
+    void        extrude_arc_as_polyline(std::string &out, const Vec2d &point, const Vec2d &center_offset, double dE, const bool is_ccw, const std::string &comment = std::string(), bool force_no_extrusion = false);
+    std::string extrude_to_xyz(const Vec3d &point, double dE, const std::string &comment = std::string(), bool force_no_extrusion = false);
+    // Each appends its line to `out`.
+    void        set_speed(std::string &out, double F, const std::string &comment = std::string(), const std::string &cooling_marker = std::string());
+    void        extrude_to_xy(std::string &out, const Vec2d &point, double dE, const std::string &comment = std::string(), bool force_no_extrusion = false);
+    void        extrude_arc_to_xy(std::string &out, const Vec2d &point, const Vec2d &center_offset, double dE, const bool is_ccw, const std::string &comment = std::string(), bool force_no_extrusion = false);
+    void        extrude_to_xyz(std::string &out, const Vec3d &point, double dE, const std::string &comment = std::string(), bool force_no_extrusion = false);
     std::string retract(bool before_wipe = false, double retract_length = 0);
     std::string retract_for_toolchange(bool before_wipe = false, double retract_length = 0);
     // extra_retract adds a small over-extrusion to the deretract move (PETG pre-extrusion).
     // Default 0 -> byte-identical to the plain deretract.
     std::string unretract(float extra_retract = 0.f);
     // do lift instantly
-    virtual std::string eager_lift(const LiftType type);
+    std::string eager_lift(const LiftType type);
     // record a lift request, do realy lift in next travel
-    virtual std::string lazy_lift(LiftType lift_type = LiftType::NormalLift, bool spiral_vase = false);
+    std::string lazy_lift(LiftType lift_type = LiftType::NormalLift, bool spiral_vase = false);
     std::string unlift();
     const Vec3d& get_position() const { return m_pos; }
     Vec3d&       get_position() { return m_pos; }
@@ -142,10 +164,28 @@ public:
     void set_build_volume_max(const Vec3d &max);
     bool has_axis_remap() const;
 
+    // Install the machine frame mapping.  Any axis remap / build volume already
+    // configured is carried over, so install order does not matter.
+    void set_kinematics(std::unique_ptr<MachineKinematics> kinematics);
+    const MachineKinematics& kinematics() const { return *m_kinematics; }
+
+    // Per-point first-layer test.  When set, travel speed selection asks it per
+    // destination point (in the writer's logical placed frame) instead of using
+    // the layer-coarse m_is_first_layer flag.  GCode installs it on belt printers
+    // with the same test its extrusions use (GCode::on_first_layer(point)), so a
+    // travel is judged against the belt surface exactly as the path it leads to.
+    using FirstLayerPointTest = std::function<bool(const Vec3d &point_logical)>;
+    void set_first_layer_point_test(FirstLayerPointTest test) { m_first_layer_point_test = std::move(test); }
+
+    // Force every lift to a plain vertical lift.  Spiral and slope lifts compute
+    // their slope in the logical frame and do not account for a machine mapping
+    // that couples axes.
+    void set_force_normal_lift(bool force) { m_force_normal_lift = force; }
+
     // Returns whether this flavor supports separate print and travel acceleration.
     static bool supports_separate_travel_acceleration(GCodeFlavor flavor);
 protected:
-    // Position/lift/offset state — accessible to subclasses (e.g. BeltGCodeWriter)
+    // Position/lift/offset state.
     Vec3d           m_pos = Vec3d::Zero();
     double          m_x_offset{ 0 };
     double          m_y_offset{ 0 };
@@ -156,20 +196,48 @@ protected:
     bool            m_is_current_pos_clear = false;
     double          m_current_speed;
 
-    virtual std::string _travel_to_z(double z, const std::string &comment);
+    std::string _travel_to_z(double z, const std::string &comment);
 
-    // Axis remap state — accessible to subclasses.
+    // Whether a destination gets first-layer treatment.  With a point test
+    // installed it decides; otherwise the layer-coarse m_is_first_layer flag does.
+    bool point_on_first_layer(const Vec3d &point_logical) const;
+
+    // True when a lift must be skipped because this mapping would emit the
+    // stored logical X/Y and that position is not yet known.
+    bool must_skip_lift_now() const;
+
+    // True when travel speed is selected per destination point rather than per
+    // layer. Set for writers that install a first-layer point test. The
+    // historical path emits the raw configured travel speed in the final branch
+    // of travel_to_xyz(), ignoring the first-layer selection computed at the top
+    // of that function; a point-test-driven writer uses the first-layer-aware
+    // value throughout. Both are preserved exactly -- unifying them would change
+    // emitted feedrates and belongs in its own commit.
+    bool uses_pointwise_travel_speed() const { return bool(m_first_layer_point_test); }
+
+    FirstLayerPointTest    m_first_layer_point_test;
+    bool                   m_force_normal_lift = false;
+
+    // The machine frame mapping.  Owns the axis-remap state that used to live
+    // here as m_remap_* / m_build_vol_max; the setters above forward to it.
+    // Never null: a CartesianKinematics at the identity remap reproduces the
+    // historical behaviour exactly.
+    std::unique_ptr<MachineKinematics> m_kinematics;
+
+    // Last configured remap / build volume, replayed onto a newly installed
+    // kinematics so set_kinematics() and the setters are order-independent.
     int             m_remap_x = 0;  // RemapAxis: 0=+X, 1=+Y, 2=+Z, 3=-X, etc.
     int             m_remap_y = 1;
     int             m_remap_z = 2;
     Vec3d           m_build_vol_max = Vec3d::Zero();
 
-    // Apply axis remap to a point. Returns pos unchanged if remap is identity.
+    // Apply the machine frame mapping to a point. Returns pos unchanged when the
+    // mapping is the identity.
     Vec3d apply_axis_remap(const Vec3d &pos) const;
 
     // Motion uses the global/base process variant until a filament becomes active.
-    // Protected so BeltGCodeWriter indexes the per-extruder speed options (travel_speed,
-    // travel_speed_z, initial_layer_travel_speed) exactly as the base writer does.
+    // Indexes the per-extruder speed options (travel_speed, travel_speed_z,
+    // initial_layer_travel_speed).
     size_t     m_cached_extruder_idx;
 
 private:
@@ -309,8 +377,14 @@ public:
     }
 
     std::string string() {
+        std::string out;
+        this->append_to(out);
+        return out;
+    }
+
+    void append_to(std::string &out) {
         *ptr_err.ptr ++ = '\n';
-        return std::string(this->buf, ptr_err.ptr - buf);
+        out.append(this->buf, ptr_err.ptr - buf);
     }
 
 protected:

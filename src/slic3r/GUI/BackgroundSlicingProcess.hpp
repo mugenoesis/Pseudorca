@@ -23,7 +23,11 @@
 #include "libslic3r/Format/SL1.hpp"
 #include "slic3r/Utils/PrintHost.hpp"
 #include "libslic3r/GCode/GCodeProcessor.hpp"
-#include "PartPlate.hpp"
+
+namespace Slic3r { class Polygon; }
+namespace Slic3r { class Print; }
+namespace Slic3r::GUI { class PartPlate; }
+namespace Slic3r::GUI { class Plater; }
 
 namespace boost { namespace filesystem { class path; } }
 
@@ -94,7 +98,7 @@ public:
 	~BackgroundSlicingProcess();
 
 	void set_fff_print(Print *print) { m_fff_print = print; }
-    void set_sla_print(SLAPrint *print) { m_sla_print = print; m_sla_print->set_printer(&m_sla_archive); }
+    void set_sla_print(SLAPrint *print) { m_sla_print = print; }
 	void set_thumbnail_cb(ThumbnailsGeneratorCallback cb) { m_thumbnail_cb = cb; }
 	void set_gcode_result(GCodeProcessorResult* result) { m_gcode_result = result; }
 
@@ -247,13 +251,14 @@ private:
 	GCodeProcessorResult     *m_gcode_result 		 = nullptr;
 	// Callback function, used to write thumbnails into gcode.
 	ThumbnailsGeneratorCallback m_thumbnail_cb 	     = nullptr;
-	SL1Archive                  m_sla_archive;
 		// Temporary G-code, there is one defined for the BackgroundSlicingProcess, differentiated from the other processes by a process ID.
 	std::string 				m_temp_output_path;
 	// Output path provided by the user. The output path may be set even if the slicing is running,
 	// but once set, it cannot be re-set.
 	std::string 				m_export_path;
 	bool 						m_export_path_on_removable_media = false;
+	// Read from the preferences when the export is scheduled, as the background thread may not read them.
+	bool 						m_export_statistics = false;
 	// Print host upload job to schedule after slicing is complete, used by schedule_upload(),
 	// empty by default (ie. no upload to schedule)
 	PrintHostJob                m_upload_job;
