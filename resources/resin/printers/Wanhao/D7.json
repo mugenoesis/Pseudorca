@@ -1,0 +1,23 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Wanhao D7",
+  "printer_technology": "SLA",
+  "printer_model": "D7",
+  "delay_after_exposure": "1",
+  "delay_before_exposure": "2.5",
+  "display_height": "68.5",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "2560",
+  "display_pixels_y": "1440",
+  "display_width": "120.96",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "60",
+  "light_pwm": "255",
+  "printable_height": "180",
+  "retract_speed": "150",
+  "sla_archive_format": "xmlcws"
+}

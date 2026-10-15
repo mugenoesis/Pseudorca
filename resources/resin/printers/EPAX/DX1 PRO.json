@@ -1,0 +1,23 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "EPAX DX1 PRO",
+  "printer_technology": "SLA",
+  "printer_model": "DX1 PRO",
+  "delay_after_exposure": "1",
+  "delay_before_exposure": "2.5",
+  "display_height": "89.6",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "4098",
+  "display_pixels_y": "2560",
+  "display_width": "143.43",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "100",
+  "light_pwm": "255",
+  "printable_height": "155",
+  "retract_speed": "150",
+  "sla_archive_format": "encryptedctb"
+}

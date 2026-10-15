@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Creality Halot One Plus CL-79",
+  "printer_technology": "SLA",
+  "printer_model": "Halot One Plus CL-79",
+  "delay_before_exposure": "2",
+  "display_height": "102.4",
+  "display_mirror_x": "0",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "4320",
+  "display_pixels_y": "2560",
+  "display_width": "172.8",
+  "gamma_correction": "1",
+  "lift_distance": "6",
+  "lift_speed": "80",
+  "light_pwm": "255",
+  "printable_height": "160",
+  "retract_speed": "150",
+  "sla_archive_format": "cxdlp"
+}

@@ -1,0 +1,17 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "FlashForge Foto 13.3",
+  "printer_technology": "SLA",
+  "printer_model": "Foto 13.3",
+  "display_height": "165",
+  "display_mirror_x": "0",
+  "display_mirror_y": "1",
+  "display_orientation": "landscape",
+  "display_pixels_x": "3842",
+  "display_pixels_y": "2171",
+  "display_width": "292",
+  "gamma_correction": "1",
+  "printable_height": "400",
+  "sla_archive_format": "svgx"
+}
