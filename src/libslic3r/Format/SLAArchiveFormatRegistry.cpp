@@ -10,6 +10,7 @@
 #include "AnycubicSLA.hpp"
 #include "AnycubicPW.hpp"
 #include "CTB.hpp"
+#include "SVGX.hpp"
 #include "CXDLP.hpp"
 #include "GOO.hpp"
 #include "ImageZip.hpp"
@@ -107,6 +108,14 @@ class Registry {
                 "cxdlp",
                 {},
                 [] (const auto &cfg) { return std::make_unique<CXDLPArchive>(cfg); },
+                nullptr
+            },
+            {
+                "SVGX",
+                L("FlashForge SVGX"),
+                "svgx",
+                {},
+                [] (const auto &cfg) { return std::make_unique<SVGXArchive>(cfg); },
                 nullptr
             },
             {
