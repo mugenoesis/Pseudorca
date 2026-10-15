@@ -8,6 +8,7 @@
 #include "SL1.hpp"
 #include "SL1_SVG.hpp"
 #include "AnycubicSLA.hpp"
+#include "CTB.hpp"
 #include "libslic3r/I18N.hpp"
 #include "SLAArchiveFormatRegistry.hpp"
 #include "libslic3r/Format/SLAArchiveReader.hpp"
@@ -46,6 +47,22 @@ class Registry {
                 [] (const std::string &fname, SLAImportQuality quality, const ProgrFn &progr) {
                     return std::make_unique<SL1_SVGReader>(fname, quality, progr);
                 }
+            },
+            {
+                "CTB",
+                L("Chitubox CTB (version 4)"),
+                "ctb",
+                {},
+                [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::Chitubox); },
+                nullptr             // no reader yet
+            },
+            {
+                "CTBGKTWO",
+                L("Chitubox CTB for the UniFormation GKtwo"),
+                "ctb",
+                {},
+                [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::GKtwo); },
+                nullptr
             },
             anycubic_sla_format("pwmo", "Photon Mono"),
             anycubic_sla_format("pwmx", "Photon Mono X"),
