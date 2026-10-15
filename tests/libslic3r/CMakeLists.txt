@@ -56,6 +56,7 @@ add_executable(${_TEST_NAME}_tests
     test_mesh_repair.cpp
     test_trianglemesh_slicer.cpp
     test_marchingsquares.cpp
+    test_marchingsquares_sla.cpp
     test_lay_on_face.cpp
     test_model.cpp
     test_utils.cpp
