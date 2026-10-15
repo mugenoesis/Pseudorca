@@ -19,6 +19,8 @@ DynamicPrintConfig resin_machine(const std::string &archive_format = "SL1")
 {
     DynamicPrintConfig cfg;
     cfg.set_key_value("printer_technology", new ConfigOptionEnum<PrinterTechnology>(ptSLA));
+    // Some formats (CXDLP) name the printer model in the file and refuse a name without a model code.
+    cfg.set_deserialize_strict("printer_model", "Halot One CL-60");
     cfg.set_deserialize_strict("display_width", "120");
     cfg.set_deserialize_strict("display_height", "68");
     cfg.set_deserialize_strict("display_pixels_x", "2560");

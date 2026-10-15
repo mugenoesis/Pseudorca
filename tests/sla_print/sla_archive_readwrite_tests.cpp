@@ -33,6 +33,7 @@ TEST_CASE("Archive export test", "[sla_archives]") {
 
         fullcfg.printer_technology.setInt(ptSLA); // FIXME this should be ensured
         fullcfg.set("sla_archive_format", entry.id);
+        fullcfg.set("printer_model", "Halot One CL-60");   // CXDLP files carry the model code
         fullcfg.set("supports_enable", false);
         fullcfg.set("pad_enable", false);
 

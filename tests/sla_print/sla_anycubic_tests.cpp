@@ -76,7 +76,7 @@ TEST_CASE("Anycubic runs round trip at the four bit precision", "[Anycubic]")
 TEST_CASE("The Anycubic formats are registered with their extensions", "[Anycubic]")
 {
     for (const char *id : {"pw0", "pwx", "pwmo", "pwmx", "pwms", "pmsq", "dlp", "pwma", "pm3", "pm3m", "pwmb", "dl2p", "pmx2",
-                           "pm3r", "pm3n", "pm5", "px6s", "pm5s", "m5sp"}) {
+                           "pm3r", "pm3n", "pm4n", "pm5", "px6s", "pm5s", "m5sp"}) {
         INFO(id);
         const ArchiveEntry *entry = get_archive_entry(id);
         REQUIRE(entry != nullptr);

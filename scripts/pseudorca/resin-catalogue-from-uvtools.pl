@@ -14,11 +14,11 @@ die "usage: $0 <ini dir> <output dir>\n" unless $src && $dst;
 # FILEFORMAT_ tag of the printer notes -> the id of the archive writer and whether it exists.
 my %writer = (
     'CTB' => 'CTB', 'ZIP' => 'ZIP', 'CXDLP' => 'CXDLP', 'SVGX' => 'SVGX', 'GKTWO.CTB' => 'CTBGKTWO', 'ENCRYPTED.CTB' => 'CTBENCRYPTED', 'GOO' => 'GOO', 'PHOTON' => 'CBDDLP',
-    'PWMO' => 'pwmo', 'PWMX' => 'pwmx', 'PWMS' => 'pwms', 'PHROZENZIP' => 'PHROZENZIP',
+    'PWMO' => 'pwmo', 'PWMX' => 'pwmx', 'PWMS' => 'pwms', 'PHROZENZIP' => 'PHROZENZIP', 'CHITUBOXZIP' => 'CHITUBOXZIP',
 );
 my %supported = map { $_ => 1 } values %writer;
 $supported{TINYMAKER} = 1;
-$supported{$_} = 1 for qw(pw0 pwx pwmo pwmx pwms pmsq dlp pwma pm3 pm3m pwmb dl2p pmx2 pm3r pm3n pm5 px6s pm5s m5sp);
+$supported{$_} = 1 for qw(pw0 pwx pwmo pwmx pwms pmsq dlp pwma pm3 pm3m pwmb dl2p pmx2 pm3r pm3n pm4n pm5 px6s pm5s m5sp);
 
 sub num { my $v = shift; return defined $v ? $v + 0 : undef }
 
@@ -44,7 +44,7 @@ for my $file (sort grep { /\.ini$/ } readdir $dh) {
     my ($vendor, $model) = split / /, $name, 2;
     $model //= $vendor;
     my $id = $writer{$tag // ''} // lc(($tag // 'none') =~ s/\.//gr);
-    $id = $vendor eq 'Phrozen' ? 'PHROZENZIP' : 'chituboxzip' if $id eq 'ZIP';
+    $id = $vendor eq 'Phrozen' ? 'PHROZENZIP' : $name =~ /Klipper/ ? 'klipperzip' : 'CHITUBOXZIP' if $id eq 'ZIP';
     my $ok = $supported{$id} ? 1 : 0;
 
     my %m = (
