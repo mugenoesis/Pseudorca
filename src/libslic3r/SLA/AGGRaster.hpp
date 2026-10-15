@@ -1,14 +1,11 @@
+///|/ Copyright (c) Prusa Research 2020 - 2022 Tomáš Mészáros @tamasmeszaros, Vojtěch Bubník @bubnikv
+///|/
+///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/
 #ifndef AGGRASTER_HPP
 #define AGGRASTER_HPP
 
-#include <cassert>
-#include <cstdint>
-#include <cstddef>
-#include <agg/agg_gamma_functions.h>
 #include <libslic3r/SLA/RasterBase.hpp>
-#include "libslic3r/Polygon.hpp"
-#include "libslic3r/Point.hpp"
-#include "libslic3r/libslic3r.h"
 #include "libslic3r/ExPolygon.hpp"
 
 // For rasterizing
@@ -22,8 +19,6 @@
 #include <agg/agg_scanline_p.h>
 #include <agg/agg_rasterizer_scanline_aa.h>
 #include <agg/agg_path_storage.h>
-#include <vector>
-#include <type_traits>
 
 namespace Slic3r {
 
@@ -49,6 +44,7 @@ public:
     using TColor = typename PixelRenderer::color_type;
     using TValue = typename TColor::value_type;
     using TPixel = typename PixelRenderer::pixel_type;
+    using TRawBuffer = agg::rendering_buffer;
 
 protected:
     

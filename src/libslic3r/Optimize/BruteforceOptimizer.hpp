@@ -1,12 +1,11 @@
+///|/ Copyright (c) Prusa Research 2020 - 2022 Tomáš Mészáros @tamasmeszaros
+///|/
+///|/ PrusaSlicer is released under the terms of the AGPLv3 or higher
+///|/
 #ifndef BRUTEFORCEOPTIMIZER_HPP
 #define BRUTEFORCEOPTIMIZER_HPP
 
-#include <cstddef>
-#include <array>
-#include <cmath>
-#include <functional>
 #include <libslic3r/Optimize/Optimizer.hpp>
-#include <limits>
 
 namespace Slic3r { namespace opt {
 
@@ -18,7 +17,9 @@ template<size_t N>
 long num_iter(const std::array<size_t, N> &idx, size_t gridsz)
 {
     long ret = 0;
-    for (size_t i = 0; i < N; ++i) ret += idx[i] * std::pow(gridsz, i);
+    for (size_t i = 0; i < N; ++i)
+        ret += idx[i] * std::pow(gridsz, i);
+
     return ret;
 }
 

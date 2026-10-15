@@ -339,6 +339,7 @@ struct MassProperties
 };
 // The solid a closed mesh bounds at unit density, whichever way its faces turn; nothing for a zero volume.
 MassProperties its_mass_properties(const indexed_triangle_set &its);
+float its_area(const indexed_triangle_set &its);
 float its_average_edge_length(const indexed_triangle_set &its);
 
 void its_merge(indexed_triangle_set &A, const indexed_triangle_set &B);
@@ -392,6 +393,22 @@ inline BoundingBoxf3 bounding_box(const indexed_triangle_set& its)
     for (const Vec3f &p : its.vertices) {
         bmin = p.cwiseMin(bmin);
         bmax = p.cwiseMax(bmax);
+    }
+
+    return {bmin.cast<double>(), bmax.cast<double>()};
+}
+
+inline BoundingBoxf3 bounding_box(const indexed_triangle_set& its, const Transform3f &tr)
+{
+    if (its.vertices.empty())
+        return {};
+
+    Vec3f bmin = tr * its.vertices.front(), bmax = tr * its.vertices.front();
+
+    for (const Vec3f &p : its.vertices) {
+        Vec3f pp = tr * p;
+        bmin = pp.cwiseMin(bmin);
+        bmax = pp.cwiseMax(bmax);
     }
 
     return {bmin.cast<double>(), bmax.cast<double>()};
