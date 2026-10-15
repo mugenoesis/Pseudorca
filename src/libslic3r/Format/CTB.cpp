@@ -36,6 +36,16 @@ constexpr size_t LayerDefExSize   = 84;
 constexpr size_t ExtensionSize    = 84 + 380;   // fields up to the resin address, then reserved space
 constexpr uint64_t PageSize       = uint64_t(1) << 32;
 
+constexpr uint32_t MagicCbddlp = 0x12FD0019;
+constexpr uint32_t CbddlpVersion = 2;
+constexpr uint32_t CbddlpMaxRun = 0x7D;    // what Chitubox writes: runs are cut at 125 pixels
+
+uint8_t plane_threshold(uint32_t plane)
+{
+    return cbddlp_planes == 1 ? uint8_t(127) : uint8_t(256 / cbddlp_planes * plane - 1);
+}
+
+
 const char *const Disclaimer =
     "Layout and record format for the ctb and cbddlp file types are the copyrighted programs or codes of CBD Technology "
     "(China) Inc..The Customer or User shall not in any manner reproduce, distribute, modify, decompile, disassemble, "
@@ -244,6 +254,150 @@ void layer_cipher(uint8_t *data, size_t size, uint32_t seed, uint32_t layer_inde
     }
 }
 
+std::vector<uint8_t> cbddlp_encode(const uint8_t *pixels, size_t count)
+{
+    std::vector<uint8_t> blob;
+    for (uint32_t plane = 0; plane < cbddlp_planes; ++plane) {
+        const uint8_t threshold = plane_threshold(plane);
+        std::vector<uint8_t> rle;
+        size_t i = 0;
+        while (i < count) {
+            const bool on = pixels[i] >= threshold;
+            size_t j = i + 1;
+            while (j < count && (pixels[j] >= threshold) == on)
+                ++j;
+            for (size_t left = j - i; left > 0;) {
+                const size_t n = std::min<size_t>(left, CbddlpMaxRun);
+                rle.push_back(uint8_t(n | (on ? 0x80 : 0)));
+                left -= n;
+            }
+            i = j;
+        }
+        const uint32_t size = uint32_t(rle.size());
+        blob.insert(blob.end(), reinterpret_cast<const uint8_t*>(&size), reinterpret_cast<const uint8_t*>(&size) + 4);
+        blob.insert(blob.end(), rle.begin(), rle.end());
+    }
+    return blob;
+}
+
+bool cbddlp_split(const std::vector<uint8_t> &blob, std::vector<std::vector<uint8_t>> &planes)
+{
+    planes.clear();
+    size_t at = 0;
+    for (uint32_t plane = 0; plane < cbddlp_planes; ++plane) {
+        uint32_t size;
+        if (at + 4 > blob.size())
+            return false;
+        std::memcpy(&size, &blob[at], 4);
+        at += 4;
+        if (size > blob.size() - at)
+            return false;
+        planes.emplace_back(blob.begin() + at, blob.begin() + at + size);
+        at += size;
+    }
+    return at == blob.size();
+}
+
+bool cbddlp_decode(const std::vector<std::vector<uint8_t>> &planes, uint8_t *pixels, size_t count)
+{
+    std::fill(pixels, pixels + count, uint8_t(0));
+    for (const std::vector<uint8_t> &rle : planes) {
+        size_t px = 0;
+        for (uint8_t code : rle) {
+            const size_t n = code & 0x7F;
+            if (n > count - px)
+                return false;
+            if (code & 0x80)
+                for (size_t k = 0; k < n; ++k)
+                    ++pixels[px + k];
+            px += n;
+        }
+        if (px != count)
+            return false;
+    }
+    const size_t step = 256 / cbddlp_planes;
+    for (size_t i = 0; i < count; ++i) {
+        const size_t gray = size_t(pixels[i]) * step;
+        pixels[i] = uint8_t(gray > 0 ? gray - 1 : 0);
+    }
+    return true;
+}
+
+std::vector<uint8_t> build_cbddlp(const FileParams &p, const std::vector<std::vector<uint8_t>> &images)
+{
+    if (images.size() != p.layers.size())
+        throw ExportError("The cbddlp file needs one image for each layer.");
+
+    const size_t layer_count = p.layers.size();
+    Buffer b;
+
+    b.u32(MagicCbddlp);
+    b.u32(CbddlpVersion);
+    b.f32(p.bed_x_mm); b.f32(p.bed_y_mm); b.f32(p.bed_z_mm);
+    b.zeros(8);
+    b.f32(layer_count ? p.layers.back().z_mm : 0.f);
+    b.f32(p.layer_height_mm);
+    b.f32(p.exposure_s);
+    b.f32(p.bottom_exposure_s);
+    b.f32(p.light_off_s);
+    b.u32(p.bottom_layer_count);
+    b.u32(p.res_x);
+    b.u32(p.res_y);
+    const size_t h_large  = b.hole();
+    const size_t h_layers = b.hole();
+    b.u32(uint32_t(layer_count));
+    const size_t h_small  = b.hole();
+    b.u32(p.print_time_s);
+    b.u32(p.projector_type);
+    const size_t h_params = b.hole();
+    b.u32(uint32_t(PrintParamsSize));
+    b.u32(cbddlp_planes);
+    b.u16(p.light_pwm);
+    b.u16(p.bottom_light_pwm);
+    b.u32(0);                       // not encrypted
+    b.u32(0);                       // no slicer info in this version
+    b.u32(0);
+    if (b.pos() != HeaderSize)
+        throw ExportError("cbddlp header size mismatch.");
+
+    b.patch(h_large, to_u32(b.pos()));
+    write_preview(b, p.large_preview, 400, 300);
+    b.patch(h_small, to_u32(b.pos()));
+    write_preview(b, p.small_preview, 200, 125);
+
+    b.patch(h_params, to_u32(b.pos()));
+    b.f32(p.bottom_lift_mm); b.f32(p.bottom_lift_mm_min);
+    b.f32(p.lift_mm); b.f32(p.lift_mm_min);
+    b.f32(p.retract_mm_min);
+    b.f32(p.volume_ml); b.f32(p.weight_g); b.f32(p.cost);
+    b.f32(p.bottom_light_off_s);
+    b.f32(p.light_off_s);
+    b.u32(p.bottom_layer_count);
+    b.zeros(16);
+
+    // One table of layer definitions for each bit plane, then the plane images.
+    b.patch(h_layers, to_u32(b.pos()));
+    const size_t table_at = b.pos();
+    b.zeros(LayerDefSize * layer_count * cbddlp_planes);
+
+    for (size_t i = 0; i < layer_count; ++i) {
+        std::vector<std::vector<uint8_t>> planes;
+        if (! cbddlp_split(images[i], planes))
+            throw ExportError("A cbddlp layer image is malformed.");
+        for (uint32_t k = 0; k < cbddlp_planes; ++k) {
+            const LayerParams &l = p.layers[i];
+            Buffer def;
+            def.f32(l.z_mm); def.f32(l.exposure_s); def.f32(l.light_off_s);
+            def.u32(to_u32(b.pos())); def.u32(to_u32(planes[k].size())); def.u32(0);
+            def.u32(uint32_t(LayerDefSize)); def.zeros(8);
+            const std::vector<uint8_t> bytes = def.take();
+            std::memcpy(b.data(table_at + LayerDefSize * (k * layer_count + i)), bytes.data(), bytes.size());
+            b.bytes(planes[k].data(), planes[k].size());
+        }
+    }
+    return b.take();
+}
+
 std::vector<uint8_t> build_ctb_v4(const FileParams &p, const std::vector<std::vector<uint8_t>> &images)
 {
     if (images.size() != p.layers.size())
@@ -396,9 +550,13 @@ namespace {
 
 struct CTBRasterEncoder
 {
+    bool cbddlp { false };
+
     sla::EncodedRaster operator()(const void *ptr, size_t w, size_t h, size_t num_components)
     {
         // One 8 bit component: the grayscale, anti aliased layer image.
+        if (cbddlp)
+            return sla::EncodedRaster(ctb::cbddlp_encode(static_cast<const uint8_t*>(ptr), w * h * num_components), "cbddlp");
         std::vector<uint8_t> out = ctb::rle_encode(static_cast<const uint8_t*>(ptr), w * h * num_components);
         return sla::EncodedRaster(std::move(out), "ctb");
     }
@@ -457,7 +615,7 @@ std::unique_ptr<sla::RasterBase> CTBArchive::create_raster() const
 
 sla::RasterEncoder CTBArchive::get_encoder() const
 {
-    return CTBRasterEncoder{};
+    return CTBRasterEncoder{ m_dialect == CTBDialect::Cbddlp };
 }
 
 void CTBArchive::export_print(const std::string     fname,
@@ -536,7 +694,7 @@ void CTBArchive::export_print(const std::string     fname,
         images.emplace_back(data, data + m_layers[i].size());
     }
 
-    const std::vector<uint8_t> file = ctb::build_ctb_v4(p, images);
+    const std::vector<uint8_t> file = m_dialect == CTBDialect::Cbddlp ? ctb::build_cbddlp(p, images) : ctb::build_ctb_v4(p, images);
     std::ofstream out(fname, std::ios::binary | std::ios::out | std::ios::trunc);
     if (! out)
         throw ExportError("Cannot open " + fname + " for writing.");

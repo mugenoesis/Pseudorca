@@ -75,6 +75,14 @@ class Registry {
                 nullptr
             },
             {
+                "CBDDLP",
+                L("Chitubox CBDDLP / Photon (version 2)"),
+                "cbddlp",
+                {"photon"},
+                [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::Cbddlp); },
+                nullptr
+            },
+            {
                 "TINYMAKER",
                 L("TinyMaker image folder (zip of numbered PNGs)"),
                 "zip",
