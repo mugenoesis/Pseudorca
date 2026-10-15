@@ -10,6 +10,7 @@
 #include "AnycubicSLA.hpp"
 #include "AnycubicPW.hpp"
 #include "CTB.hpp"
+#include "CXDLP.hpp"
 #include "GOO.hpp"
 #include "ImageZip.hpp"
 #include "TinyMaker.hpp"
@@ -98,6 +99,14 @@ class Registry {
                 "zip",
                 {},
                 [] (const auto &cfg) { return std::make_unique<PhrozenZipArchive>(cfg); },
+                nullptr
+            },
+            {
+                "CXDLP",
+                L("Creality CXDLP (version 3)"),
+                "cxdlp",
+                {},
+                [] (const auto &cfg) { return std::make_unique<CXDLPArchive>(cfg); },
                 nullptr
             },
             {

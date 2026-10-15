@@ -13,7 +13,7 @@ die "usage: $0 <ini dir> <output dir>\n" unless $src && $dst;
 
 # FILEFORMAT_ tag of the printer notes -> the id of the archive writer and whether it exists.
 my %writer = (
-    'CTB' => 'CTB', 'ZIP' => 'ZIP', 'GKTWO.CTB' => 'CTBGKTWO', 'ENCRYPTED.CTB' => 'CTBENCRYPTED', 'GOO' => 'GOO', 'PHOTON' => 'CBDDLP',
+    'CTB' => 'CTB', 'ZIP' => 'ZIP', 'CXDLP' => 'CXDLP', 'GKTWO.CTB' => 'CTBGKTWO', 'ENCRYPTED.CTB' => 'CTBENCRYPTED', 'GOO' => 'GOO', 'PHOTON' => 'CBDDLP',
     'PWMO' => 'pwmo', 'PWMX' => 'pwmx', 'PWMS' => 'pwms', 'PHROZENZIP' => 'PHROZENZIP',
 );
 my %supported = map { $_ => 1 } values %writer;
