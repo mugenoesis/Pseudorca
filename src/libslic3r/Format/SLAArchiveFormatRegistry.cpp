@@ -8,6 +8,7 @@
 #include "SL1.hpp"
 #include "SL1_SVG.hpp"
 #include "AnycubicSLA.hpp"
+#include "AnycubicPW.hpp"
 #include "CTB.hpp"
 #include "GOO.hpp"
 #include "ImageZip.hpp"
@@ -107,9 +108,25 @@ class Registry {
                 [] (const auto &cfg) { return std::make_unique<TinyMakerArchive>(cfg); },
                 nullptr
             },
-            anycubic_sla_format("pwmo", "Photon Mono"),
-            anycubic_sla_format("pwmx", "Photon Mono X"),
-            anycubic_sla_format("pwms", "Photon Mono SE"),
+            anycubic_pw_format("pw0",  "Photon Zero",                         1,   1),
+            anycubic_pw_format("pwx",  "Photon X",                            1,   1),
+            anycubic_pw_format("pwmo", "Photon Mono",                         1,   516),
+            anycubic_pw_format("pwmx", "Photon Mono X",                       1,   516),
+            anycubic_pw_format("pwms", "Photon Mono SE",                      1,   516),
+            anycubic_pw_format("pmsq", "Photon Mono SQ",                      516, 516),
+            anycubic_pw_format("dlp",  "Photon Ultra",                        516, 516),
+            anycubic_pw_format("pwma", "Photon Mono 4K",                      516, 516),
+            anycubic_pw_format("pm3",  "Photon M3",                           516, 516),
+            anycubic_pw_format("pm3m", "Photon M3 Max",                       516, 516),
+            anycubic_pw_format("pwmb", "Photon Mono X 6K / Photon M3 Plus",   516, 517),
+            anycubic_pw_format("dl2p", "Photon D2",                           517, 517),
+            anycubic_pw_format("pmx2", "Photon Mono X2",                      517, 517),
+            anycubic_pw_format("pm3r", "Photon M3 Premium",                   517, 517),
+            anycubic_pw_format("pm3n", "Photon Mono 2",                       517, 517),
+            anycubic_pw_format("pm5",  "Photon Mono M5",                      517, 517),
+            anycubic_pw_format("px6s", "Photon Mono X 6Ks",                   517, 517),
+            anycubic_pw_format("pm5s", "Photon Mono M5s",                     518, 518),
+            anycubic_pw_format("m5sp", "Photon Mono M5s Pro",                 518, 518),
 
             /**
                 // Supports only ANYCUBIC_SLA_VERSION_1

@@ -537,6 +537,8 @@ set(lisbslic3r_sources
     Format/AnycubicSLA.cpp
     Format/CTB.cpp
     Format/CTB.hpp
+    Format/AnycubicPW.cpp
+    Format/AnycubicPW.hpp
     Format/ImageZip.cpp
     Format/ImageZip.hpp
     Format/GOO.cpp
