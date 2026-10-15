@@ -415,11 +415,11 @@ TEST_CASE("A built CTB file is deterministic", "[CTB]")
 
 TEST_CASE("The CTB archives are registered", "[CTB]")
 {
-    for (const char *id : {"CTB", "CTBGKTWO"}) {
+    for (const char *id : {"CTB", "CTBGKTWO", "CBDDLP"}) {
         INFO(id);
         const ArchiveEntry *entry = get_archive_entry(id);
         REQUIRE(entry != nullptr);
-        CHECK(std::string(entry->ext) == "ctb");
+        CHECK(std::string(entry->ext) == (std::string(id) == "CBDDLP" ? "cbddlp" : "ctb"));
         CHECK(entry->wrfactoryfn);
     }
 }
@@ -516,4 +516,85 @@ TEST_CASE("A cube sliced to CTB is a valid file with the print's settings", "[CT
     const double left = first - (mid.begin() + row * 2560);
     const double right = (mid.begin() + (row + 1) * 2560) - last.base();
     CHECK(left == Catch::Approx(right).margin(3));
+}
+
+TEST_CASE("The cbddlp bit planes match the known encodings", "[CTB][Cbddlp]")
+{
+    // Thresholds of the four planes are 255, 63, 127, 191: a plane is lit where the pixel reaches its threshold.
+    const std::vector<uint8_t> px{0, 255, 255, 255, 0, 100};
+    const std::vector<uint8_t> blob = ctb::cbddlp_encode(px.data(), px.size());
+    std::vector<std::vector<uint8_t>> planes;
+    REQUIRE(ctb::cbddlp_split(blob, planes));
+    REQUIRE(planes.size() == 4);
+    CHECK(planes[0] == std::vector<uint8_t>{0x01, 0x83, 0x02});        // >= 255: off 1, on 3, off 2
+    CHECK(planes[1] == std::vector<uint8_t>{0x01, 0x83, 0x01, 0x81});  // >= 63: the 100 is lit
+    CHECK(planes[2] == std::vector<uint8_t>{0x01, 0x83, 0x02});        // >= 127
+    CHECK(planes[3] == std::vector<uint8_t>{0x01, 0x83, 0x02});        // >= 191
+
+    // A long run is cut at 125 pixels.
+    const std::vector<uint8_t> black(300, 0);
+    REQUIRE(ctb::cbddlp_split(ctb::cbddlp_encode(black.data(), black.size()), planes));
+    CHECK(planes[0] == std::vector<uint8_t>{0x7D, 0x7D, 0x32});
+}
+
+TEST_CASE("A cbddlp layer decodes to its four gray levels", "[CTB][Cbddlp]")
+{
+    std::mt19937 rng(11);
+    std::vector<uint8_t> px(5000);
+    for (size_t i = 0; i < px.size(); ++i)
+        px[i] = (i / 50) % 3 == 0 ? uint8_t(rng()) : ((i / 50) % 3 == 1 ? 0 : 255);
+    std::vector<std::vector<uint8_t>> planes;
+    REQUIRE(ctb::cbddlp_split(ctb::cbddlp_encode(px.data(), px.size()), planes));
+    std::vector<uint8_t> out(px.size());
+    REQUIRE(ctb::cbddlp_decode(planes, out.data(), out.size()));
+    for (size_t i = 0; i < px.size(); ++i) {
+        // black stays black, white stays white, the rest lands on the closest step below
+        if (px[i] == 0) REQUIRE(out[i] == 0);
+        else if (px[i] == 255) REQUIRE(out[i] == 255);
+        else REQUIRE(int(px[i]) - int(out[i]) < 64);
+    }
+}
+
+TEST_CASE("A cube sliced to cbddlp is a version 2 file with one table per bit plane", "[CTB][Cbddlp]")
+{
+    boost::filesystem::path dir = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path("cbddlp-job-%%%%%%%%");
+    struct Cleanup { boost::filesystem::path p; ~Cleanup() { boost::system::error_code ec; boost::filesystem::remove_all(p, ec); } } cleanup{dir};
+
+    const SLAJobResult res = slice_cube_to("CBDDLP", dir);
+    REQUIRE(res.code == CLI_SUCCESS);
+    CHECK(boost::filesystem::path(res.archive_path).filename() == "plate_1.cbddlp");
+
+    const Bytes f = read_file(res.archive_path);
+    CHECK(u32_at(f, 0) == 0x12FD0019u);
+    CHECK(u32_at(f, 4) == 2u);
+    CHECK(f32_at(f, 8) == Catch::Approx(120.f));
+    CHECK(f32_at(f, 12) == Catch::Approx(68.f));
+    CHECK(f32_at(f, 16) == Catch::Approx(150.f));
+    CHECK(f32_at(f, 32) == Catch::Approx(0.05f));      // layer height
+    CHECK(f32_at(f, 36) == Catch::Approx(2.5f));
+    CHECK(f32_at(f, 40) == Catch::Approx(30.f));
+    CHECK(u32_at(f, 48) == 3u);                        // bottom layers
+    const uint32_t res_x = u32_at(f, 52), res_y = u32_at(f, 56);
+    CHECK(res_x == 2560u); CHECK(res_y == 1440u);
+    const uint32_t layers_at = u32_at(f, 64), layer_count = u32_at(f, 68);
+    CHECK(layer_count == res.layer_count);
+    CHECK(u32_at(f, 92) == 4u);                        // anti alias level = bit planes
+    CHECK(u32_at(f, 100) == 0u);                       // not encrypted
+    CHECK(u32_at(f, 104) == 0u);                       // no slicer info
+
+    // The middle layer: decode its four planes into a picture of the 20 mm square.
+    const size_t mid = layer_count / 2;
+    std::vector<std::vector<uint8_t>> planes;
+    for (uint32_t k = 0; k < 4; ++k) {
+        const size_t def = layers_at + 36 * (size_t(k) * layer_count + mid);
+        const uint32_t addr = u32_at(f, def + 12), size = u32_at(f, def + 16);
+        REQUIRE(addr + size <= f.size());
+        planes.emplace_back(f.begin() + addr, f.begin() + addr + size);
+        CHECK(u32_at(f, def + 24) == 36u);
+        if (k == 0) CHECK(f32_at(f, def + 4) == Catch::Approx(2.5f));
+    }
+    Bytes img(size_t(res_x) * res_y);
+    REQUIRE(ctb::cbddlp_decode(planes, img.data(), img.size()));
+    const double lit = std::count_if(img.begin(), img.end(), [](uint8_t v) { return v > 127; });
+    CHECK(lit == Catch::Approx((20. / (120. / 2560)) * (20. / (68. / 1440))).epsilon(0.02));
 }
