@@ -17,13 +17,17 @@ file(TO_NATIVE_PATH "${TEST_DATA_DIR}" TEST_DATA_DIR)
 set(PROFILES_DIR ${CMAKE_SOURCE_DIR}/resources/profiles)
 file(TO_NATIVE_PATH "${PROFILES_DIR}" PROFILES_DIR)
 
+# The resin printer catalogue.
+set(RESIN_DIR ${CMAKE_SOURCE_DIR}/resources/resin)
+file(TO_NATIVE_PATH "${RESIN_DIR}" RESIN_DIR)
+
 include(CTest)
 include(Catch)
 
 set(CATCH_EXTRA_ARGS "" CACHE STRING "Extra arguments for catch2 test suites.") # Unknown if this still works and/or should be replaced with something else.
 
 add_library(test_common INTERFACE)
-target_compile_definitions(test_common INTERFACE TEST_DATA_DIR=R"\(${TEST_DATA_DIR}\)" PROFILES_DIR=R"\(${PROFILES_DIR}\)" CATCH_CONFIG_FAST_COMPILE)
+target_compile_definitions(test_common INTERFACE TEST_DATA_DIR=R"\(${TEST_DATA_DIR}\)" PROFILES_DIR=R"\(${PROFILES_DIR}\)" RESIN_DIR=R"\(${RESIN_DIR}\)" CATCH_CONFIG_FAST_COMPILE)
 target_include_directories(test_common INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (APPLE)

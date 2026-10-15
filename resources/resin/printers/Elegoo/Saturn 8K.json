@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Elegoo Saturn 8K",
+  "printer_technology": "SLA",
+  "printer_model": "Saturn 8K",
+  "delay_after_exposure": "0",
+  "display_height": "123.12",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "7680",
+  "display_pixels_y": "4320",
+  "display_width": "218.88",
+  "gamma_correction": "1",
+  "lift_distance": "7",
+  "lift_speed": "70",
+  "light_pwm": "255",
+  "printable_height": "210",
+  "retract_speed": "210",
+  "sla_archive_format": "encryptedctb"
+}

@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "QIDI S-Box",
+  "printer_technology": "SLA",
+  "printer_model": "S-Box",
+  "delay_after_exposure": "0",
+  "display_height": "216.576",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "1600",
+  "display_pixels_y": "2560",
+  "display_width": "135.36",
+  "gamma_correction": "1",
+  "lift_distance": "7",
+  "lift_speed": "65",
+  "light_pwm": "255",
+  "printable_height": "200",
+  "retract_speed": "65",
+  "sla_archive_format": "CTB"
+}

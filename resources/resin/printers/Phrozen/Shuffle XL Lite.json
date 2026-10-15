@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Phrozen Shuffle XL Lite",
+  "printer_technology": "SLA",
+  "printer_model": "Shuffle XL Lite",
+  "delay_after_exposure": "0",
+  "display_height": "120",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "2560",
+  "display_pixels_y": "1600",
+  "display_width": "192",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "65",
+  "light_pwm": "255",
+  "printable_height": "200",
+  "retract_speed": "150",
+  "sla_archive_format": "zip"
+}

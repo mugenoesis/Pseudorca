@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Anycubic Photon D2",
+  "printer_technology": "SLA",
+  "printer_model": "Photon D2",
+  "delay_before_exposure": "2.5",
+  "display_height": "73.44",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "2560",
+  "display_pixels_y": "1440",
+  "display_width": "130.56",
+  "gamma_correction": "1",
+  "lift_distance": "8",
+  "lift_speed": "150",
+  "light_pwm": "255",
+  "printable_height": "165",
+  "retract_speed": "150",
+  "sla_archive_format": "dl2p"
+}

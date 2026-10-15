@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Concepts3D Athena 12K",
+  "printer_technology": "SLA",
+  "printer_model": "Athena 12K",
+  "delay_before_exposure": "1",
+  "display_height": "122.88",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "11520",
+  "display_pixels_y": "5120",
+  "display_width": "218.88",
+  "gamma_correction": "1",
+  "lift_distance": "8",
+  "lift_speed": "120",
+  "light_pwm": "255",
+  "printable_height": "245",
+  "retract_speed": "120",
+  "sla_archive_format": "nanodlp"
+}

@@ -1,0 +1,22 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Anycubic Photon P1 Max",
+  "printer_technology": "SLA",
+  "printer_model": "Photon P1 Max",
+  "delay_before_exposure": "2.5",
+  "display_height": "214.272",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "11520",
+  "display_pixels_y": "8640",
+  "display_width": "285.696",
+  "gamma_correction": "0",
+  "lift_distance": "8",
+  "lift_speed": "120",
+  "light_pwm": "255",
+  "printable_height": "300",
+  "retract_speed": "120",
+  "sla_archive_format": "pp1m"
+}

@@ -104,7 +104,7 @@ SLAJobResult run_sla_job(Model &model, const SLAJobParams &params)
     const char *ext = get_default_extension(res.archive_format.c_str());
     const auto &registry = registered_sla_archives();
     if (registry.find(ArchiveEntry{res.archive_format.c_str()}) == registry.end())
-        return fail(CLI_CONFIG_FILE_ERROR, "Unknown resin archive format: " + res.archive_format);
+        return fail(CLI_CONFIG_FILE_ERROR, "Unknown resin archive format: " + res.archive_format + " (no writer for it yet)");
 
     if (! place_on_display(model, width, height, params.keep_positions))
         return fail(CLI_OBJECT_ARRANGE_FAILED, "The objects do not fit on the printer's display.");

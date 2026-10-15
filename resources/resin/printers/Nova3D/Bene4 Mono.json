@@ -1,0 +1,23 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Nova3D Bene4 Mono",
+  "printer_technology": "SLA",
+  "printer_model": "Bene4 Mono",
+  "delay_after_exposure": "1",
+  "delay_before_exposure": "2.5",
+  "display_height": "129.998",
+  "display_mirror_x": "0",
+  "display_mirror_y": "1",
+  "display_orientation": "landscape",
+  "display_pixels_x": "1566",
+  "display_pixels_y": "2549",
+  "display_width": "79.865",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "120",
+  "light_pwm": "255",
+  "printable_height": "150",
+  "retract_speed": "120",
+  "sla_archive_format": "rgbcws"
+}
