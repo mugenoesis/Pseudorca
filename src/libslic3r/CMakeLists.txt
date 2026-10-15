@@ -537,6 +537,8 @@ set(lisbslic3r_sources
     Format/AnycubicSLA.cpp
     Format/CTB.cpp
     Format/CTB.hpp
+    Format/TinyMaker.cpp
+    Format/TinyMaker.hpp
     Format/SLAArchiveFormatRegistry.hpp
     Format/SLAArchiveFormatRegistry.cpp
     BoostAdapter.hpp

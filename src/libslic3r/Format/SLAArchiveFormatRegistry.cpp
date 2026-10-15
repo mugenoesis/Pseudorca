@@ -9,6 +9,7 @@
 #include "SL1_SVG.hpp"
 #include "AnycubicSLA.hpp"
 #include "CTB.hpp"
+#include "TinyMaker.hpp"
 #include "libslic3r/I18N.hpp"
 #include "SLAArchiveFormatRegistry.hpp"
 #include "libslic3r/Format/SLAArchiveReader.hpp"
@@ -62,6 +63,14 @@ class Registry {
                 "ctb",
                 {},
                 [] (const auto &cfg) { return std::make_unique<CTBArchive>(cfg, CTBDialect::GKtwo); },
+                nullptr
+            },
+            {
+                "TINYMAKER",
+                L("TinyMaker image folder (zip of numbered PNGs)"),
+                "zip",
+                {},
+                [] (const auto &cfg) { return std::make_unique<TinyMakerArchive>(cfg); },
                 nullptr
             },
             anycubic_sla_format("pwmo", "Photon Mono"),
