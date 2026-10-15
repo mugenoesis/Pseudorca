@@ -5,6 +5,9 @@
 #include "../Polygon.hpp"
 #include "../Slicing.hpp"
 #include "../PrintConfig.hpp"
+#include <cstddef>
+#include <functional>
+#include <vector>
 
 namespace Slic3r {
 
@@ -76,15 +79,5 @@ private:
     // If belt_surface=true, returns the belt side; otherwise the valid (complement) side.
     Polygons half_plane(coordf_t print_z, bool belt_surface) const;
 };
-
-// Number of virtual "belt raft" layers the organic tree-support pipeline
-// prepends below a belt-printer object so branches can grow down to the
-// tilted belt surface instead of stopping at the object's first layer; 0 when
-// that mode isn't active. `extra_depth` (mm) deepens it beyond the default.
-// TreeModelVolumes (anti_overhang shift and m_raft_layers) and
-// generate_support_areas() all index the same combined raft+object layer
-// space, so they must all use one count from here -- a mismatch silently
-// shifts one side's per-layer data against the other's.
-size_t belt_organic_raft_layer_count(const PrintObject &print_object, double extra_depth = 0.);
 
 } // namespace Slic3r

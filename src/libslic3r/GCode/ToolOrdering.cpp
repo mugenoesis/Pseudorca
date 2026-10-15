@@ -1,4 +1,9 @@
+#include "libslic3r/Exception.hpp"
+#include "libslic3r/CustomGCode.hpp"
+#include "libslic3r/Config.hpp"
 #include "ExtrusionEntity.hpp"
+#include "libslic3r/ObjectID.hpp"
+#include "libslic3r/FilamentGroup.hpp"
 #include "Print.hpp"
 #include "ToolOrdering.hpp"
 #include "Layer.hpp"
@@ -9,11 +14,24 @@
 #include "MultiNozzleUtils.hpp"
 #include "FilamentMixer.hpp"
 #include "LocalesUtils.hpp"
+#include "libslic3r/PrintConfig.hpp"
 #include "Utils.hpp"
 #include "format.hpp"
 #include "I18N.hpp"
+#include "../BeltBrim.hpp"
 
 #include <boost/log/trivial.hpp>
+#include <vector>
+#include <string>
+#include <utility>
+#include <cmath>
+#include <cstdlib>
+#include <optional>
+#include <functional>
+#include <exception>
+#include <memory>
+#include <tuple>
+#include <iostream>
 
 // #define SLIC3R_DEBUG
 
@@ -35,6 +53,11 @@
 #include <unordered_map>
 
 #include <libslic3r.h>
+#include "libslic3r/ExPolygon.hpp"
+#include "libslic3r/ExtrusionEntityCollection.hpp"
+#include "libslic3r/Model.hpp"
+#include "libslic3r/Polygon.hpp"
+#include "libslic3r/SurfaceCollection.hpp"
 
 namespace Slic3r {
 
@@ -1000,7 +1023,6 @@ void ToolOrdering::collect_extruders(const PrintObject &object, const std::vecto
                 continue;
             LayerTools &layer_tools = this->tools_for_layer(band.print_z);
             layer_tools.extruders.push_back(brim_filament);
-            layer_tools.has_belt_brim = true;
         }
     }
 
@@ -1019,7 +1041,6 @@ void ToolOrdering::collect_extruders(const PrintObject &object, const std::vecto
                 continue;
             LayerTools &layer_tools = this->tools_for_layer(object.layers()[i]->print_z);
             layer_tools.extruders.push_back(brim_filament);
-            layer_tools.has_belt_brim = true;
         }
     }
 
@@ -1068,8 +1089,8 @@ void ToolOrdering::fill_wipe_tower_partitions(const PrintConfig &config, coordf_
     // The `print_z < object_bottom_z` clause reads "below the object" as "raft
     // gap".  On a belt printer that is wrong: the brim apron legitimately prints
     // below the object's first layer, and treating those layers as raft would put a
-    // wipe tower at negative Z.  Belt brim and the prime tower are mutually
-    // exclusive (rejected in Print::validate()), so simply drop the clause there.
+    // wipe tower at negative Z.  A belt printer never prints the classic
+    // prime tower (Print::has_wipe_tower()), so simply drop the clause there.
     //
     // Gate on config.belt_printer, NOT on has_belt_brim: every layer below the
     // object bottom on a belt printer is legitimately a sub-object stream - brim
@@ -1527,7 +1548,6 @@ static FilamentGroupContext build_filament_group_context(
     FilamentMapMode                                  mode,
     const std::unordered_map<int, int>&              nozzle_status)
 {
-    using namespace MultiNozzleUtils;
     using namespace FilamentGroupUtils;
 
     FilamentGroupContext context;
@@ -1626,7 +1646,7 @@ static FilamentGroupContext build_filament_group_context(
     context.nozzle_info.extruder_nozzle_list = build_extruder_nozzle_list(context.nozzle_info.nozzle_list);
 
     if (context.nozzle_info.nozzle_list.empty())
-        throw Slic3r::RuntimeError("No valid nozzle found. Please check nozzle count.");
+        throw Slic3r::RuntimeError(_L("No valid nozzle found. Please check nozzle count."));
 
     if (!nozzle_status.empty())
         context.nozzle_info.nozzle_status = nozzle_status;
@@ -1736,7 +1756,6 @@ static std::vector<int> apply_master_extruder_preference(const FilamentGroupCont
 // multi-nozzle (H2C/A2L) resolves to a nozzle-granular result.
 MultiNozzleUtils::LayeredNozzleGroupResult ToolOrdering::get_recommended_filament_maps(const std::vector<std::vector<unsigned int>>& layer_filaments, const Print* print, const FilamentMapMode mode, const std::vector<std::set<int>>& physical_unprintables, const std::vector<std::set<int>>& geometric_unprintables, const std::map<int, std::set<NozzleVolumeType>>& unprintable_volumes, const std::unordered_map<int, int>& nozzle_status)
 {
-    using namespace FilamentGroupUtils;
     using namespace MultiNozzleUtils;
 
     if (!print || layer_filaments.empty())

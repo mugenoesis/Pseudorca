@@ -16,6 +16,7 @@
 #include "Jobs/BoostThreadWorker.hpp"
 #include "Jobs/PlaterWorker.hpp"
 
+#include <wx/containr.h>
 #include <wx/event.h>
 #include <map>
 #include <string>
@@ -76,6 +77,9 @@
 #include "DeviceCore/DevStorage.h"
 #include "libslic3r_version.h"
 #include "slic3r/Utils/FileTransferUtils.hpp"
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
 
 
 namespace Slic3r {
@@ -122,7 +126,7 @@ void SendToPrinterDialog::stripWhiteSpace(std::string& str)
 {
     if (str == "") { return; }
 
-    string::iterator cur_it;
+    std::string::iterator cur_it;
     cur_it = str.begin();
 
     while (cur_it != str.end()) {
@@ -1183,7 +1187,7 @@ void SendToPrinterDialog::update_user_printer()
                 m_list.push_back(it->second);
                 wxString dev_name_text = from_u8(it->second->get_dev_name());
                 if (it->second->is_lan_mode_printer()) {
-                    dev_name_text += "(LAN)";
+                    dev_name_text += _L("(LAN)");
                 }
                 machine_list_name.Add(dev_name_text);
                 break;

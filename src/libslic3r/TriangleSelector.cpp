@@ -1,12 +1,30 @@
 #include "TriangleSelector.hpp"
-#include "Model.hpp"
+#include "Geometry.hpp"
 #include "AABBTreeIndirect.hpp"
+#include "Point.hpp"
+#include "libslic3r.h"
+#include "Utils.hpp"
+#include "TriangleMesh.hpp"
 
+#include <algorithm>
+#include <array>
+#include <Eigen/Geometry>
+#include <Eigen/Core>
 #include <boost/container/small_vector.hpp>
 #include <boost/log/trivial.hpp>
+#include <cmath>
+#include <cassert>
 #include <cstddef>
+#include <cstring>
+#include <cstdint>
+#include <cstdlib>
 #include <functional>
+#include <memory>
+#include <optional>
 #include <tbb/parallel_for.h>
+#include <utility>
+#include <vector>
+#include <queue>
 
 #ifndef NDEBUG
 //    #define EXPENSIVE_DEBUG_CHECKS
@@ -367,7 +385,7 @@ bool TriangleSelector::is_facet_clipped(int facet_idx, const ClippingPlane &clp)
 
 void TriangleSelector::seed_fill_select_triangles(const Vec3f &hit, int facet_start, const Transform3d& trafo_no_translate,
                                                   const ClippingPlane &clp, float seed_fill_angle, float highlight_by_angle_deg,
-                                                  bool force_reselection, const Vec3f &up_direction)
+                                                  const Vec3f &up_direction, bool force_reselection)
 {
     assert(facet_start < m_orig_size_indices);
 

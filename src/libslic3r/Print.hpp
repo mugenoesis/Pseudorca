@@ -1,15 +1,26 @@
 #ifndef slic3r_Print_hpp_
 #define slic3r_Print_hpp_
 
+#include "Config.hpp"
+#include "Model.hpp"
+#include "Polygon.hpp"
+#include "Fill/FillBase.hpp"
+#include "Polyline.hpp"
+#include "ExtrusionEntity.hpp"
+#include "Geometry.hpp"
+#include "CommonDefs.hpp"
 #include "PrintBase.hpp"
 #include "Fill/FillAdaptive.hpp"
 #include "Fill/FillLightning.hpp"
+#include "Fill/FillTpmsAdaptive.hpp"
 
 #include "BoundingBox.hpp"
 #include "ExtrusionEntityCollection.hpp"
 #include "Flow.hpp"
 #include "Point.hpp"
+#include "PrintConfig.hpp"
 #include "Slicing.hpp"
+#include "TriangleMesh.hpp"
 #include "TriangleMeshSlicer.hpp"
 #include "GCode/ToolOrdering.hpp"
 #include "GCode/WipeTower.hpp"
@@ -20,13 +31,25 @@
 #include "BeltBrim.hpp"
 #include "BeltTransform.hpp"
 #include "ObjectID.hpp"
+#include "TriangleSelector.hpp"
 #include "libslic3r.h"
 
 #include <Eigen/Geometry>
 
+#include <cstddef>
+#include <cmath>
+#include <algorithm>
 #include <functional>
+#include <memory>
+#include <map>
+#include <math.h>
+#include <optional>
 #include <set>
+#include <string>
+#include <tuple>
 #include <unordered_map>
+#include <vector>
+#include <utility>
 
 #include "calib.hpp"
 
@@ -209,13 +232,6 @@ class ConstSupportLayerPtrsAdaptor : public ConstVectorOfPtrsAdaptor<SupportLaye
     ConstSupportLayerPtrsAdaptor(const SupportLayerPtrs *data) : ConstVectorOfPtrsAdaptor<SupportLayer>(data) {}
 };
 
-// Returns the model's raw bounding box with pre-slice axis remap applied.
-// When no remap is active, returns the unmodified raw_bounding_box().
-inline BoundingBoxf3 belt_remapped_bbox(const ModelObject &model_object, const PrintConfig &config)
-{
-    return BeltTransformPipeline::remap_bbox(model_object, config);
-}
-
 // Single instance of a PrintObject.
 // As multiple PrintObjects may be generated for a single ModelObject (their instances differ in rotation around Z),
 // ModelObject's instancess will be distributed among these multiple PrintObjects.
@@ -233,9 +249,9 @@ struct PrintInstance
     // SoftFever
     // 
     // instance id
-    size_t               id;
+    size_t               id{0};
     // Orca: unique id used by marlin/rrf cancel object feature
-    size_t               unique_id;
+    size_t               unique_id{0};
 
     //BBS: instance_shift is too large because of multi-plate, apply without plate offset.
     Point shift_without_plate_offset() const;
@@ -361,7 +377,12 @@ public:
     // Trafo with the center_offset() applied after the transformation, to center the object in XY before slicing.
     Transform3d                  trafo_centered() const
         { Transform3d t = this->trafo(); t.pretranslate(Vec3d(- unscale<double>(m_center_offset.x()), - unscale<double>(m_center_offset.y()), 0)); return t; }
+    // trafo_centered() with the belt pre-slice transforms applied: the frame the layers were sliced in (Layer::slice_z).
+    // Equal to trafo_centered() unless a belt rotation or pre-slice remap is active.
+    Transform3d                  trafo_sliced() const;
     const PrintInstances&        instances() const      { return m_instances; }
+    // Orca: Bounding box of each connected body, indexed by Layer::lslices_separated_component_ids.
+    const std::vector<BoundingBox>& separated_body_bboxes() const { return m_separated_body_bboxes; }
     PrintInstances &instances() { return m_instances; }
 
     // Whoever will get a non-const pointer to PrintObject will be able to modify its layers.
@@ -386,6 +407,7 @@ public:
     double                      max_z() const         { return m_max_z; }
     // Centering offset of the sliced mesh from the scaled and rotated mesh of the model.
     const Point& 			     center_offset() const  { return m_center_offset; }
+    const TpmsRadialField*       tpms_radial_field(TpmsAdaptiveMode mode) const { return m_tpms_radial_fields[size_t(mode)].get(); }
 
     // BBS
     void generate_support_preview();
@@ -413,11 +435,7 @@ public:
     // the whole list to 0-based afterwards).  Lowest positive outer_wall_filament_id
     // over the printing regions, 1 if none is explicitly set.
     unsigned int                 belt_brim_filament() const;
-    // False when this object's instances sit at different points ALONG the belt, which
-    // would need a separate set of bands each.  Public so validate() can explain it.
-    bool                         belt_brim_instances_compatible() const;
     const std::vector<ExtrusionEntityCollection>& belt_brim_by_layer()       const { return m_belt_brim_by_layer; }
-    const std::vector<ExPolygons>&                belt_brim_areas_by_layer() const { return m_belt_brim_areas_by_layer; }
     const std::vector<BeltBrimBand>&              belt_brim_prologue()       const { return m_belt_brim_prologue; }
     void                         clear_belt_brim();
     void                         set_belt_brim(std::vector<ExtrusionEntityCollection> &&by_layer,
@@ -485,9 +503,12 @@ public:
     std::vector<std::reference_wrapper<const PrintRegion>> all_regions() const;
     const PrintObjectRegions*   shared_regions() const throw() { return m_shared_regions; }
 
-    bool                        has_support()           const { return m_config.enable_support || m_config.enforce_support_layers > 0; }
-    bool                        has_raft()              const { return m_config.raft_layers > 0; }
-    bool                        has_support_material()  const { return this->has_support() || this->has_raft(); }
+    static bool                 has_support(const PrintObjectConfig &config)          { return config.enable_support || config.enforce_support_layers > 0; }
+    static bool                 has_raft(const PrintObjectConfig &config)             { return config.raft_layers > 0; }
+    static bool                 has_support_material(const PrintObjectConfig &config) { return has_support(config) || has_raft(config); }
+    bool                        has_support()           const { return has_support(m_config); }
+    bool                        has_raft()              const { return has_raft(m_config); }
+    bool                        has_support_material()  const { return has_support_material(m_config); }
     // Checks if the model object is painted using the multi-material painting gizmo.
     bool                        is_mm_painted()         const { return this->model_object()->is_mm_painted(); }
     // Checks if the model object is painted using the fuzzy skin painting gizmo.
@@ -503,10 +524,8 @@ public:
     std::vector<Polygons>       slice_support_volumes(const ModelVolumeType model_volume_type) const;
     std::vector<Polygons>       slice_support_blockers() const { return this->slice_support_volumes(ModelVolumeType::SUPPORT_BLOCKER); }
     std::vector<Polygons>       slice_support_enforcers() const { return this->slice_support_volumes(ModelVolumeType::SUPPORT_ENFORCER); }
-    // Shared slicing path; multiple volumes are united per layer.
-    std::vector<Polygons>       slice_modifier_volumes(const std::vector<const ModelVolume*> &volumes) const;
-    // Keep Precise Seam volumes separate so their individual priority is preserved.
-    std::vector<Polygons>       slice_single_volume(const ModelVolume* volume) const { return this->slice_modifier_volumes({volume}); }
+    // Preserve each connected region and its holes for perimeter clipping.
+    std::vector<ExPolygons>     slice_single_volume_regions(const ModelVolume* volume) const;
 
     // Helpers to project custom facets on slices
     void project_and_append_custom_facets(bool seam, EnforcerBlockerType type, std::vector<Polygons>& expolys, std::vector<std::pair<Vec3f,Vec3f>>* vertical_points=nullptr) const;
@@ -561,7 +580,13 @@ private:
     void ironing();
     bool need_z_contouring() const;
     void contour_z();
-    void generate_support_material();
+    // with_belt_brim = false leaves the belt brim to generate_belt_brim(), for a
+    // caller that runs the support step of several objects in parallel.
+    void generate_support_material(bool with_belt_brim = true);
+    // The belt brim keeps clear of every object's layers and support layers, so
+    // it has to run after all support steps finished.  A no-op unless a support
+    // step left it pending.
+    void generate_belt_brim();
     void estimate_curled_extrusions();
     void simplify_extrusion_path();
 
@@ -588,6 +613,28 @@ private:
     // Wipe-tower-only invalidations do not necessarily reslice the object, so
     // truncation must be reversible when later toolchanges move upward.
     void belt_restore_truncated_layers();
+    // Belt purge prism, plastic saving: drop the fills on one layer that no
+    // toolchange claimed. `claimed` reports whether an entity was overridden as
+    // purge; everything else on that layer would otherwise print as solid infill
+    // in the prism's own filament for nothing. Perimeters are never touched, so
+    // the bar keeps a continuous wall along the belt.
+    //
+    // Entities are STASHED, not deleted, with their original positions -- the
+    // same reversibility contract belt_truncate_layers_above() has, and the
+    // reason the original version of this had to be removed: psWipeTower can
+    // rerun without regenerating infill, and a later tool ordering may claim what
+    // this one did not. Returns the number of entities dropped.
+    size_t belt_drop_unclaimed_fills(Layer *layer, const std::function<bool(const ExtrusionEntity*)> &claimed);
+    // Put every stashed fill back at its original index. Must run before a replan.
+    void   belt_restore_dropped_fills();
+    // Undo every edit _plan_belt_purge() made to this object's layers, leaving
+    // m_layers exactly as the object steps produced it. Fills first: they point
+    // into layers that are still live, and truncated layers were stashed whole
+    // with their own fills untouched, so the two stashes never share an entity.
+    // Print::process() calls this before any object step may rerun (those steps
+    // regenerate per-layer content over m_layers only, so a stale stash would
+    // otherwise be restored on top of fresh content); the plan calls it too.
+    void   belt_undo_purge_plan() { belt_restore_dropped_fills(); belt_restore_truncated_layers(); }
     //BBS
     ExPolygons _shrink_contour_holes(double contour_delta, double hole_delta, const ExPolygons& polys) const;
     // BBS
@@ -605,9 +652,10 @@ private:
     void discover_horizontal_shells();
     void combine_infill();
     void _generate_support_material();
-    std::pair<FillAdaptive::OctreePtr, FillAdaptive::OctreePtr> prepare_adaptive_infill_data(
-        const std::vector<std::pair<const Surface*, float>>& surfaces_w_bottom_z) const;
+    FillAdaptive::RegionOctrees prepare_adaptive_infill_data(
+        const std::vector<std::pair<const Surface*, const Layer*>>& surfaces_w_layer) const;
     FillLightning::GeneratorPtr prepare_lightning_infill_data();
+    TpmsRadialFields prepare_tpms_radial_fields() const;
 
     // BBS
     SupportNecessaryType is_support_necessary();
@@ -631,6 +679,16 @@ private:
     SlicingParameters                       m_slicing_params;
     LayerPtrs                               m_layers;
     LayerPtrs                               m_belt_truncated_layers;
+    // Fills removed by belt_drop_unclaimed_fills(), owned by this vector until
+    // restored or until clear_layers() deletes them. An entity is in exactly one
+    // of the live collection or this stash, never both.
+    struct BeltDroppedFill {
+        Layer           *layer      { nullptr };
+        size_t           region_idx { 0 };
+        size_t           index      { 0 };   // position in the original fills.entities
+        ExtrusionEntity *entity     { nullptr };
+    };
+    std::vector<BeltDroppedFill>            m_belt_dropped_fills;
     SupportLayerPtrs                        m_support_layers;
     // Belt brim, generated in posSupportMaterial by BeltBrim.cpp.  Object-local
     // slicing frame, one entry per object layer plus a prologue of brim-only
@@ -645,8 +703,10 @@ private:
     // so that next call to make_perimeters() performs a union() before computing loops
     bool                    				m_typed_slices = false;
 
-    std::pair<FillAdaptive::OctreePtr, FillAdaptive::OctreePtr> m_adaptive_fill_octrees;
+    FillAdaptive::RegionOctrees             m_adaptive_fill_octrees;
+    std::vector<BoundingBox>                m_separated_body_bboxes;
     FillLightning::GeneratorPtr m_lightning_generator;
+    TpmsRadialFields m_tpms_radial_fields;
 
     std::vector < VolumeSlices >            firstLayerObjSliceByVolume;
     std::vector<groupedVolumeSlices>        firstLayerObjSliceByGroups;
@@ -658,10 +718,10 @@ private:
 
     // Belt printer: global Z offset applied to this object's layers for shear positioning.
     double                                  m_belt_global_z_offset { 0.0 };
+    // generate_support_material(false) finished and generate_belt_brim() has not run yet.
+    bool                                    m_belt_brim_pending { false };
     // Belt printer: min_z of mesh after belt shear (before Z-shift), for z_offset calc.
     double                                  m_belt_min_z { 0.0 };
-    // Belt printer: XY correction from global pre-slice mode, applied to G-code origin.
-    Vec2d                                   m_belt_global_xy_correction { Vec2d::Zero() };
     // Belt printer: exact belt_floor_z_shift computed during posSlice from a
     // vertex-level scan of the post-transform mesh.  Cached separately from
     // m_slicing_params so that rebuilding m_slicing_params on a non-belt-affecting
@@ -672,15 +732,13 @@ private:
     bool                                    m_belt_floor_z_shift_cache_valid { false };
 public:
     double belt_global_z_offset() const { return m_belt_global_z_offset; }
-    double belt_min_z() const { return m_belt_min_z; }
-    Vec2d  belt_global_xy_correction() const { return m_belt_global_xy_correction; }
 private:
 
 
     // SoftFever
     // 
     // object id
-    size_t               m_id;
+    size_t               m_id{0};
     void apply_conical_overhang();
 
  public:
@@ -1155,9 +1213,9 @@ public:
 
     // Logical (extruder, nozzle) grouping result produced by ToolOrdering during reorder.
     // Consumed by GCode via get_layered_nozzle_group_result()->get_nozzle_id(filament, layer) etc.
-    void set_nozzle_group_result(std::shared_ptr<MultiNozzleUtils::NozzleGroupResultBase> result) { m_nozzle_group_result = result; }
+    void set_nozzle_group_result(std::shared_ptr<MultiNozzleUtils::NozzleGroupResultBase> result);
     std::shared_ptr<MultiNozzleUtils::NozzleGroupResultBase> get_nozzle_group_result() const { return m_nozzle_group_result; }
-    std::shared_ptr<MultiNozzleUtils::LayeredNozzleGroupResult> get_layered_nozzle_group_result() const;
+    std::shared_ptr<MultiNozzleUtils::LayeredNozzleGroupResult> get_layered_nozzle_group_result() const { return m_layered_nozzle_group_result; }
 
     // True only when the project opts into the per-layer filament selector
     // (enable_filament_dynamic_map) in auto-for-flush mode on a multi-extruder machine. Gates the
@@ -1232,10 +1290,27 @@ public:
     //BBS: plate's origin related functions
     void set_plate_origin(Vec3d origin) { m_origin = origin; }
     const Vec3d get_plate_origin() const { return m_origin; }
+    // IMEX firmware-managed zones: additional XY shift applied at gcode emission so the
+    // primary zone's contents land at bed origin (0,0). Non-zero only when
+    // `imex_firmware_managed_zones` is on AND the active mode is non-primary; Vec2d::Zero()
+    // in every other case → byte-identical gcode output for everyone else.
+    //
+    // Derived, never pushed in: update_imex_slice_offset() recomputes it from the applied
+    // config, so a headless slice gets the same shift a GUI slice does. It is a pure
+    // function of the config + printable_area, so calling it twice is a no-op; process()
+    // and export_gcode() both call it, which is what settles it ahead of every consumer
+    // (the writer offset in export_gcode(), and translate_to_print_space()).
+    void update_imex_slice_offset();
+    Vec2d get_imex_slice_offset() const { return m_imex_slice_offset; }
     //BBS: export gcode from previous gcode file from 3mf
     void set_gcode_file_ready();
     void set_gcode_file_invalidated();
     void export_gcode_from_previous_file(const std::string& file, GCodeProcessorResult* result, ThumbnailsGeneratorCallback thumbnail_cb = nullptr);
+    // Re-reads the moves and line offsets of `result` from its G-code file after the file was rewritten in
+    // place (post-processing scripts or plugins), so the preview and its G-code window follow the file on
+    // disk. Everything else in `result` was computed while slicing and is kept. If the file cannot be
+    // re-read, the moves are kept and the line offsets are cleared, which hides the G-code window.
+    void reload_gcode_moves(GCodeProcessorResult* result) const;
     //BBS: add modify_count logic
     int get_modified_count() const {return m_modified_count;}
     //BBS: add status for whether support used
@@ -1308,12 +1383,16 @@ public:
     // pipeline's cooling stage, which runs concurrently with the generator stage filling it.
     int get_filament_config_indx(int filament_id, int layer_id, bool use_cache = true);
     int get_nozzle_config_index(int filament_id, int layer_id);
+    // Changes with the grouping result and the filament maps, so a caller may reuse a resolved slot
+    // until it changes.
+    size_t config_index_generation() const { return m_config_index_generation; }
 
     // Orca: Implement prusa's filament shrink compensation approach
+    // Both are decided by apply() from the filaments the model uses, before the PrintObject transformations are built.
     // Returns if all used filaments have same shrinkage compensations.
-     bool has_same_shrinkage_compensations() const;
+    bool has_same_shrinkage_compensations() const { return m_same_shrinkage_compensations; }
     // Returns scaling for each axis representing shrinkage compensations in each axis.
-     Vec3d shrinkage_compensation() const;
+    Vec3d shrinkage_compensation() const { return m_shrinkage_compensation; }
 
     std::tuple<float, float> object_skirt_offset(double margin_height = 0) const;
 
@@ -1409,11 +1488,19 @@ private:
             s_slicing_pipeline_hook_fn(*this, object, step);
     }
 
+    static void append_model_object_extruders(const ModelObject &mo, std::vector<unsigned int> &extruders);
+    static bool append_support_extruders(const PrintObjectConfig &config, unsigned int num_extruders, std::vector<unsigned int> &extruders);
+    void        append_tool_change_extruders(std::vector<unsigned int> &extruders) const;
+    void        append_wipe_tower_extruder(std::vector<unsigned int> &extruders) const;
+    void        update_shrinkage_compensation(size_t num_extruders, std::vector<int> &variant_index);
+
     PrintConfig                             m_config;
     PrintObjectConfig                       m_default_object_config;
     PrintRegionConfig                       m_default_region_config;
     PrintObjectPtrs                         m_objects;
     PrintRegionPtrs                         m_print_regions;
+    bool                                    m_same_shrinkage_compensations { false };
+    Vec3d                                   m_shrinkage_compensation { Vec3d::Ones() };
     
     //SoftFever
     bool m_isBBLPrinter = false;
@@ -1440,6 +1527,9 @@ private:
 
     // Logical (extruder, nozzle) grouping result, set by ToolOrdering during reorder.
     std::shared_ptr<MultiNozzleUtils::NozzleGroupResultBase> m_nozzle_group_result;
+    // m_nozzle_group_result narrowed to the layer-aware type; only set_nozzle_group_result() assigns
+    // either.
+    std::shared_ptr<MultiNozzleUtils::LayeredNozzleGroupResult> m_layered_nozzle_group_result;
 
     // Sequential (by-object) selector plans, keyed by object; see sequential_dynamic_orderings().
     // Rebuilt (or cleared) on every process().
@@ -1449,6 +1539,7 @@ private:
     FilamentIndexMap m_filament_index_map;
     // Used to cache printer and process parameter information
     PrintIndexMap m_nozzle_index_map;
+    size_t        m_config_index_generation{0};
     // Orca: filament ids already reported as missing a nozzle-group entry this slice. get_config_index()
     // falls back per-filament/per-layer in the g-code hot path, so this dedupes its log to once per
     // filament instead of flooding thousands of identical error lines. Cleared with the caches each slice.
@@ -1472,6 +1563,9 @@ private:
 
     //BBS: plate's origin
     Vec3d   m_origin {0, 0, 0};
+    // IMEX firmware-managed slice offset (plate-local primary-zone center, or zero).
+    // Cache of update_imex_slice_offset(); nothing outside that function writes it.
+    Vec2d   m_imex_slice_offset { Vec2d::Zero() };
     //BBS: modified_count
     int     m_modified_count {0};
     //BBS

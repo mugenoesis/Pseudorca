@@ -1,11 +1,24 @@
 #include "BuildVolume.hpp"
+#include "BoundingBox.hpp"
 #include "ClipperUtils.hpp"
+#include "Polygon.hpp"
+#include "Geometry/Circle.hpp"
+#include "ExtrusionEntity.hpp"
 #include "TriangleMesh.hpp"
 #include "Geometry/ConvexHull.hpp"
 #include "GCode/GCodeProcessor.hpp"
 #include "Point.hpp"
+#include "libslic3r.h"
 
+#include <algorithm>
 #include <boost/log/trivial.hpp>
+#include <vector>
+#include <cassert>
+#include <cstdlib>
+#include <limits>
+#include <utility>
+#include <cstddef>
+#include <string_view>
 
 namespace Slic3r {
 
@@ -178,31 +191,6 @@ BuildVolume::BuildVolume(const std::vector<Vec2d> &printable_area, const double 
     }
 
     BOOST_LOG_TRIVIAL(debug) << "BuildVolume printable_area clasified as: " << this->type_name();
-}
-
-void BuildVolume::set_belt_printer(bool enabled, double angle_deg, bool infinite_y)
-{
-    m_is_belt_printer = enabled;
-    m_belt_angle = angle_deg;
-    m_belt_infinite_y = infinite_y;
-
-    // Restart from the unmodified bbox each call. Without this, toggling
-    // belt mode off (or switching infinite_y true→false) would leave the
-    // extents inflated and break collision / object_state checks.
-    BoundingBoxf bboxf = get_extents(m_bed_shape);
-    m_bboxf = BoundingBoxf3{ to_3d(bboxf.min, 0.), to_3d(bboxf.max, m_max_print_height) };
-
-    if (enabled) {
-        if (infinite_y) {
-            // Extend the Y bound to a very large value for infinite belt.
-            m_bboxf.max.y() = 100000.;
-        }
-        // Belt printer: the Z extent already equals printable_height (set above), which
-        // is the usable vertical clearance above the belt. The gantry's axis range is
-        // sized to reach height/cos(tilt), so no diagonal scaling is applied here — this
-        // keeps the live "outside build volume" highlight in agreement with Print::validate().
-        (void) angle_deg;
-    }
 }
 
 #if 0
@@ -413,11 +401,6 @@ BuildVolume::ObjectState BuildVolume::object_state(const indexed_triangle_set& i
             build_volume.max.z() = std::numeric_limits<double>::max();
         if (ignore_bottom)
             build_volume.min.z() = -std::numeric_limits<double>::max();
-        // Belt printer: extend Y bounds for infinite Y.
-        if (m_is_belt_printer && m_belt_infinite_y) {
-            build_volume.min.y() = -std::numeric_limits<double>::max();
-            build_volume.max.y() = std::numeric_limits<double>::max();
-        }
         BoundingBox3Base<Vec3f> build_volumef(build_volume.min.cast<float>(), build_volume.max.cast<float>());
         // The following test correctly interprets intersection of a non-convex object with a rectangular build volume.
         //return rectangle_test(its, trafo, to_2d(build_volume.min), to_2d(build_volume.max), build_volume.max.z());

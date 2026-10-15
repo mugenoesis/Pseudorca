@@ -193,7 +193,9 @@ ColorRGBA GLVolume::SUPPORT_BLOCKER_COL  = {1.0f, 0.3f, 0.3f, 0.4f};
 
 ColorRGBA GLVolume::MODEL_HIDDEN_COL  = {0.f, 0.f, 0.f, 0.3f};
 
-// Precise Seam modifier colors
+// Precise Seam modifier colors. Center, Left and Right are deliberately close shades of one orange:
+// all three are strong modifiers, and distinct hues per mode would turn the scene into a rainbow.
+// The object list icons tell the modes apart.
 ColorRGBA GLVolume::PRECISE_SEAM_CENTER_COL   = {1.0f,   0.627f, 0.082f, 0.6f};  // FFA015 - orange
 ColorRGBA GLVolume::PRECISE_SEAM_LEFT_COL     = {1.0f,   0.753f, 0.0f,   0.6f};  // FFC000 - golden
 ColorRGBA GLVolume::PRECISE_SEAM_RIGHT_COL    = {1.0f,   0.514f, 0.0f,   0.6f};  // FF8300 - dark orange
@@ -295,6 +297,7 @@ GLVolume::GLVolume(float r, float g, float b, float a)
     , printable(true)
     , visible(true)
     , is_active(true)
+    , on_hidden_plate(false)
     , zoom_to_volumes(true)
     , shader_outside_printer_detection_enabled(false)
     , is_outside(false)
@@ -308,6 +311,7 @@ GLVolume::GLVolume(float r, float g, float b, float a)
     , force_native_color(false)
     , force_neutral_color(false)
     , force_sinking_contours(false)
+    , depth_bias(false)
     , picking(false)
     , tverts_range(0, size_t(-1))
 {
@@ -821,6 +825,8 @@ bool GLVolume::is_below_printbed() const
 
 void GLVolume::render_sinking_contours()
 {
+    if (!is_active)
+        return;
     m_sinking_contours.render();
 }
 
@@ -1237,17 +1243,7 @@ void GLVolumeCollection::render(GLVolumeCollection::ERenderType       type,
 
     // Compute up direction accounting for build plate tilt. This is frame-invariant
     // (config cannot change mid-render), so compute it once before the volume loop.
-    Vec3f up_direction = Vec3f::UnitZ();
-    {
-        const DynamicPrintConfig& prt_cfg = GUI::wxGetApp().preset_bundle->printers.get_edited_preset().config;
-        double tilt_x_deg = prt_cfg.opt_float("build_plate_tilt_x");
-        double tilt_y_deg = prt_cfg.opt_float("build_plate_tilt_y");
-        if (tilt_x_deg != 0. || tilt_y_deg != 0.) {
-            double tilt_x_rad = Geometry::deg2rad(tilt_x_deg);
-            double tilt_y_rad = Geometry::deg2rad(tilt_y_deg);
-            up_direction = Vec3f(float(tan(tilt_y_rad)), float(tan(tilt_x_rad)), 1.f).normalized();
-        }
-    }
+    const Vec3f up_direction = GUI::build_plate_tilt_up_direction().cast<float>();
 
     for (GLVolumeWithIdAndZ& volume : to_render) {
 #if ENABLE_MODIFIERS_ALWAYS_TRANSPARENT
@@ -1345,11 +1341,17 @@ void GLVolumeCollection::render(GLVolumeCollection::ERenderType       type,
         shader->set_uniform("projection_matrix", projection_matrix);
         const Matrix3d view_normal_matrix = view_matrix.matrix().block(0, 0, 3, 3) * model_matrix.matrix().block(0, 0, 3, 3).inverse().transpose();
         shader->set_uniform("view_normal_matrix", view_normal_matrix);
+        if (volume.first->depth_bias) {
+            glsafe(::glEnable(GL_POLYGON_OFFSET_FILL));
+            glsafe(::glPolygonOffset(1.0f, 1.0f));
+        }
 		//BBS: add outline related logic
         if (volume.first->selected && shader_can_outline && GUI::wxGetApp().show_outline())
             volume.first->render_with_outline(cnv_size);
         else
             volume.first->render();
+        if (volume.first->depth_bias)
+            glsafe(::glDisable(GL_POLYGON_OFFSET_FILL));
 
 #if ENABLE_ENVIRONMENT_MAP
         if (use_environment_texture)
@@ -1593,7 +1595,7 @@ bool GLVolumeCollection::check_outside_state(const BuildVolume &build_volume, Mo
                     {
                         std::vector<int> result_filaments;
                         //result_filaments.reserve(conflict_filaments.size());
-                        std::set_intersection (conflict_filament_vector.begin(), conflict_filament_vector.end(), unprintable_filament_vec[index].begin(), unprintable_filament_vec[index].end(), insert_iterator<vector<int>>(result_filaments, result_filaments.begin()));
+                        std::set_intersection (conflict_filament_vector.begin(), conflict_filament_vector.end(), unprintable_filament_vec[index].begin(), unprintable_filament_vec[index].end(), std::insert_iterator<std::vector<int>>(result_filaments, result_filaments.begin()));
                         conflict_filament_vector = result_filaments;
                     }
                 }
