@@ -17,6 +17,7 @@
   "lift_speed": "100",
   "light_pwm": "255",
   "printable_height": "170",
+  "printer_settings_id": "Phrozen Shuffle 4K",
   "retract_speed": "150",
   "sla_archive_format": "PHROZENZIP"
 }

@@ -17,6 +17,7 @@
   "lift_speed": "65",
   "light_pwm": "255",
   "printable_height": "400",
+  "printer_settings_id": "Phrozen Shuffle 16",
   "retract_speed": "150",
   "sla_archive_format": "CTB"
 }

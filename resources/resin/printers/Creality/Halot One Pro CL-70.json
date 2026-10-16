@@ -17,6 +17,7 @@
   "lift_speed": "80",
   "light_pwm": "255",
   "printable_height": "160",
+  "printer_settings_id": "Creality Halot One Pro CL-70",
   "retract_speed": "150",
   "sla_archive_format": "CXDLP"
 }

@@ -15,6 +15,7 @@
   "gamma_correction": "1",
   "lift_distance": "6",
   "printable_height": "150",
+  "printer_settings_id": "Anycubic Photon Zero",
   "retract_speed": "150",
   "sla_archive_format": "pw0"
 }

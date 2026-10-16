@@ -17,6 +17,7 @@
   "lift_speed": "60",
   "light_pwm": "255",
   "printable_height": "250",
+  "printer_settings_id": "EPAX X10 4K Mono",
   "retract_speed": "150",
   "sla_archive_format": "CTB"
 }

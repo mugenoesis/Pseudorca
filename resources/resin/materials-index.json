@@ -1,0 +1,74 @@
+{
+  "materials" : [
+    {
+      "file" : "materials/Siraya Tech/Blu Obsidian Black and Blu V3.json",
+      "name" : "Siraya Tech Blu Obsidian Black and Blu V3",
+      "resin_type" : "tough",
+      "rows" : 10,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Blu and Blu Clear V2.json",
+      "name" : "Siraya Tech Blu and Blu Clear V2",
+      "resin_type" : "tough",
+      "rows" : 9,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Build.json",
+      "name" : "Siraya Tech Build",
+      "resin_type" : "engineering",
+      "rows" : 11,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Easy Grey.json",
+      "name" : "Siraya Tech Easy Grey",
+      "resin_type" : "plant-based",
+      "rows" : 18,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Easy Obsidian Black.json",
+      "name" : "Siraya Tech Easy Obsidian Black",
+      "resin_type" : "plant-based",
+      "rows" : 18,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Fast Navy Grey.json",
+      "name" : "Siraya Tech Fast Navy Grey",
+      "resin_type" : "abs-like",
+      "rows" : 18,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Sculpt Clear.json",
+      "name" : "Siraya Tech Sculpt Clear",
+      "resin_type" : "high-temp",
+      "rows" : 6,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Sculpt Grey.json",
+      "name" : "Siraya Tech Sculpt Grey",
+      "resin_type" : "high-temp",
+      "rows" : 4,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Tenacious Clear.json",
+      "name" : "Siraya Tech Tenacious Clear",
+      "resin_type" : "flexible",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "file" : "materials/Siraya Tech/Tenacious Obsidian Black.json",
+      "name" : "Siraya Tech Tenacious Obsidian Black",
+      "resin_type" : "flexible",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    }
+  ]
+}

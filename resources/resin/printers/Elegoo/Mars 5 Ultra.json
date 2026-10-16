@@ -16,6 +16,7 @@
   "lift_speed": "0.05",
   "light_pwm": "255",
   "printable_height": "165",
+  "printer_settings_id": "Elegoo Mars 5 Ultra",
   "retract_speed": "0.05",
   "sla_archive_format": "CTBENCRYPTED"
 }

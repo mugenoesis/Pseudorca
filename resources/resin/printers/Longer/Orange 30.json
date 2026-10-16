@@ -16,5 +16,6 @@
   "lift_distance": "4",
   "lift_speed": "150",
   "printable_height": "170",
+  "printer_settings_id": "Longer Orange 30",
   "sla_archive_format": "lgs30"
 }

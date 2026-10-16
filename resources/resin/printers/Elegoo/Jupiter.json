@@ -18,6 +18,7 @@
   "lift_speed": "100",
   "light_pwm": "255",
   "printable_height": "300",
+  "printer_settings_id": "Elegoo Jupiter",
   "retract_speed": "150",
   "sla_archive_format": "CTBENCRYPTED"
 }

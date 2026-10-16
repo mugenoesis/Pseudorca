@@ -1,0 +1,116 @@
+{
+  "name" : "Siraya Tech Blu and Blu Clear V2",
+  "resin_type" : "tough",
+  "settings" : [
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 11,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon S"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 4,
+      "exposure_time" : 11,
+      "initial_exposure_time" : 50,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Creality LD-002R"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 10,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X1"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 12,
+      "initial_exposure_time" : 90,
+      "layer_height" : 0.1,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X1"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 11,
+      "initial_exposure_time" : 60,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "exposure_time" : 9,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Phrozen Shuffle"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "exposure_time" : 12,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Phrozen Shuffle XL"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "exposure_time" : 9,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Wanhao D7"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "exposure_time" : 4,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Phrozen Sonic Mini"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/blu-user-guide"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Siraya Tech"
+}

@@ -17,6 +17,7 @@
   "lift_speed": "100",
   "light_pwm": "255",
   "printable_height": "150",
+  "printer_settings_id": "Elegoo Mars",
   "retract_speed": "150",
   "sla_archive_format": "CTB"
 }

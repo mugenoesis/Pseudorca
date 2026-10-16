@@ -17,6 +17,7 @@
   "lift_distance": "4",
   "lift_speed": "600",
   "printable_height": "220",
+  "printer_settings_id": "Uniz IBEE (Klipper)",
   "retract_speed": "600",
   "sla_archive_format": "klipperzip"
 }

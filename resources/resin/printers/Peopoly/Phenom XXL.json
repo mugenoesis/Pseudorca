@@ -17,6 +17,7 @@
   "lift_speed": "35",
   "light_pwm": "255",
   "printable_height": "550",
+  "printer_settings_id": "Peopoly Phenom XXL",
   "retract_speed": "100",
   "sla_archive_format": "CTB"
 }
