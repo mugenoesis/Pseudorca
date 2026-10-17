@@ -1,0 +1,1624 @@
+{
+  "materials" : [
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/14K Texture Resin.json",
+      "name" : "Anycubic 14K Texture Resin",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/16K Standard Resin-Orange Red.json",
+      "name" : "Anycubic 16K Standard Resin-Orange Red",
+      "resin_type" : "standard",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/16K Standard Resin-Other Colors.json",
+      "name" : "Anycubic 16K Standard Resin-Other Colors",
+      "resin_type" : "standard",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/ABS-Like Resin 2.0.json",
+      "name" : "Anycubic ABS-Like Resin 2.0",
+      "resin_type" : "abs-like",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/ABS-Like Resin 3.0.json",
+      "name" : "Anycubic ABS-Like Resin 3.0",
+      "resin_type" : "abs-like",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/ABS-Like Resin Pro.json",
+      "name" : "Anycubic ABS-Like Resin Pro",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/ABS-Like Resin Pro 2.json",
+      "name" : "Anycubic ABS-Like Resin Pro 2",
+      "resin_type" : "abs-like",
+      "rows" : 23,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/ABS-Like Resin V2.json",
+      "name" : "Anycubic ABS-Like Resin V2",
+      "resin_type" : "abs-like",
+      "rows" : 16,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/ABS-Like Resin Plus.json",
+      "name" : "Anycubic ABS-Like Resin+",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/BJD Wear-Resistant Resin.json",
+      "name" : "Anycubic BJD Wear-Resistant Resin",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/DLP Craftman Resin.json",
+      "name" : "Anycubic DLP Craftman Resin",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/DLP Craftsman Resin.json",
+      "name" : "Anycubic DLP Craftsman Resin",
+      "resin_type" : "",
+      "rows" : 15,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/High Clear Resin.json",
+      "name" : "Anycubic High Clear Resin",
+      "resin_type" : "clear",
+      "rows" : 22,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/High Speed Resin.json",
+      "name" : "Anycubic High Speed Resin",
+      "resin_type" : "",
+      "rows" : 2,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/High Speed Resin 2.0.json",
+      "name" : "Anycubic High Speed Resin 2.0",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Plant Based Resin 2.0.json",
+      "name" : "Anycubic Plant Based Resin 2.0",
+      "resin_type" : "plant-based",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Plant-Based Resin.json",
+      "name" : "Anycubic Plant-Based Resin",
+      "resin_type" : "plant-based",
+      "rows" : 18,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Plant-Based Resin Plus.json",
+      "name" : "Anycubic Plant-Based Resin+",
+      "resin_type" : "plant-based",
+      "rows" : 15,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Standard Resin.json",
+      "name" : "Anycubic Standard Resin",
+      "resin_type" : "standard",
+      "rows" : 26,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Standard Resin V2.json",
+      "name" : "Anycubic Standard Resin V2",
+      "resin_type" : "standard",
+      "rows" : 22,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Standard Resin Plus.json",
+      "name" : "Anycubic Standard Resin+",
+      "resin_type" : "standard",
+      "rows" : 15,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Tough Resin 2.0.json",
+      "name" : "Anycubic Tough Resin 2.0",
+      "resin_type" : "tough",
+      "rows" : 23,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Tough Resin Ultra.json",
+      "name" : "Anycubic Tough Resin Ultra",
+      "resin_type" : "tough",
+      "rows" : 23,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/UV Tough Resin.json",
+      "name" : "Anycubic UV Tough Resin",
+      "resin_type" : "tough",
+      "rows" : 18,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Water Wash ABS-Like Resin 3.0.json",
+      "name" : "Anycubic Water Wash ABS-Like Resin 3.0",
+      "resin_type" : "abs-like",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Water Wash Resin 2.0.json",
+      "name" : "Anycubic Water Wash Resin 2.0",
+      "resin_type" : "water-washable",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Anycubic/Water-Wash Resin Plus.json",
+      "name" : "Anycubic Water-Wash Resin+",
+      "resin_type" : "",
+      "rows" : 19,
+      "vendor" : "Anycubic"
+    },
+    {
+      "color" : "Red Clay",
+      "family" : "8K ABS-Like 3.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K ABS-Like 3.0 Photopolymer Resin Red Clay.json",
+      "name" : "Elegoo 8K ABS-Like 3.0 Photopolymer Resin Red Clay",
+      "resin_type" : "abs-like",
+      "rows" : 11,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Space Grey",
+      "family" : "8K ABS-Like 3.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K ABS-Like 3.0 Photopolymer Resin Space Grey.json",
+      "name" : "Elegoo 8K ABS-Like 3.0 Photopolymer Resin Space Grey",
+      "resin_type" : "abs-like",
+      "rows" : 11,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Vanilla",
+      "family" : "8K ABS-Like 3.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K ABS-Like 3.0 Photopolymer Resin Vanilla.json",
+      "name" : "Elegoo 8K ABS-Like 3.0 Photopolymer Resin Vanilla",
+      "resin_type" : "abs-like",
+      "rows" : 11,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White Smoke",
+      "family" : "8K ABS-Like 3.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K ABS-Like 3.0 Photopolymer Resin White Smoke.json",
+      "name" : "Elegoo 8K ABS-Like 3.0 Photopolymer Resin White Smoke",
+      "resin_type" : "abs-like",
+      "rows" : 11,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Red Clay",
+      "family" : "8K ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/8K ABS-Like Resin 3.0 Red Clay.json",
+      "name" : "Elegoo 8K ABS-Like Resin 3.0 Red Clay",
+      "resin_type" : "abs-like",
+      "rows" : 1,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Space Grey",
+      "family" : "8K ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/8K ABS-Like Resin 3.0 Space Grey.json",
+      "name" : "Elegoo 8K ABS-Like Resin 3.0 Space Grey",
+      "resin_type" : "abs-like",
+      "rows" : 1,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Vanilla",
+      "family" : "8K ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/8K ABS-Like Resin 3.0 Vanilla.json",
+      "name" : "Elegoo 8K ABS-Like Resin 3.0 Vanilla",
+      "resin_type" : "abs-like",
+      "rows" : 1,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White Smoke",
+      "family" : "8K ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/8K ABS-Like Resin 3.0 White Smoke.json",
+      "name" : "Elegoo 8K ABS-Like Resin 3.0 White Smoke",
+      "resin_type" : "abs-like",
+      "rows" : 1,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Red Clay",
+      "family" : "8K Standard Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Standard Photopolymer Resin Red Clay.json",
+      "name" : "Elegoo 8K Standard Photopolymer Resin Red Clay",
+      "resin_type" : "standard",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Space Grey",
+      "family" : "8K Standard Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Standard Photopolymer Resin Space Grey.json",
+      "name" : "Elegoo 8K Standard Photopolymer Resin Space Grey",
+      "resin_type" : "standard",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Vanilla",
+      "family" : "8K Standard Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Standard Photopolymer Resin Vanilla.json",
+      "name" : "Elegoo 8K Standard Photopolymer Resin Vanilla",
+      "resin_type" : "standard",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White Smoke",
+      "family" : "8K Standard Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Standard Photopolymer Resin White Smoke.json",
+      "name" : "Elegoo 8K Standard Photopolymer Resin White Smoke",
+      "resin_type" : "standard",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Red Clay",
+      "family" : "8K Water Washable 2.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable 2.0 Photopolymer Resin Red Clay.json",
+      "name" : "Elegoo 8K Water Washable 2.0 Photopolymer Resin Red Clay",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Space Grey",
+      "family" : "8K Water Washable 2.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable 2.0 Photopolymer Resin Space Grey.json",
+      "name" : "Elegoo 8K Water Washable 2.0 Photopolymer Resin Space Grey",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Vanilla",
+      "family" : "8K Water Washable 2.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable 2.0 Photopolymer Resin Vanilla.json",
+      "name" : "Elegoo 8K Water Washable 2.0 Photopolymer Resin Vanilla",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White Smoke",
+      "family" : "8K Water Washable 2.0 Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable 2.0 Photopolymer Resin White Smoke.json",
+      "name" : "Elegoo 8K Water Washable 2.0 Photopolymer Resin White Smoke",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Red Clay",
+      "family" : "8K Water Washable ABS-Like Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable ABS-Like Photopolymer Resin Red Clay.json",
+      "name" : "Elegoo 8K Water Washable ABS-Like Photopolymer Resin Red Clay",
+      "resin_type" : "abs-like",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Space Grey",
+      "family" : "8K Water Washable ABS-Like Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable ABS-Like Photopolymer Resin Space Grey.json",
+      "name" : "Elegoo 8K Water Washable ABS-Like Photopolymer Resin Space Grey",
+      "resin_type" : "abs-like",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Vanilla",
+      "family" : "8K Water Washable ABS-Like Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable ABS-Like Photopolymer Resin Vanilla.json",
+      "name" : "Elegoo 8K Water Washable ABS-Like Photopolymer Resin Vanilla",
+      "resin_type" : "abs-like",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White Smoke",
+      "family" : "8K Water Washable ABS-Like Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable ABS-Like Photopolymer Resin White Smoke.json",
+      "name" : "Elegoo 8K Water Washable ABS-Like Photopolymer Resin White Smoke",
+      "resin_type" : "abs-like",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Space Grey",
+      "family" : "8K Water Washable Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable Photopolymer Resin Space Grey.json",
+      "name" : "Elegoo 8K Water Washable Photopolymer Resin Space Grey",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Vanilla",
+      "family" : "8K Water Washable Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable Photopolymer Resin Vanilla.json",
+      "name" : "Elegoo 8K Water Washable Photopolymer Resin Vanilla",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White Smoke",
+      "family" : "8K Water Washable Photopolymer Resin",
+      "file" : "materials/Elegoo/8K Water Washable Photopolymer Resin White Smoke.json",
+      "name" : "Elegoo 8K Water Washable Photopolymer Resin White Smoke",
+      "resin_type" : "water-washable",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "ABS-Like Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/ABS-Like Plant-based Photopolymer Resin Black.json",
+      "name" : "Elegoo ABS-Like Plant-based Photopolymer Resin Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "ABS-Like Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/ABS-Like Plant-based Photopolymer Resin Clear Green.json",
+      "name" : "Elegoo ABS-Like Plant-based Photopolymer Resin Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/ABS-Like Plant-based Photopolymer Resin Grey.json",
+      "name" : "Elegoo ABS-Like Plant-based Photopolymer Resin Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "ABS-Like Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/ABS-Like Plant-based Photopolymer Resin White.json",
+      "name" : "Elegoo ABS-Like Plant-based Photopolymer Resin White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Beige.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Beige",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Black.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Blue",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Blue.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Clear.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Clear",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Clear Blue.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Clear Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Clear Green.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Clear Red.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Clear Red",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Grey.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Maroon",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Maroon.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Maroon",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Mint Green",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Mint Green.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Mint Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Smoky Black",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Smoky Black.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Smoky Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 White.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "ABS-Like Resin 1.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 1.0 Yellow.json",
+      "name" : "Elegoo ABS-Like Resin 1.0 Yellow",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Resin 2.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 2.0 Grey.json",
+      "name" : "Elegoo ABS-Like Resin 2.0 Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Beige.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Beige",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Black.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Blue",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Blue.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Clear Blue.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Clear Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Clear Green.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Clear Red.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Clear Red",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Grey.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Mint Green",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Mint Green.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Mint Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro Beige.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro Beige",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro Black.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro Clear Green.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro Grey.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Translucent",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro Translucent.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro Translucent",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro White.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "ABS-Like Resin 3.0 Pro",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Pro Yellow.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Pro Yellow",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Smoky Black",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Smoky Black.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Smoky Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Translucent",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Translucent.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Translucent",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 White.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "ABS-Like Resin 3.0",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Yellow.json",
+      "name" : "Elegoo ABS-Like Resin 3.0 Yellow",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Beige.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Beige",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Black.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Blue",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Blue.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Clear Blue.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Clear Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Clear Green.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Clear Red.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Clear Red",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Grey.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Mint Green",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Mint Green.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Mint Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Smoky Black",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Smoky Black.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Smoky Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Translucent",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Translucent.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Translucent",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus White.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "ABS-Like Resin 3.0+",
+      "file" : "materials/Elegoo/ABS-Like Resin 3.0 Plus Yellow.json",
+      "name" : "Elegoo ABS-Like Resin 3.0+ Yellow",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Beige.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Beige",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Black.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Clear Blue.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Clear Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Clear Green.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Clear Red.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Clear Red",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Grey.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Neon-Lemon",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Neon-Lemon.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Neon-Lemon",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Neon-Lime",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Neon-Lime.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Neon-Lime",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Neon-Peach",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Neon-Peach.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Neon-Peach",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Neon-Pumpkin",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Neon-Pumpkin.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Neon-Pumpkin",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin White.json",
+      "name" : "Elegoo ABS-Like Ultra Resin White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "ABS-Like Ultra Resin",
+      "file" : "materials/Elegoo/ABS-Like Ultra Resin Yellow.json",
+      "name" : "Elegoo ABS-Like Ultra Resin Yellow",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "Dental Castable UV Resin",
+      "file" : "materials/Elegoo/Dental Castable UV Resin Clear Green.json",
+      "name" : "Elegoo Dental Castable UV Resin Clear Green",
+      "resin_type" : "dental",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Orange",
+      "family" : "Dental Model UV Resin",
+      "file" : "materials/Elegoo/Dental Model UV Resin Orange.json",
+      "name" : "Elegoo Dental Model UV Resin Orange",
+      "resin_type" : "dental",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Orange",
+      "family" : "Dental Orthodontic UV Resin",
+      "file" : "materials/Elegoo/Dental Orthodontic UV Resin Orange.json",
+      "name" : "Elegoo Dental Orthodontic UV Resin Orange",
+      "resin_type" : "dental",
+      "rows" : 12,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Standard Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/Standard Plant-based Photopolymer Resin Black.json",
+      "name" : "Elegoo Standard Plant-based Photopolymer Resin Black",
+      "resin_type" : "plant-based",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "Standard Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/Standard Plant-based Photopolymer Resin Clear Green.json",
+      "name" : "Elegoo Standard Plant-based Photopolymer Resin Clear Green",
+      "resin_type" : "plant-based",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "Standard Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/Standard Plant-based Photopolymer Resin Grey.json",
+      "name" : "Elegoo Standard Plant-based Photopolymer Resin Grey",
+      "resin_type" : "plant-based",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Translucent",
+      "family" : "Standard Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/Standard Plant-based Photopolymer Resin Translucent.json",
+      "name" : "Elegoo Standard Plant-based Photopolymer Resin Translucent",
+      "resin_type" : "plant-based",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "Standard Plant-based Photopolymer Resin",
+      "file" : "materials/Elegoo/Standard Plant-based Photopolymer Resin White.json",
+      "name" : "Elegoo Standard Plant-based Photopolymer Resin White",
+      "resin_type" : "plant-based",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Beige.json",
+      "name" : "Elegoo Standard Resin 1.0 Beige",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Black.json",
+      "name" : "Elegoo Standard Resin 1.0 Black",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Blue",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Blue.json",
+      "name" : "Elegoo Standard Resin 1.0 Blue",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Clear Blue.json",
+      "name" : "Elegoo Standard Resin 1.0 Clear Blue",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Clear Green.json",
+      "name" : "Elegoo Standard Resin 1.0 Clear Green",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Clear Red.json",
+      "name" : "Elegoo Standard Resin 1.0 Clear Red",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Grey.json",
+      "name" : "Elegoo Standard Resin 1.0 Grey",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Maroon",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Maroon.json",
+      "name" : "Elegoo Standard Resin 1.0 Maroon",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Translucent",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Translucent.json",
+      "name" : "Elegoo Standard Resin 1.0 Translucent",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "Standard Resin 1.0",
+      "file" : "materials/Elegoo/Standard Resin 1.0 Yellow.json",
+      "name" : "Elegoo Standard Resin 1.0 Yellow",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Standard Resin 2.0",
+      "file" : "materials/Elegoo/Standard Resin 2.0 Black.json",
+      "name" : "Elegoo Standard Resin 2.0 Black",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "Standard Resin 2.0",
+      "file" : "materials/Elegoo/Standard Resin 2.0 Grey.json",
+      "name" : "Elegoo Standard Resin 2.0 Grey",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Medium Slate Blue",
+      "family" : "Standard Resin 2.0",
+      "file" : "materials/Elegoo/Standard Resin 2.0 Medium Slate Blue.json",
+      "name" : "Elegoo Standard Resin 2.0 Medium Slate Blue",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Orchid",
+      "family" : "Standard Resin 2.0",
+      "file" : "materials/Elegoo/Standard Resin 2.0 Orchid.json",
+      "name" : "Elegoo Standard Resin 2.0 Orchid",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Slate Blue",
+      "family" : "Standard Resin 2.0",
+      "file" : "materials/Elegoo/Standard Resin 2.0 Slate Blue.json",
+      "name" : "Elegoo Standard Resin 2.0 Slate Blue",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "Standard Resin 2.0",
+      "file" : "materials/Elegoo/Standard Resin 2.0 White.json",
+      "name" : "Elegoo Standard Resin 2.0 White",
+      "resin_type" : "standard",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey To Purple",
+      "family" : "Thermochromic Resin",
+      "file" : "materials/Elegoo/Thermochromic Resin Grey To Purple.json",
+      "name" : "Elegoo Thermochromic Resin Grey To Purple",
+      "resin_type" : "",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Tough Resin 1.0",
+      "file" : "materials/Elegoo/Tough Resin 1.0 Black.json",
+      "name" : "Elegoo Tough Resin 1.0 Black",
+      "resin_type" : "tough",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Grey",
+      "family" : "Tough Resin 1.0",
+      "file" : "materials/Elegoo/Tough Resin 1.0 Grey.json",
+      "name" : "Elegoo Tough Resin 1.0 Grey",
+      "resin_type" : "tough",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Beige.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Beige",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Black.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Black",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Blue",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Blue.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Blue",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Ceramic Grey",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Ceramic Grey.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Ceramic Grey",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Clear Blue.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Clear Blue",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Clear Green.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Clear Green",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Clear Red.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Clear Red",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Mint Green",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Mint Green.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Mint Green",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Smoky Black",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Smoky Black.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Smoky Black",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin White.json",
+      "name" : "Elegoo Water Washable 2.0 Resin White",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "Water Washable 2.0 Resin",
+      "file" : "materials/Elegoo/Water Washable 2.0 Resin Yellow.json",
+      "name" : "Elegoo Water Washable 2.0 Resin Yellow",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Beige.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Beige",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Black.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Blue",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Blue.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Ceramic Grey",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Ceramic Grey.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Ceramic Grey",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Clear Blue.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Clear Blue",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Clear Green.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Clear Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Clear Red.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Clear Red",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Mint Green",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Mint Green.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Mint Green",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Smoky Black",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Smoky Black.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Smoky Black",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin White.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin White",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "Water Washable ABS-Like Resin",
+      "file" : "materials/Elegoo/Water Washable ABS-Like Resin Yellow.json",
+      "name" : "Elegoo Water Washable ABS-Like Resin Yellow",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Beige",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Beige.json",
+      "name" : "Elegoo Water Washable Resin Beige",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Black",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Black.json",
+      "name" : "Elegoo Water Washable Resin Black",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Ceramic Grey",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Ceramic Grey.json",
+      "name" : "Elegoo Water Washable Resin Ceramic Grey",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Blue",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Clear Blue.json",
+      "name" : "Elegoo Water Washable Resin Clear Blue",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Green",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Clear Green.json",
+      "name" : "Elegoo Water Washable Resin Clear Green",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Clear Red",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Clear Red.json",
+      "name" : "Elegoo Water Washable Resin Clear Red",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Mint Green",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Mint Green.json",
+      "name" : "Elegoo Water Washable Resin Mint Green",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Smoky Black",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Smoky Black.json",
+      "name" : "Elegoo Water Washable Resin Smoky Black",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "White",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin White.json",
+      "name" : "Elegoo Water Washable Resin White",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "Yellow",
+      "family" : "Water Washable Resin",
+      "file" : "materials/Elegoo/Water Washable Resin Yellow.json",
+      "name" : "Elegoo Water Washable Resin Yellow",
+      "resin_type" : "water-washable",
+      "rows" : 19,
+      "vendor" : "Elegoo"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Obsidian Black and Blu V3.json",
+      "name" : "Siraya Tech Blu Obsidian Black and Blu V3",
+      "resin_type" : "tough",
+      "rows" : 10,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu and Blu Clear V2.json",
+      "name" : "Siraya Tech Blu and Blu Clear V2",
+      "resin_type" : "tough",
+      "rows" : 9,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Build.json",
+      "name" : "Siraya Tech Build",
+      "resin_type" : "engineering",
+      "rows" : 11,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Easy Grey.json",
+      "name" : "Siraya Tech Easy Grey",
+      "resin_type" : "plant-based",
+      "rows" : 18,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Easy Obsidian Black.json",
+      "name" : "Siraya Tech Easy Obsidian Black",
+      "resin_type" : "plant-based",
+      "rows" : 18,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Navy Grey.json",
+      "name" : "Siraya Tech Fast Navy Grey",
+      "resin_type" : "abs-like",
+      "rows" : 18,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Sculpt Clear.json",
+      "name" : "Siraya Tech Sculpt Clear",
+      "resin_type" : "high-temp",
+      "rows" : 6,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Sculpt Grey.json",
+      "name" : "Siraya Tech Sculpt Grey",
+      "resin_type" : "high-temp",
+      "rows" : 4,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Clear.json",
+      "name" : "Siraya Tech Tenacious Clear",
+      "resin_type" : "flexible",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Obsidian Black.json",
+      "name" : "Siraya Tech Tenacious Obsidian Black",
+      "resin_type" : "flexible",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    }
+  ]
+}

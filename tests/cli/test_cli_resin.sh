@@ -59,7 +59,7 @@ slice() {
     local out="$WORK/$1"
     mkdir -p "$WORK/$1.dd"
     timeout 300 "$BIN" --datadir "$WORK/$1.dd" --load-settings "$WORK/machine.json;$WORK/process.json" \
-        --slice 0 --outputdir "$out" "$2" > "$WORK/$1.log" 2>&1
+        ${3:+--load-filaments "$3"} --slice 0 --outputdir "$out" "$2" > "$WORK/$1.log" 2>&1
     echo "$?" > "$WORK/$1.rc"
 }
 
@@ -114,4 +114,28 @@ if result["return_code"] != -21:
     sys.exit("FAIL: wide: result.json return_code %s, expected -21" % result["return_code"])
 PYEOF
 
-echo "PASS: resin slicing writes the archive and reports it, and a model that does not fit is refused"
+# 3. A resin material (--load-filaments) sets the exposure; one with no settings for the printer is refused (-5).
+cat > "$WORK/material.json" <<'JSON'
+{ "type": "material", "name": "test resin", "vendor": "Test",
+  "settings": [ { "printers": ["*"], "layer_height": 0.05, "exposure_time": 7, "initial_exposure_time": 41,
+                  "source": "https://example.test/", "retrieved": "2026-10-16" } ] }
+JSON
+cat > "$WORK/material_other.json" <<'JSON'
+{ "type": "material", "name": "other printer resin", "vendor": "Test",
+  "settings": [ { "printers": ["Some Other Printer"], "layer_height": 0.05, "exposure_time": 7, "initial_exposure_time": 41 } ] }
+JSON
+slice material "$WORK/cube.stl" "$WORK/material.json"
+[ "$(rc material)" = "0" ] || fail "material: expected 0, got $(rc material): $(tail -n 5 "$WORK/material.log")"
+grep -q "resin material test resin" "$WORK/material.log" || fail "material: the log does not name the resin"
+"$PY" - "$WORK/material/plate_1.sl1" <<'PYEOF' || exit 1
+import sys, zipfile
+
+ini = dict(line.split(" = ", 1) for line in zipfile.ZipFile(sys.argv[1]).read("config.ini").decode().splitlines() if " = " in line)
+if abs(float(ini["expTime"]) - 7) > 1e-6 or abs(float(ini["expTimeFirst"]) - 41) > 1e-6:
+    sys.exit("FAIL: expTime %s expTimeFirst %s, the material says 7 and 41" % (ini["expTime"], ini["expTimeFirst"]))
+PYEOF
+slice material_other "$WORK/cube.stl" "$WORK/material_other.json"
+[ "$(rc material_other)" = "-5" ] || fail "material_other: expected -5, got $(rc material_other): $(tail -n 5 "$WORK/material_other.log")"
+[ ! -e "$WORK/material_other/plate_1.sl1" ] || fail "material_other: an archive was written without usable resin settings"
+
+echo "PASS: resin slicing writes the archive and reports it, a resin material sets the exposure, and a model that does not fit is refused"

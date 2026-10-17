@@ -1,0 +1,25 @@
+{
+  "color" : "Red Clay",
+  "family" : "8K ABS-Like Resin 3.0",
+  "name" : "Elegoo 8K ABS-Like Resin 3.0 Red Clay",
+  "resin_type" : "abs-like",
+  "settings" : [
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 3,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 125.9,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Mars 5"
+      ],
+      "retract_speed" : 125.9,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Elegoo"
+}

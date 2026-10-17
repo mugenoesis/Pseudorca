@@ -1,0 +1,181 @@
+{
+  "color" : "Red Clay",
+  "family" : "8K Standard Photopolymer Resin",
+  "name" : "Elegoo 8K Standard Photopolymer Resin Red Clay",
+  "resin_type" : "standard",
+  "settings" : [
+    {
+      "delay_before_exposure" : 1,
+      "exposure_time" : 3.25,
+      "initial_exposure_time" : 32.5,
+      "layer_height" : 0.05,
+      "lift_distance" : 9,
+      "lift_speed" : 104,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Jupiter 2"
+      ],
+      "retract_speed" : 104,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 125.9,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Mars 4"
+      ],
+      "retract_speed" : 125.9,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 27.5,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 125.9,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Mars 4 Ultra"
+      ],
+      "retract_speed" : 125.9,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 3,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 125.9,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Mars 5"
+      ],
+      "retract_speed" : 125.9,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle",
+      "printers" : [
+        "Elegoo Mars 5 Ultra"
+      ],
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 27.5,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 102.4,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Saturn 2"
+      ],
+      "retract_speed" : 102.4,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 27.5,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 102.4,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Saturn 3"
+      ],
+      "retract_speed" : 102.4,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 27.5,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 152.7,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Saturn 3 Ultra"
+      ],
+      "retract_speed" : 152.7,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 102.4,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Saturn 4"
+      ],
+      "retract_speed" : 102.4,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle",
+      "printers" : [
+        "Elegoo Saturn 4 Ultra 12K"
+      ],
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 1.2,
+      "exposure_time" : 2.55,
+      "initial_exposure_time" : 29.5,
+      "layer_height" : 0.05,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle",
+      "printers" : [
+        "Elegoo Saturn 4 Ultra 16K"
+      ],
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    },
+    {
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2.75,
+      "initial_exposure_time" : 27.5,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 102.4,
+      "notes" : "Elegoo's spreadsheet of resin setting suggestions; exposure ranges given as their middle; a two-stage lift is given as its total distance and the speed that takes as long",
+      "printers" : [
+        "Elegoo Saturn 8K"
+      ],
+      "retract_speed" : 102.4,
+      "retrieved" : "2026-10-17",
+      "source" : "https://www.elegoo.com/blogs/3d-printer-user-guide/official-suggestions-for-elegoo-resin-on-elegoo-printers"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Elegoo"
+}

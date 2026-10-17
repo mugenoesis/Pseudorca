@@ -49,7 +49,7 @@ for my $file (sort grep { /\.ini$/ } readdir $dh) {
 
     my %m = (
         type => 'machine', from => 'system', name => $name,
-        printer_technology => 'SLA', printer_model => $model,
+        printer_technology => 'SLA', printer_model => $model, printer_settings_id => $name,
         display_width => $kv{display_width}, display_height => $kv{display_height},
         display_pixels_x => $kv{display_pixels_x}, display_pixels_y => $kv{display_pixels_y},
         display_orientation => $kv{display_orientation}, display_mirror_x => $kv{display_mirror_x},
@@ -75,7 +75,7 @@ closedir $dh;
 # physical size is the build volume the owner measured (30.6 x 40.8 x 60 mm over a 320 x 240 pixel panel).
 write_machine('TinyMaker', 'TinyMaker', {
     type => 'machine', from => 'system', name => 'TinyMaker TinyMaker', printer_technology => 'SLA',
-    printer_model => 'TinyMaker', display_width => '40.8', display_height => '30.6',
+    printer_model => 'TinyMaker', printer_settings_id => 'TinyMaker TinyMaker', display_width => '40.8', display_height => '30.6',
     display_pixels_x => '320', display_pixels_y => '240', display_orientation => 'landscape',
     display_mirror_x => '0', display_mirror_y => '0', printable_height => '60', gamma_correction => '1',
     sla_archive_format => 'TINYMAKER', layer_height => '0.05', initial_layer_height => '0.05',

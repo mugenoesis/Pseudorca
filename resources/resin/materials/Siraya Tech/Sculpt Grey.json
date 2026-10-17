@@ -1,0 +1,56 @@
+{
+  "name" : "Siraya Tech Sculpt Grey",
+  "resin_type" : "high-temp",
+  "settings" : [
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 18,
+      "initial_exposure_time" : 90,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/sculpt-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 14,
+      "initial_exposure_time" : 75,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Elegoo Mars"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/sculpt-user-guide"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "exposure_time" : 15,
+      "initial_exposure_time" : 90,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Wanhao D7"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/sculpt-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 18,
+      "initial_exposure_time" : 90,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Zortrax Inkspire"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/sculpt-user-guide"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Siraya Tech"
+}

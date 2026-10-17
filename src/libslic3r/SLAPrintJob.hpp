@@ -17,6 +17,9 @@ struct SLAJobParams
     // them; keys that are not SLA options are ignored.
     const DynamicPrintConfig *machine { nullptr };
     const DynamicPrintConfig *process { nullptr };
+    // Optional: the resin material's values (see ResinMaterial.hpp). They sit between the machine and the process profile: a
+    // value in the process profile still wins.
+    const DynamicPrintConfig *material { nullptr };
     // Directory the archive is written to. The file is named plate_1.<extension of sla_archive_format>.
     std::string               output_dir;
     // Leave the instances where they are (the caller already placed them) instead of packing the objects on the display.

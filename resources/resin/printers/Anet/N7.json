@@ -15,5 +15,6 @@
   "lift_distance": "6",
   "lift_speed": "60",
   "printable_height": "300",
+  "printer_settings_id": "Anet N7",
   "sla_archive_format": "n7"
 }

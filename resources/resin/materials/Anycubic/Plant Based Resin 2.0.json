@@ -1,0 +1,120 @@
+{
+  "name" : "Anycubic Plant Based Resin 2.0",
+  "resin_type" : "plant-based",
+  "settings" : [
+    {
+      "bottom_layer_count" : 1,
+      "delay_before_exposure" : 2,
+      "exposure_time" : 2,
+      "initial_exposure_time" : 20,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 180,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon P1 Max"
+      ],
+      "retract_speed" : 180,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 1,
+      "delay_before_exposure" : 2,
+      "exposure_time" : 2,
+      "initial_exposure_time" : 20,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 180,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon P1"
+      ],
+      "retract_speed" : 180,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 8,
+      "lift_speed" : 360,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono M7 Max"
+      ],
+      "retract_speed" : 360,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 480,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono 4 Ultra"
+      ],
+      "retract_speed" : 480,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.8,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 6,
+      "lift_speed" : 240,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono 4"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 4,
+      "delay_before_exposure" : 1,
+      "exposure_time" : 2.5,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 8,
+      "lift_speed" : 360,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono M7"
+      ],
+      "retract_speed" : 360,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 4,
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 2,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 8,
+      "lift_speed" : 360,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono M7 Pro"
+      ],
+      "retract_speed" : 360,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Anycubic"
+}

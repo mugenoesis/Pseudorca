@@ -1,0 +1,44 @@
+{
+  "name" : "Siraya Tech Tenacious Clear",
+  "resin_type" : "flexible",
+  "settings" : [
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 15,
+      "initial_exposure_time" : 80,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Anycubic Photon"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/tenacious-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 12,
+      "initial_exposure_time" : 60,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "EPAX X1"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/tenacious-user-guide"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "exposure_time" : 15,
+      "initial_exposure_time" : 80,
+      "layer_height" : 0.05,
+      "notes" : "Recommended exposure at room temperature in Siraya Tech's guide",
+      "printers" : [
+        "Zortrax Inkspire"
+      ],
+      "retrieved" : "2026-10-16",
+      "source" : "https://siraya.tech/pages/tenacious-user-guide"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Siraya Tech"
+}

@@ -18,6 +18,7 @@
   "lift_speed": "120",
   "light_pwm": "255",
   "printable_height": "150",
+  "printer_settings_id": "Nova3D Elfin2",
   "retract_speed": "120",
   "sla_archive_format": "cws"
 }
