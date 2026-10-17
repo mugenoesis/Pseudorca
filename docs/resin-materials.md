@@ -43,7 +43,7 @@ the material, and the material wins over the printer profile.
 `resources/resin/materials` holds the resins whose makers publish their settings; `materials-index.json` lists them. At the
 moment they are Siraya Tech's resins (read from the exposure tables in its user guides by
 `scripts/pseudorca/resin-materials-siraya.pl`) and Anycubic's own resins (the "Resin Settings for Anycubic 3D Printers" page,
-`scripts/pseudorca/resin-materials-anycubic.pl`, 26 Photon printers). `scripts/pseudorca/resin-materials-index.pl` rebuilds
+`scripts/pseudorca/resin-materials-anycubic.pl`, 26 Photon printers) and Elegoo's resins (the spreadsheet of resin setting suggestions, `scripts/pseudorca/resin-materials-elegoo.pl`: 143 resin and color combinations for 20 Elegoo printers; exposure ranges are given as their middle and a two-stage lift as its total distance at the speed that takes as long). `scripts/pseudorca/resin-materials-index.pl` rebuilds
 `materials-index.json`. They are the maker's recommendations as a starting point: exposure still depends on
 the individual printer, the resin's age and temperature, so a calibration print remains the way to settle it.
 

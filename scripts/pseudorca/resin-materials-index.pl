@@ -17,7 +17,7 @@ find({ no_chdir => 1, wanted => sub {
     my $m = decode_json(do { local $/; <$fh> });
     return unless ($m->{type} // '') eq 'material';
     (my $rel = $File::Find::name) =~ s{^\Q$dir\E/}{};
-    push @index, { name => $m->{name}, vendor => $m->{vendor}, resin_type => $m->{resin_type} // '', file => $rel,
+    push @index, { name => $m->{name}, vendor => $m->{vendor}, resin_type => $m->{resin_type} // '', family => $m->{family} // '', color => $m->{color} // '', file => $rel,
                    rows => scalar @{ $m->{settings} } };
 } }, "$dir/materials");
 @index = sort { $a->{name} cmp $b->{name} } @index;
