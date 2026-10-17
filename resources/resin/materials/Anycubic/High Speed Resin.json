@@ -1,0 +1,39 @@
+{
+  "name" : "Anycubic High Speed Resin",
+  "settings" : [
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 1.9,
+      "initial_exposure_time" : 10,
+      "layer_height" : 0.05,
+      "lift_distance" : 3,
+      "lift_speed" : 1200,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono M5s Pro"
+      ],
+      "retract_speed" : 1200,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    },
+    {
+      "bottom_layer_count" : 3,
+      "delay_before_exposure" : 0.5,
+      "exposure_time" : 1.7,
+      "initial_exposure_time" : 10,
+      "layer_height" : 0.05,
+      "lift_distance" : 3,
+      "lift_speed" : 1200,
+      "notes" : "Anycubic Laboratory reference settings for the factory default light energy",
+      "printers" : [
+        "Anycubic Photon Mono M5s"
+      ],
+      "retract_speed" : 1200,
+      "retrieved" : "2026-10-17",
+      "source" : "https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Anycubic"
+}

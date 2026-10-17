@@ -120,7 +120,6 @@ for my $r (@resins) {
 
 my $json = JSON::PP->new->pretty->canonical->indent_length(2);
 make_path("$dst/Siraya Tech");
-my @index;
 for my $name (sort keys %out) {
     my $res = $out{$name};
     next unless @{ $res->{rows} };
@@ -135,9 +134,5 @@ for my $name (sort keys %out) {
     open(my $o, '>', "$dst/Siraya Tech/$file.json") or die "$file: $!";
     print $o $json->encode($material);
     close $o;
-    push @index, { name => $name, vendor => 'Siraya Tech', resin_type => $res->{type}, file => "materials/Siraya Tech/$file.json", rows => scalar @rows };
 }
-open(my $o, '>', "$dst/materials-index.json") or die;
-print $o $json->encode({ materials => \@index });
-close $o;
-print scalar(@index), " resins\n";
+print scalar(keys %out), " resins\n";
