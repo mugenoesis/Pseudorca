@@ -41,8 +41,10 @@ the material, and the material wins over the printer profile.
 ## The library
 
 `resources/resin/materials` holds the resins whose makers publish their settings; `materials-index.json` lists them. At the
-moment they are Siraya Tech's resins, read from the exposure tables in Siraya Tech's user guides by
-`scripts/pseudorca/resin-materials-siraya.pl`. They are the maker's recommendations as a starting point: exposure still depends on
+moment they are Siraya Tech's resins (read from the exposure tables in its user guides by
+`scripts/pseudorca/resin-materials-siraya.pl`) and Anycubic's own resins (the "Resin Settings for Anycubic 3D Printers" page,
+`scripts/pseudorca/resin-materials-anycubic.pl`, 26 Photon printers). `scripts/pseudorca/resin-materials-index.pl` rebuilds
+`materials-index.json`. They are the maker's recommendations as a starting point: exposure still depends on
 the individual printer, the resin's age and temperature, so a calibration print remains the way to settle it.
 
 ## Your own resins

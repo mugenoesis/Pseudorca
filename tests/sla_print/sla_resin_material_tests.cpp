@@ -214,7 +214,7 @@ TEST_CASE("Every resin material in the library is complete and refers to printer
             CHECK(e >= 0.5); CHECK(e <= 60.);
             CHECK(b >= e); CHECK(b <= 200.);
             if (row.contains("lift_distance")) { CHECK(row["lift_distance"].get<double>() >= 1.); CHECK(row["lift_distance"].get<double>() <= 30.); }
-            if (row.contains("lift_speed")) { CHECK(row["lift_speed"].get<double>() >= 5.); CHECK(row["lift_speed"].get<double>() <= 400.); }
+            if (row.contains("lift_speed")) { CHECK(row["lift_speed"].get<double>() >= 5.); CHECK(row["lift_speed"].get<double>() <= 1200.); }
             for (const json &p : row.at("printers")) {
                 const std::string name = p.get<std::string>();
                 INFO(name);

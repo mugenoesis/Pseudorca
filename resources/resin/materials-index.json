@@ -1,6 +1,195 @@
 {
   "materials" : [
     {
+      "file" : "materials/Anycubic/14K Texture Resin.json",
+      "name" : "Anycubic 14K Texture Resin",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/16K Standard Resin-Orange Red.json",
+      "name" : "Anycubic 16K Standard Resin-Orange Red",
+      "resin_type" : "standard",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/16K Standard Resin-Other Colors.json",
+      "name" : "Anycubic 16K Standard Resin-Other Colors",
+      "resin_type" : "standard",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/ABS-Like Resin 2.0.json",
+      "name" : "Anycubic ABS-Like Resin 2.0",
+      "resin_type" : "abs-like",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/ABS-Like Resin 3.0.json",
+      "name" : "Anycubic ABS-Like Resin 3.0",
+      "resin_type" : "abs-like",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/ABS-Like Resin Pro.json",
+      "name" : "Anycubic ABS-Like Resin Pro",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/ABS-Like Resin Pro 2.json",
+      "name" : "Anycubic ABS-Like Resin Pro 2",
+      "resin_type" : "abs-like",
+      "rows" : 23,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/ABS-Like Resin V2.json",
+      "name" : "Anycubic ABS-Like Resin V2",
+      "resin_type" : "abs-like",
+      "rows" : 16,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/ABS-Like Resin Plus.json",
+      "name" : "Anycubic ABS-Like Resin+",
+      "resin_type" : "abs-like",
+      "rows" : 19,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/BJD Wear-Resistant Resin.json",
+      "name" : "Anycubic BJD Wear-Resistant Resin",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/DLP Craftman Resin.json",
+      "name" : "Anycubic DLP Craftman Resin",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/DLP Craftsman Resin.json",
+      "name" : "Anycubic DLP Craftsman Resin",
+      "resin_type" : "",
+      "rows" : 15,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/High Clear Resin.json",
+      "name" : "Anycubic High Clear Resin",
+      "resin_type" : "clear",
+      "rows" : 22,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/High Speed Resin.json",
+      "name" : "Anycubic High Speed Resin",
+      "resin_type" : "",
+      "rows" : 2,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/High Speed Resin 2.0.json",
+      "name" : "Anycubic High Speed Resin 2.0",
+      "resin_type" : "",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Plant Based Resin 2.0.json",
+      "name" : "Anycubic Plant Based Resin 2.0",
+      "resin_type" : "plant-based",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Plant-Based Resin.json",
+      "name" : "Anycubic Plant-Based Resin",
+      "resin_type" : "plant-based",
+      "rows" : 18,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Plant-Based Resin Plus.json",
+      "name" : "Anycubic Plant-Based Resin+",
+      "resin_type" : "plant-based",
+      "rows" : 15,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Standard Resin.json",
+      "name" : "Anycubic Standard Resin",
+      "resin_type" : "standard",
+      "rows" : 26,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Standard Resin V2.json",
+      "name" : "Anycubic Standard Resin V2",
+      "resin_type" : "standard",
+      "rows" : 22,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Standard Resin Plus.json",
+      "name" : "Anycubic Standard Resin+",
+      "resin_type" : "standard",
+      "rows" : 15,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Tough Resin 2.0.json",
+      "name" : "Anycubic Tough Resin 2.0",
+      "resin_type" : "tough",
+      "rows" : 23,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Tough Resin Ultra.json",
+      "name" : "Anycubic Tough Resin Ultra",
+      "resin_type" : "tough",
+      "rows" : 23,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/UV Tough Resin.json",
+      "name" : "Anycubic UV Tough Resin",
+      "resin_type" : "tough",
+      "rows" : 18,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Water Wash ABS-Like Resin 3.0.json",
+      "name" : "Anycubic Water Wash ABS-Like Resin 3.0",
+      "resin_type" : "abs-like",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Water Wash Resin 2.0.json",
+      "name" : "Anycubic Water Wash Resin 2.0",
+      "resin_type" : "water-washable",
+      "rows" : 7,
+      "vendor" : "Anycubic"
+    },
+    {
+      "file" : "materials/Anycubic/Water-Wash Resin Plus.json",
+      "name" : "Anycubic Water-Wash Resin+",
+      "resin_type" : "",
+      "rows" : 19,
+      "vendor" : "Anycubic"
+    },
+    {
       "file" : "materials/Siraya Tech/Blu Obsidian Black and Blu V3.json",
       "name" : "Siraya Tech Blu Obsidian Black and Blu V3",
       "resin_type" : "tough",

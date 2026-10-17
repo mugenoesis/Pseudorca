@@ -32,7 +32,7 @@ The TinyMaker entry was measured by its owner. None of the printers is verified 
 
 ### Resin materials
 
-`resources/resin/materials` holds the exposure settings Siraya Tech publishes for its resins in its user guides (https://siraya.tech/pages/...-user-guide); they are the maker's recommended values, entered with the link to their page and the date they were read (`scripts/pseudorca/resin-materials-siraya.pl`). Two test fixtures come from open sources: a Chitubox resin profile from [Photonsters/CBD-based-printers-list](https://github.com/Photonsters/CBD-based-printers-list) (The Unlicense) and a section of PrusaSlicer's `AnycubicSLA.ini` (AGPL-3.0); see `tests/data/resin/README.md`.
+`resources/resin/materials` holds the exposure settings that resin makers publish for their own resins: Siraya Tech in its user guides (https://siraya.tech/pages/...-user-guide) and Anycubic on its "Resin Settings for Anycubic 3D Printers" page (https://store.anycubic.com/blogs/news/resin-settings-for-anycubic-3d-printers, reference settings from the Anycubic Laboratory). They are the makers' recommended values, entered with the link to their page and the date they were read (`scripts/pseudorca/resin-materials-siraya.pl`, `scripts/pseudorca/resin-materials-anycubic.pl`). Two test fixtures come from open sources: a Chitubox resin profile from [Photonsters/CBD-based-printers-list](https://github.com/Photonsters/CBD-based-printers-list) (The Unlicense) and a section of PrusaSlicer's `AnycubicSLA.ini` (AGPL-3.0); see `tests/data/resin/README.md`.
 
 ## Trademarks
 
