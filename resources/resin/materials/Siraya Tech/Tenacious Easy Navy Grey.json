@@ -1,0 +1,739 @@
+{
+  "name" : "Siraya Tech Tenacious Easy Navy Grey",
+  "resin_type" : "flexible",
+  "settings" : [
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 3.2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 88,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon D2"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 12,
+      "lift_speed" : 91,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon M3 Max"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 94,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon M3 Plus"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 89,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon M3 Premium"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 88,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon M3"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 95,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono 2"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 84,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono 4 Ultra"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 3.2,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono 4"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 1.6,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 6,
+      "lift_speed" : 45,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono 4K"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 3.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono M5"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 4.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 98,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono M5s Pro"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 3.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono M5s"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 12,
+      "lift_speed" : 89,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono M7 Max"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 8,
+      "lift_speed" : 76,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono M7 Pro"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 8,
+      "lift_speed" : 76,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono M7"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 45,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono SE"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 1.6,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 94,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono X 6K"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 8,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 94,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono X 6Ks"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 1.6,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 45,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono X"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 3.1,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 84,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono X2"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 45,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Mono"
+      ],
+      "retract_speed" : 250,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 8,
+      "lift_speed" : 76,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon P1"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 30,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 45,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Anycubic Photon Ultra"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.8,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 35,
+      "layer_height" : 0.05,
+      "lift_distance" : 12,
+      "lift_speed" : 73,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Jupiter"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 0,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 95,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 2 Pro"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 0,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 95,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 2"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 95,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 3"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 67,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 4 DLP"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 4 Max"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 67,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 4 Ultra"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 67,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 4"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 4.05,
+      "lift_speed" : 228,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 5 Ultra"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.5,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 88,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars 5"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 10,
+      "faded_layers" : 0,
+      "initial_exposure_time" : 55,
+      "layer_height" : 0.05,
+      "lift_distance" : 5,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Mars"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 10,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn 2"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 8,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 118,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn 3 Ultra"
+      ],
+      "retract_speed" : 320,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 8,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn 3"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2,
+      "faded_layers" : 5,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 4.05,
+      "lift_speed" : 228,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn 4 Ultra 16K"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 8,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 84,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn 4"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 8,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn 8K"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn S"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 5,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 2.75,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 25,
+      "layer_height" : 0.05,
+      "lift_distance" : 7,
+      "lift_speed" : 109,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "Elegoo Saturn"
+      ],
+      "retract_speed" : 240,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    },
+    {
+      "bottom_layer_count" : 6,
+      "delay_before_exposure" : 0,
+      "exposure_time" : 3.8,
+      "faded_layers" : 6,
+      "initial_exposure_time" : 20,
+      "layer_height" : 0.05,
+      "lift_distance" : 9,
+      "lift_speed" : 45,
+      "notes" : "Siraya Tech's Chitubox 50 um profile, ported by the Open Resin Alliance",
+      "printers" : [
+        "UniFormation GKtwo"
+      ],
+      "retract_speed" : 200,
+      "retrieved" : "2026-10-18",
+      "source" : "https://github.com/Open-Resin-Alliance/df-plugin-sirayatech (MIT), from https://siraya.tech/pages/print-settings-download"
+    }
+  ],
+  "type" : "material",
+  "vendor" : "Siraya Tech"
+}

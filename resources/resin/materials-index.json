@@ -1533,10 +1533,55 @@
     {
       "color" : "",
       "family" : "",
+      "file" : "materials/Siraya Tech/Blu Easy Grey.json",
+      "name" : "Siraya Tech Blu Easy Grey",
+      "resin_type" : "standard",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Lava Black.json",
+      "name" : "Siraya Tech Blu Lava Black",
+      "resin_type" : "standard",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Lava Grey.json",
+      "name" : "Siraya Tech Blu Lava Grey",
+      "resin_type" : "standard",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Nylon Black.json",
+      "name" : "Siraya Tech Blu Nylon Black",
+      "resin_type" : "standard",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Nylon Mecha.json",
+      "name" : "Siraya Tech Blu Nylon Mecha",
+      "resin_type" : "engineering",
+      "rows" : 42,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
       "file" : "materials/Siraya Tech/Blu Obsidian Black and Blu V3.json",
       "name" : "Siraya Tech Blu Obsidian Black and Blu V3",
       "resin_type" : "tough",
-      "rows" : 10,
+      "rows" : 52,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1545,7 +1590,7 @@
       "file" : "materials/Siraya Tech/Blu and Blu Clear V2.json",
       "name" : "Siraya Tech Blu and Blu Clear V2",
       "resin_type" : "tough",
-      "rows" : 9,
+      "rows" : 51,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1554,7 +1599,52 @@
       "file" : "materials/Siraya Tech/Build.json",
       "name" : "Siraya Tech Build",
       "resin_type" : "engineering",
-      "rows" : 11,
+      "rows" : 53,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Cast Purple.json",
+      "name" : "Siraya Tech Cast Purple",
+      "resin_type" : "",
+      "rows" : 42,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Cast Royal Blu.json",
+      "name" : "Siraya Tech Cast Royal Blu",
+      "resin_type" : "",
+      "rows" : 42,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Cast True Blue.json",
+      "name" : "Siraya Tech Cast True Blue",
+      "resin_type" : "",
+      "rows" : 42,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Craft Glow-in-Dark.json",
+      "name" : "Siraya Tech Craft Glow-in-Dark",
+      "resin_type" : "",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Craft High Clear.json",
+      "name" : "Siraya Tech Craft High Clear",
+      "resin_type" : "",
+      "rows" : 43,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1563,7 +1653,7 @@
       "file" : "materials/Siraya Tech/Easy Grey.json",
       "name" : "Siraya Tech Easy Grey",
       "resin_type" : "plant-based",
-      "rows" : 18,
+      "rows" : 53,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1572,7 +1662,25 @@
       "file" : "materials/Siraya Tech/Easy Obsidian Black.json",
       "name" : "Siraya Tech Easy Obsidian Black",
       "resin_type" : "plant-based",
-      "rows" : 18,
+      "rows" : 53,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Grey, White, Green, Smoky Black, Creamy, Metal Grey.json",
+      "name" : "Siraya Tech Fast Grey, White, Green, Smoky Black, Creamy, Metal Grey",
+      "resin_type" : "abs-like",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Mecha White.json",
+      "name" : "Siraya Tech Fast Mecha White",
+      "resin_type" : "abs-like",
+      "rows" : 43,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1581,7 +1689,61 @@
       "file" : "materials/Siraya Tech/Fast Navy Grey.json",
       "name" : "Siraya Tech Fast Navy Grey",
       "resin_type" : "abs-like",
-      "rows" : 18,
+      "rows" : 53,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Tough Grey.json",
+      "name" : "Siraya Tech Fast Tough Grey",
+      "resin_type" : "tough",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Tough Navy Grey.json",
+      "name" : "Siraya Tech Fast Tough Navy Grey",
+      "resin_type" : "tough",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Magna Durable Black.json",
+      "name" : "Siraya Tech Magna Durable Black",
+      "resin_type" : "tough",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Magna Durable Clear.json",
+      "name" : "Siraya Tech Magna Durable Clear",
+      "resin_type" : "tough",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Magna Durable Grey.json",
+      "name" : "Siraya Tech Magna Durable Grey",
+      "resin_type" : "tough",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Rebound 55A Black.json",
+      "name" : "Siraya Tech Rebound 55A Black",
+      "resin_type" : "flexible",
+      "rows" : 40,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1590,7 +1752,7 @@
       "file" : "materials/Siraya Tech/Sculpt Clear.json",
       "name" : "Siraya Tech Sculpt Clear",
       "resin_type" : "high-temp",
-      "rows" : 6,
+      "rows" : 49,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1599,7 +1761,43 @@
       "file" : "materials/Siraya Tech/Sculpt Grey.json",
       "name" : "Siraya Tech Sculpt Grey",
       "resin_type" : "high-temp",
-      "rows" : 4,
+      "rows" : 46,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Sculpt Ultra White.json",
+      "name" : "Siraya Tech Sculpt Ultra White",
+      "resin_type" : "engineering",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Simple Clear, Grey, Smoky Black.json",
+      "name" : "Siraya Tech Simple Clear, Grey, Smoky Black",
+      "resin_type" : "standard",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Simple V2 Aqua Grey.json",
+      "name" : "Siraya Tech Simple V2 Aqua Grey",
+      "resin_type" : "standard",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Simple V2 Grey.json",
+      "name" : "Siraya Tech Simple V2 Grey",
+      "resin_type" : "standard",
+      "rows" : 43,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1608,7 +1806,43 @@
       "file" : "materials/Siraya Tech/Tenacious Clear.json",
       "name" : "Siraya Tech Tenacious Clear",
       "resin_type" : "flexible",
-      "rows" : 3,
+      "rows" : 46,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Easy Grey.json",
+      "name" : "Siraya Tech Tenacious Easy Grey",
+      "resin_type" : "flexible",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Easy Navy Grey.json",
+      "name" : "Siraya Tech Tenacious Easy Navy Grey",
+      "resin_type" : "flexible",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Flex Black.json",
+      "name" : "Siraya Tech Tenacious Flex Black",
+      "resin_type" : "flexible",
+      "rows" : 43,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Lava Black.json",
+      "name" : "Siraya Tech Tenacious Lava Black",
+      "resin_type" : "flexible",
+      "rows" : 43,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1617,7 +1851,7 @@
       "file" : "materials/Siraya Tech/Tenacious Obsidian Black.json",
       "name" : "Siraya Tech Tenacious Obsidian Black",
       "resin_type" : "flexible",
-      "rows" : 3,
+      "rows" : 46,
       "vendor" : "Siraya Tech"
     }
   ]
