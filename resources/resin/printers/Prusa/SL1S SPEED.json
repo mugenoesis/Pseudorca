@@ -1,0 +1,18 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Prusa SL1S SPEED",
+  "printer_technology": "SLA",
+  "printer_model": "SL1S SPEED",
+  "display_height": "128",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "1620",
+  "display_pixels_y": "2560",
+  "display_width": "81",
+  "gamma_correction": "1",
+  "printable_height": "150",
+  "printer_settings_id": "Prusa SL1S SPEED",
+  "sla_archive_format": "SL1"
+}
