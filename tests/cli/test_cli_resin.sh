@@ -187,4 +187,75 @@ echo "$?" > "$WORK/thin.rc"
 [ "$(rc thin)" != "0" ] || fail "thin: a 3 mm cube was hollowed with a 2 mm wall"
 [ ! -e "$WORK/thin/thin_hollow.stl" ] || fail "thin: an STL was written for a model that cannot be hollowed"
 
-echo "PASS: resin slicing writes the archive and reports it, a resin material sets the exposure, a model that does not fit is refused, and --sla-hollow-output hollows a model (and refuses one too thin)"
+# 6. --sla-support-points-output writes the generated support points (no slicing) in the file's own frame, and
+#    --sla-support-points-input slices with exactly the points given.
+cat > "$WORK/support_process.json" <<'JSON'
+{ "type": "process", "from": "user", "name": "resin-support-process", "supports_enable": "1" }
+JSON
+mkdir -p "$WORK/points.dd"
+timeout 300 "$BIN" --datadir "$WORK/points.dd" --load-settings "$WORK/machine.json;$WORK/support_process.json" --slice 0 \
+    --sla-support-points-output "$WORK/points/points.json" --outputdir "$WORK/points" "$WORK/cube.stl" > "$WORK/points.log" 2>&1
+echo "$?" > "$WORK/points.rc"
+[ "$(rc points)" = "0" ] || fail "points: expected 0, got $(rc points): $(tail -n 5 "$WORK/points.log")"
+[ -s "$WORK/points/points.json" ] || fail "points: no points file written"
+[ ! -e "$WORK/points/plate_1.sl1" ] || fail "points: the model was sliced as well"
+"$PY" - "$WORK/points/points.json" "$WORK/points/result.json" <<'PYEOF' || exit 1
+import json, sys
+
+pts = json.load(open(sys.argv[1]))["objects"][0]["points"]
+result = json.load(open(sys.argv[2]))
+if len(pts) < 4:
+    sys.exit("FAIL: points: %d points for a 20 mm cube" % len(pts))
+for p in pts:
+    on_face = any(abs(p[a] - c) < 0.3 for a in "xyz" for c in (0, 20))
+    inside = all(-0.3 <= p[a] <= 20.3 for a in "xyz")
+    if not (on_face and inside) or p["radius"] <= 0:
+        sys.exit("FAIL: points: %r is not on the cube in the file's own frame" % p)
+if result["return_code"] != 0 or int(result.get("support_point_count", -1)) != len(pts):
+    sys.exit("FAIL: points: result.json %r" % result)
+PYEOF
+
+cat > "$WORK/given.json" <<'JSON'
+{ "objects": [ { "points": [
+  { "x": 5,  "y": 5,  "z": 0, "radius": 0.4 },
+  { "x": 15, "y": 5,  "z": 0, "radius": 0.4 },
+  { "x": 10, "y": 15, "z": 0, "radius": 0.5 } ] } ] }
+JSON
+timeout 300 "$BIN" --datadir "$WORK/points.dd" --load-settings "$WORK/machine.json;$WORK/support_process.json" --slice 0 \
+    --sla-support-points-input "$WORK/given.json" --sla-support-points-output "$WORK/given_back/back.json" \
+    --outputdir "$WORK/given_back" "$WORK/cube.stl" > "$WORK/given_back.log" 2>&1
+echo "$?" > "$WORK/given_back.rc"
+[ "$(rc given_back)" = "0" ] || fail "points input: expected 0, got $(rc given_back): $(tail -n 5 "$WORK/given_back.log")"
+"$PY" - "$WORK/given_back/back.json" <<'PYEOF' || exit 1
+import json, sys
+
+pts = json.load(open(sys.argv[1]))["objects"][0]["points"]
+want = [(5, 5, 0, 0.4), (15, 5, 0, 0.4), (10, 15, 0, 0.5)]
+got = sorted((round(p["x"], 2), round(p["y"], 2), round(p["z"], 2), round(p["radius"], 2)) for p in pts)
+if got != sorted(want):
+    sys.exit("FAIL: points input: %r came back as %r" % (want, got))
+PYEOF
+
+timeout 300 "$BIN" --datadir "$WORK/points.dd" --load-settings "$WORK/machine.json;$WORK/support_process.json" --slice 1 \
+    --sla-support-points-input "$WORK/given.json" --outputdir "$WORK/given_slice" "$WORK/cube.stl" > "$WORK/given_slice.log" 2>&1
+echo "$?" > "$WORK/given_slice.rc"
+[ "$(rc given_slice)" = "0" ] || fail "points slice: expected 0, got $(rc given_slice): $(tail -n 5 "$WORK/given_slice.log")"
+[ -s "$WORK/given_slice/plate_1.sl1" ] || fail "points slice: no archive"
+"$PY" - "$WORK/given_slice/result.json" <<'PYEOF' || exit 1
+import json, sys
+
+result = json.load(open(sys.argv[1]))
+if int(result.get("support_point_count", -1)) != 3:
+    sys.exit("FAIL: points slice: support_point_count %r, expected the 3 given" % result.get("support_point_count"))
+PYEOF
+
+# 7. A points file that is not usable is refused before anything is sliced.
+echo '{"objects": 3}' > "$WORK/bad_points.json"
+timeout 300 "$BIN" --datadir "$WORK/points.dd" --load-settings "$WORK/machine.json;$WORK/support_process.json" --slice 1 \
+    --sla-support-points-input "$WORK/bad_points.json" --outputdir "$WORK/bad_points" "$WORK/cube.stl" > "$WORK/bad_points.log" 2>&1
+echo "$?" > "$WORK/bad_points.rc"
+[ "$(rc bad_points)" != "0" ] || fail "bad points: an unusable file was accepted"
+[ ! -e "$WORK/bad_points/plate_1.sl1" ] || fail "bad points: an archive was written"
+grep -q "objects" "$WORK/bad_points.log" || fail "bad points: the reason was not reported: $(tail -n 3 "$WORK/bad_points.log")"
+
+echo "PASS: resin slicing writes the archive and reports it, a resin material sets the exposure, a model that does not fit is refused, --sla-hollow-output hollows a model (and refuses one too thin), and the support points can be written and given back"

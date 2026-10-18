@@ -516,6 +516,8 @@ public:
         const DynamicPrintConfig *original_config = nullptr
     );
     void                process(long long *time_cost_with_cache = nullptr, bool use_cache = false) override;
+    // Makes process() stop once every object has done `step` (no later object steps, no rasterizing); slaposCount, the default, runs everything.
+    void                stop_after_object_step(SLAPrintObjectStep step) { m_stop_after_object_step = step; }
     // Returns true if an object step is done on all objects and there's at least one object.
     bool                is_step_done(SLAPrintObjectStep step) const;
     // Returns true if the last step was finished with success.
@@ -613,6 +615,7 @@ private:
     DynamicPrintConfig              m_original_config;
 
     PrintObjects                    m_objects;
+    SLAPrintObjectStep              m_stop_after_object_step { slaposCount };
 
     // Ready-made data for rasterization.
     std::vector<PrintLayer>         m_printer_input;

@@ -3,6 +3,9 @@
 
 #include <functional>
 #include <string>
+#include <vector>
+
+#include "SLA/SupportPoint.hpp"
 
 namespace Slic3r {
 
@@ -24,6 +27,10 @@ struct SLAJobParams
     std::string               output_dir;
     // Leave the instances where they are (the caller already placed them) instead of packing the objects on the display.
     bool                      keep_positions { false };
+    // Hand-placed support points, one entry per object in the order the objects were loaded, in the place the objects are in the
+    // file (instances applied, before the job packs them on the display). An entry replaces the generated points of that object, an
+    // empty one means no supports; objects past the end of the list get generated points.
+    std::vector<sla::SupportPoints> support_points;
     // Called with a percentage and a message while slicing.
     std::function<void(int, const std::string &)> progress;
 };
@@ -39,9 +46,27 @@ struct SLAJobResult
     double      print_time_s { 0. };
     double      resin_used_ml { 0. };
     double      layer_height { 0. };
+    size_t      support_point_count { 0 };  // all objects
 };
 
 SLAJobResult run_sla_job(Model &model, const SLAJobParams &params);
+
+// Generates the support points of the objects (or takes the hand-placed ones of `params.support_points`) and returns them, in the same
+// frame as `params.support_points`, without building the supports or slicing. A profile with supports off still gets its points.
+struct SLASupportPointsResult
+{
+    // One of the CLI_* codes of libslic3r/Utils.hpp; CLI_SUCCESS when the points were produced.
+    int                             code { 0 };
+    std::string                     error;
+    std::vector<sla::SupportPoints> objects;   // per object, in load order
+};
+
+SLASupportPointsResult run_sla_support_points(Model &model, const SLAJobParams &params);
+
+// The JSON the command line reads and writes: {"objects": [{"points": [{"x", "y", "z", "radius", "type"}]}]} where type is
+// "manual", "island" or "slope" (default "manual"). The reader says why in `error` when it refuses a text.
+std::string support_points_to_json(const std::vector<sla::SupportPoints> &objects);
+bool        support_points_from_json(const std::string &text, std::vector<sla::SupportPoints> &objects, std::string &error);
 
 // Hollows the objects of a Model and writes the result as one binary STL, in the place the objects are (instances applied): the
 // outer surface and, inside it, a cavity left by a wall of at least `hollowing_min_thickness` (with `hollowing_quality` and
