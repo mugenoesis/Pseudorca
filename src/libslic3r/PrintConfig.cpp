@@ -13234,6 +13234,12 @@ CLITransformConfigDef::CLITransformConfigDef()
     def->tooltip = L("Keep every object exactly where the input file puts it. On a belt printer this skips the automatic placement near the prime-line origin. Disabled by default.");
     def->set_default_value(new ConfigOptionBool(false));
 
+    def = this->add("sla_hollow_output", coString);
+    def->label = L("Hollow output");
+    def->tooltip = L("Resin printers only: instead of slicing, hollow the model with the hollowing settings of the process profile and write it to this STL file. Disabled by default.");
+    def->cli_params = "file";
+    def->set_default_value(new ConfigOptionString(""));
+
     /*def = this->add("copy", coInt);
     def->label = L("Copy");
     def->tooltip =L("Duplicate copies of model.");

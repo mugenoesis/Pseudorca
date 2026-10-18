@@ -138,4 +138,53 @@ slice material_other "$WORK/cube.stl" "$WORK/material_other.json"
 [ "$(rc material_other)" = "-5" ] || fail "material_other: expected -5, got $(rc material_other): $(tail -n 5 "$WORK/material_other.log")"
 [ ! -e "$WORK/material_other/plate_1.sl1" ] || fail "material_other: an archive was written without usable resin settings"
 
-echo "PASS: resin slicing writes the archive and reports it, a resin material sets the exposure, and a model that does not fit is refused"
+# 4. --sla-hollow-output hollows the model into an STL (no slicing) in the place the file has it, and result.json says so.
+cat > "$WORK/hollow_process.json" <<'JSON'
+{ "type": "process", "from": "user", "name": "resin-hollow-process", "hollowing_min_thickness": "2" }
+JSON
+mkdir -p "$WORK/hollow.dd"
+timeout 300 "$BIN" --datadir "$WORK/hollow.dd" --load-settings "$WORK/machine.json;$WORK/hollow_process.json" --slice 0 \
+    --sla-hollow-output "$WORK/hollow/hollow.stl" --outputdir "$WORK/hollow" "$WORK/cube.stl" > "$WORK/hollow.log" 2>&1
+echo "$?" > "$WORK/hollow.rc"
+[ "$(rc hollow)" = "0" ] || fail "hollow: expected 0, got $(rc hollow): $(tail -n 5 "$WORK/hollow.log")"
+[ -s "$WORK/hollow/hollow.stl" ] || fail "hollow: no STL written"
+[ ! -e "$WORK/hollow/plate_1.sl1" ] || fail "hollow: the model was sliced as well"
+"$PY" - "$WORK/hollow/hollow.stl" "$WORK/hollow/result.json" <<'PYEOF' || exit 1
+import json, struct, sys
+
+data = open(sys.argv[1], "rb").read()
+n = struct.unpack_from("<I", data, 80)[0]
+if 84 + 50 * n != len(data):
+    sys.exit("FAIL: hollow: not a binary STL")
+lo, hi, volume = [1e9] * 3, [-1e9] * 3, 0.0
+for i in range(n):
+    p = [struct.unpack_from("<3f", data, 84 + 50 * i + 12 + 12 * k) for k in range(3)]
+    for v in p:
+        for k in range(3):
+            lo[k], hi[k] = min(lo[k], v[k]), max(hi[k], v[k])
+    (ax, ay, az), (bx, by, bz), (cx, cy, cz) = p
+    volume += (ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx)) / 6.0
+# 20 mm cube with 2 mm walls: about 3900 mm3 of material, not 8000
+if not 3000 < volume < 5000:
+    sys.exit("FAIL: hollow: volume %.1f mm3, expected the walls of a 20 mm cube (about 3900)" % volume)
+if n <= 12:
+    sys.exit("FAIL: hollow: %d triangles, no cavity" % n)
+# the model stays where the file puts it: the cube spans 0 to 20 on every axis
+if any(abs(lo[k]) > 0.1 or abs(hi[k] - 20) > 0.1 for k in range(3)):
+    sys.exit("FAIL: hollow: spans %s to %s, expected 0 to 20 mm on every axis" % (lo, hi))
+result = json.load(open(sys.argv[2]))
+if result["return_code"] != 0 or not result.get("hollow_file", "").endswith("hollow.stl"):
+    sys.exit("FAIL: hollow: result.json %r" % result)
+if abs(float(result["volume_before_mm3"]) - 8000) > 80:
+    sys.exit("FAIL: hollow: volume_before_mm3 %s" % result["volume_before_mm3"])
+PYEOF
+
+# 5. A model too thin for the wall cannot be hollowed: the error is reported and no STL is written.
+box "$WORK/thin.stl" 3 3 3
+timeout 300 "$BIN" --datadir "$WORK/hollow.dd" --load-settings "$WORK/machine.json;$WORK/hollow_process.json" --slice 0 \
+    --sla-hollow-output "$WORK/thin/thin_hollow.stl" --outputdir "$WORK/thin" "$WORK/thin.stl" > "$WORK/thin.log" 2>&1
+echo "$?" > "$WORK/thin.rc"
+[ "$(rc thin)" != "0" ] || fail "thin: a 3 mm cube was hollowed with a 2 mm wall"
+[ ! -e "$WORK/thin/thin_hollow.stl" ] || fail "thin: an STL was written for a model that cannot be hollowed"
+
+echo "PASS: resin slicing writes the archive and reports it, a resin material sets the exposure, a model that does not fit is refused, and --sla-hollow-output hollows a model (and refuses one too thin)"
