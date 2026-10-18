@@ -24,6 +24,8 @@ sub norm { my ($s) = @_; $s = lc $s; $s =~ s/[^a-z0-9]+//g; return $s }
 my %ours;
 for my $p (@{ slurp("$resin_dir/index.json")->{printers} }) { $ours{ norm("$p->{vendor} $p->{model}") } = "$p->{vendor} $p->{model}" }
 my %vendor = (anycubic => 'Anycubic', elegoo => 'Elegoo', uniformation => 'UniFormation');
+# The plugin's name for a printer the library lists under another.
+my %renamed = ('elegoosaturn4ultra' => 'Elegoo Saturn 4 Ultra 12K');
 
 # The resins the library already has (by name without the maker), so a preset lands in the file it belongs to. The plugin names a resin
 # for every colour it covers; where the library named a table differently the two are matched by hand.
@@ -40,6 +42,7 @@ my %alias = (
     'bluobsidianblackv3'        => 'bluobsidianblackandbluv3',
     'buildsonicgreysmokyblack'  => 'build',
     'sculptdarkgrey'            => 'sculptgrey',
+    'fastgreywhitegreensmokyblackcreamymetalgr' => 'fastgreywhitegreensmokyblackcreamymetalgrey',   # a name cut short in the Saturn 4 Ultra file
 );
 
 # Anything that is not one of the preset's own settings is not carried over (the plugin's bottle price is a default, not Siraya Tech's).
@@ -92,7 +95,7 @@ for my $v (sort keys %vendor) {
     my $vdir = "$plugin/materials/$v";
     for my $f (sort glob("'$vdir/*.json'")) {
         (my $stem = $f) =~ s{.*/}{}; $stem =~ s/\.json$//;
-        my $printer = $ours{ norm("$vendor{$v} $stem") };
+        my $printer = $ours{ norm("$vendor{$v} $stem") } // $renamed{ norm("$vendor{$v} $stem") };
         unless ($printer) { $unmapped{"$vendor{$v} $stem"} = 1; next }
         my @presets = sort { ($a->{name} =~ /-/ ? 1 : 0) <=> ($b->{name} =~ /-/ ? 1 : 0) } @{ slurp($f) };
         for my $p (@presets) {
