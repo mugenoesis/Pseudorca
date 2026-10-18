@@ -11,6 +11,8 @@
 #include "Model.hpp"
 #include "PrintConfig.hpp"
 #include "SLAPrint.hpp"
+#include "SLA/Hollowing.hpp"
+#include "TriangleMesh.hpp"
 #include "Utils.hpp"
 
 namespace Slic3r {
@@ -142,6 +144,73 @@ SLAJobResult run_sla_job(Model &model, const SLAJobParams &params)
         res.layer_height  = print.default_object_config().layer_height.getFloat();
     } catch (const std::exception &ex) {
         BOOST_LOG_TRIVIAL(error) << "Resin slicing failed: " << ex.what();
+        return fail(CLI_SLICING_ERROR, ex.what());
+    }
+    return res;
+}
+
+} // namespace Slic3r
+
+namespace Slic3r {
+
+SLAHollowResult run_sla_hollow(Model &model, const SLAHollowParams &params)
+{
+    SLAHollowResult res;
+    auto fail = [&res](int code, std::string msg) {
+        res.code  = code;
+        res.error = std::move(msg);
+        return res;
+    };
+    auto progress = [&params](int percent, const char *text) {
+        if (params.progress)
+            params.progress(percent, text);
+    };
+
+    if (params.process == nullptr || params.output_path.empty())
+        return fail(CLI_INVALID_PARAMS, "Hollowing needs a process profile and a file to write.");
+    if (model.objects.empty())
+        return fail(CLI_NO_SUITABLE_OBJECTS, "There is no object to hollow.");
+
+    SLAFullPrintConfig sla_cfg;
+    sla_cfg.apply(*params.process, true);
+    sla::HollowingConfig hollowing;
+    hollowing.min_thickness    = sla_cfg.hollowing_min_thickness.getFloat();
+    hollowing.quality          = sla_cfg.hollowing_quality.getFloat();
+    hollowing.closing_distance = sla_cfg.hollowing_closing_distance.getFloat();
+
+    try {
+        indexed_triangle_set all;
+        size_t instances = 0;
+        for (const ModelObject *mo : model.objects) {
+            for (const ModelInstance *inst : mo->instances) {
+                TriangleMesh mesh = mo->raw_mesh();
+                inst->transform_mesh(&mesh);
+                if (mesh.empty())
+                    continue;
+                ++instances;
+                res.volume_before += its_volume(mesh.its);
+                const size_t solid_triangles = mesh.its.indices.size();
+                progress(10, "Hollowing model");
+                sla::hollow_mesh(mesh, hollowing);
+                if (mesh.its.indices.size() == solid_triangles)
+                    return fail(CLI_SLICING_ERROR, "The model is too thin for a wall of " + std::to_string(hollowing.min_thickness) + " mm: there is no room for a cavity.");
+                its_merge(all, mesh.its);
+            }
+        }
+        if (instances == 0)
+            return fail(CLI_NO_SUITABLE_OBJECTS, "There is no object to hollow.");
+        res.volume_after = its_volume(all);
+        res.triangles    = all.indices.size();
+
+        progress(90, "Writing the hollow model");
+        boost::system::error_code ec;
+        boost::filesystem::create_directories(boost::filesystem::path(params.output_path).parent_path(), ec);
+        if (! its_write_stl_binary(params.output_path.c_str(), "hollow", all))
+            return fail(CLI_EXPORT_STL_ERROR, "Cannot write " + params.output_path);
+        res.path = params.output_path;
+        progress(100, "Hollow model written");
+    } catch (const std::exception &ex) {
+        BOOST_LOG_TRIVIAL(error) << "Hollowing failed: " << ex.what();
         return fail(CLI_SLICING_ERROR, ex.what());
     }
     return res;

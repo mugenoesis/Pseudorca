@@ -2335,6 +2335,31 @@ int CLI::run(int argc, char **argv)
             apply_resin_material(choice, sla_material_config);
             boost::nowide::cout << "resin material " << choice.name << ": layer height " << choice.layer_height << (choice.exact_layer_height ? "" : " (nearest)") << ", " << (choice.printer_match == ResinMaterialChoice::PrinterMatch::Exact ? "this printer" : choice.printer_match == ResinMaterialChoice::PrinterMatch::Vendor ? "this vendor" : "any printer") << std::endl;
         }
+        // --sla-hollow-output: hollow the model and write it as an STL instead of slicing it.
+        if (m_config.has("sla_hollow_output") && ! m_config.opt_string("sla_hollow_output").empty()) {
+            SLAHollowParams hollow_params;
+            hollow_params.process     = &load_process_config;
+            hollow_params.output_path = m_config.opt_string("sla_hollow_output");
+            hollow_params.progress    = [](int percent, const std::string &text) {
+                boost::nowide::cout << "sla " << percent << "% " << text << std::endl;
+            };
+            const SLAHollowResult hollow = run_sla_hollow(m_models.front(), hollow_params);
+            if (hollow.code != CLI_SUCCESS) {
+                boost::nowide::cerr << "hollowing failed: " << hollow.error << std::endl;
+                record_exit_reson(outfile_dir, hollow.code, 0, hollow.error, sliced_info);
+                flush_and_exit(hollow.code);
+            }
+            std::map<std::string, std::string> hollow_result = {
+                {"printer_technology", "SLA"},
+                {"hollow_file",        hollow.path},
+                {"triangle_count",     std::to_string(hollow.triangles)},
+                {"volume_before_mm3",  std::to_string(hollow.volume_before)},
+                {"volume_after_mm3",   std::to_string(hollow.volume_after)},
+            };
+            boost::nowide::cout << "sla exported " << hollow.path << std::endl;
+            record_exit_reson(outfile_dir, CLI_SUCCESS, 1, cli_errors[CLI_SUCCESS], sliced_info, hollow_result);
+            return CLI_SUCCESS;
+        }
         SLAJobParams sla_params;
         sla_params.machine        = &load_machine_config;
         sla_params.process        = &load_process_config;
@@ -5286,6 +5311,8 @@ int CLI::run(int argc, char **argv)
             // do nothing, the value is read where the belt printer places objects
         } else if (opt_key == "keep_positions") {
             // do nothing, the value is read where the belt printer places objects
+        } else if (opt_key == "sla_hollow_output") {
+            // do nothing, the value is read where a resin printer is sliced
         } else if (opt_key == "rotate") {
             for (auto &model : m_models)
                 for (auto &o : model.objects)
