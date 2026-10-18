@@ -291,3 +291,25 @@ TEST_CASE("A resin material sets the exposure of a sliced cube, and the process 
     CHECK(h.find(";normalExposureTime:3.5\n") != std::string::npos);
     CHECK(h.find(";bottomLayExposureTime:20\n") != std::string::npos);
 }
+
+TEST_CASE("The shipped Siraya Tech library has the maker's settings for the UniFormation GKtwo", "[SLAResinMaterial]")
+{
+    const std::vector<std::string> gktwo = { "GKtwo", "UniFormation GKtwo" };
+    // Easy Grey, from Siraya Tech's 50 um Chitubox profile for the GKtwo: 3.8 s, 20 s for the 6 bottom layers, lifting 7 mm at 60 mm/min
+    const ResinMaterialChoice easy = choose_resin_material(read_text(resin_dir() / "materials" / "Siraya Tech" / "Easy Grey.json"), gktwo, 0.05);
+    REQUIRE(easy.ok);
+    CHECK(easy.printer_match == ResinMaterialChoice::PrinterMatch::Exact);
+    DynamicPrintConfig config;
+    apply_resin_material(easy, config);
+    CHECK(config.opt_float("exposure_time") == Catch::Approx(3.8));
+    CHECK(config.opt_float("initial_exposure_time") == Catch::Approx(20.));
+    CHECK(config.opt_int("faded_layers") == 6);
+    CHECK(config.opt_float("lift_distance") == Catch::Approx(7.));
+    CHECK(config.opt_float("lift_speed") == Catch::Approx(60.));
+
+    // a resin the library only had for other printers before is there now too
+    const ResinMaterialChoice fast = choose_resin_material(read_text(resin_dir() / "materials" / "Siraya Tech" / "Fast Mecha White.json"), gktwo, 0.05);
+    REQUIRE(fast.ok);
+    CHECK(fast.printer_match == ResinMaterialChoice::PrinterMatch::Exact);
+    CHECK(fast.exact_layer_height);
+}

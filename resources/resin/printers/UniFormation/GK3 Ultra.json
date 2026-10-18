@@ -1,0 +1,23 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "UniFormation GK3 Ultra",
+  "printer_technology": "SLA",
+  "printer_model": "GK3 Ultra",
+  "delay_after_exposure": "1",
+  "delay_before_exposure": "1.5",
+  "display_height": "161.98",
+  "display_mirror_x": "1",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "15120",
+  "display_pixels_y": "6230",
+  "display_width": "302.4",
+  "gamma_correction": "1",
+  "lift_distance": "5",
+  "lift_speed": "150",
+  "printable_height": "300",
+  "printer_settings_id": "UniFormation GK3 Ultra",
+  "retract_speed": "150",
+  "sla_archive_format": "CTBENCRYPTED"
+}

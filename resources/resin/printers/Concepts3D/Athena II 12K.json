@@ -1,0 +1,18 @@
+{
+  "type": "machine",
+  "from": "system",
+  "name": "Concepts3D Athena II 12K",
+  "printer_technology": "SLA",
+  "printer_model": "Athena II 12K",
+  "display_height": "122.88",
+  "display_mirror_x": "0",
+  "display_mirror_y": "0",
+  "display_orientation": "landscape",
+  "display_pixels_x": "11520",
+  "display_pixels_y": "5120",
+  "display_width": "218.88",
+  "gamma_correction": "1",
+  "printable_height": "235",
+  "printer_settings_id": "Concepts3D Athena II 12K",
+  "sla_archive_format": "nanodlp"
+}

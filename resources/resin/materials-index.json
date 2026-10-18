@@ -3,6 +3,168 @@
     {
       "color" : "",
       "family" : "",
+      "file" : "materials/3DJake/3DJake Blue.json",
+      "name" : "3DJake Blue",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "3DJake"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DJake/3DJake High Precision Blue.json",
+      "name" : "3DJake High Precision Blue",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "3DJake"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DJake/3DJake High Precision Grey.json",
+      "name" : "3DJake High Precision Grey",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "3DJake"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-ABS.json",
+      "name" : "3DM-ABS",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-ABS Orange.json",
+      "name" : "3DM-ABS Orange",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-BLACK.json",
+      "name" : "3DM-BLACK",
+      "resin_type" : "tough",
+      "rows" : 1,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-DENT.json",
+      "name" : "3DM-DENT",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-HR Green.json",
+      "name" : "3DM-HR Green",
+      "resin_type" : "",
+      "rows" : 2,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-HR Red Wine.json",
+      "name" : "3DM-HR Red Wine",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-HTR140 (high temperature).json",
+      "name" : "3DM-HTR140 (high temperature)",
+      "resin_type" : "tough",
+      "rows" : 1,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-TOUGH Clear.json",
+      "name" : "3DM-TOUGH Clear",
+      "resin_type" : "tough",
+      "rows" : 5,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-Vulcan Gold.json",
+      "name" : "3DM-Vulcan Gold",
+      "resin_type" : "casting",
+      "rows" : 3,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/3DM/3DM-XPRO White.json",
+      "name" : "3DM-XPRO White",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "3DM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Altana/ALTANA Cubic Ink High Performance 4-1000 VP-V0.json",
+      "name" : "ALTANA Cubic Ink High Performance 4-1000 VP-V0",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "Altana"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Altana/ALTANA Cubic Ink High Performance 4-2100 VP.json",
+      "name" : "ALTANA Cubic Ink High Performance 4-2100 VP",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "Altana"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Altana/ALTANA Cubic Ink High Performance 4-2800 VP-ESD black.json",
+      "name" : "ALTANA Cubic Ink High Performance 4-2800 VP-ESD black",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "Altana"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Ameralabs/Ameralabs AMD 3 LED.json",
+      "name" : "Ameralabs AMD 3 LED",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Ameralabs"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Ameralabs/Ameralabs TGM-7 LED.json",
+      "name" : "Ameralabs TGM-7 LED",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Ameralabs"
+    },
+    {
+      "color" : "",
+      "family" : "",
       "file" : "materials/Anycubic/14K Texture Resin.json",
       "name" : "Anycubic 14K Texture Resin",
       "resin_type" : "",
@@ -242,6 +404,186 @@
       "resin_type" : "",
       "rows" : 19,
       "vendor" : "Anycubic"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Asiga/Asiga Denta Model.json",
+      "name" : "Asiga Denta Model",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "Asiga"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Asiga/Asiga PlasGRAY.json",
+      "name" : "Asiga PlasGRAY",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Asiga"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast 23LS.json",
+      "name" : "BlueCast 23LS",
+      "resin_type" : "tough",
+      "rows" : 1,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast Castable Wax.json",
+      "name" : "BlueCast Castable Wax",
+      "resin_type" : "casting",
+      "rows" : 2,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast EcoGray.json",
+      "name" : "BlueCast EcoGray",
+      "resin_type" : "tough",
+      "rows" : 4,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast Kera Master Dental.json",
+      "name" : "BlueCast Kera Master Dental",
+      "resin_type" : "medical",
+      "rows" : 3,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast LCD-DLP Original.json",
+      "name" : "BlueCast LCD-DLP Original",
+      "resin_type" : "tough",
+      "rows" : 1,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast Model Dental Gray.json",
+      "name" : "BlueCast Model Dental Gray",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast Phrozen Wax.json",
+      "name" : "BlueCast Phrozen Wax",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast S+.json",
+      "name" : "BlueCast S+",
+      "resin_type" : "tough",
+      "rows" : 1,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast X-One.json",
+      "name" : "BlueCast X-One",
+      "resin_type" : "casting",
+      "rows" : 6,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast X10.json",
+      "name" : "BlueCast X10",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/BlueCast/BlueCast X5.json",
+      "name" : "BlueCast X5",
+      "resin_type" : "tough",
+      "rows" : 1,
+      "vendor" : "BlueCast"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Dragon Resin/Dragon Resin Metalshine Brass.json",
+      "name" : "Dragon Resin Metalshine Brass",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Dragon Resin"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Dragon Resin/Dragon Resin Metalshine Dark Brass.json",
+      "name" : "Dragon Resin Metalshine Dark Brass",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Dragon Resin"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Dragon Resin/Dragon Resin Metalshine Metal Grey.json",
+      "name" : "Dragon Resin Metalshine Metal Grey",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Dragon Resin"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/DruckWege/DruckWege Type D Dental Model.json",
+      "name" : "DruckWege Type D Dental Model",
+      "resin_type" : "medical",
+      "rows" : 3,
+      "vendor" : "DruckWege"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/DruckWege/DruckWege Type D High Temp.json",
+      "name" : "DruckWege Type D High Temp",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "DruckWege"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/DruckWege/DruckWege Type D Standard Pigmentfrei Clear.json",
+      "name" : "DruckWege Type D Standard Pigmentfrei Clear",
+      "resin_type" : "",
+      "rows" : 2,
+      "vendor" : "DruckWege"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/DruckWege/DruckWege Type D Standard White.json",
+      "name" : "DruckWege Type D Standard White",
+      "resin_type" : "",
+      "rows" : 2,
+      "vendor" : "DruckWege"
     },
     {
       "color" : "Red Clay",
@@ -1533,10 +1875,955 @@
     {
       "color" : "",
       "family" : "",
+      "file" : "materials/Esun/Esun Bio-Photopolymer Resin White.json",
+      "name" : "Esun Bio-Photopolymer Resin White",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Esun"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Esun/Esun Standard Resin Black.json",
+      "name" : "Esun Standard Resin Black",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Esun"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D EL 150 Black.json",
+      "name" : "Forward AM Ultracur3D EL 150 Black",
+      "resin_type" : "flexible",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D FL 300 Black.json",
+      "name" : "Forward AM Ultracur3D FL 300 Black",
+      "resin_type" : "flexible",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D RG 35.json",
+      "name" : "Forward AM Ultracur3D RG 35",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D ST 45.json",
+      "name" : "Forward AM Ultracur3D ST 45",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D ST 45 M.json",
+      "name" : "Forward AM Ultracur3D ST 45 M",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D ST 80.json",
+      "name" : "Forward AM Ultracur3D ST 80",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D ST 80 Black.json",
+      "name" : "Forward AM Ultracur3D ST 80 Black",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Forward AM/Forward AM Ultracur3D ST 80 White.json",
+      "name" : "Forward AM Ultracur3D ST 80 White",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Forward AM"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/FunToDo/FunToDo Ash Grey.json",
+      "name" : "FunToDo Ash Grey",
+      "resin_type" : "",
+      "rows" : 2,
+      "vendor" : "FunToDo"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/FunToDo/FunToDo Castable Blend Red.json",
+      "name" : "FunToDo Castable Blend Red",
+      "resin_type" : "casting",
+      "rows" : 2,
+      "vendor" : "FunToDo"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/FunToDo/FunToDo Industrial Blend Unpigmented.json",
+      "name" : "FunToDo Industrial Blend Unpigmented",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "FunToDo"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/FunToDo/FunToDo Snow White.json",
+      "name" : "FunToDo Snow White",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "FunToDo"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Harz Labs/Harz Labs Basic Resin Red.json",
+      "name" : "Harz Labs Basic Resin Red",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Harz Labs"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Harz Labs/Harz Labs Dental Cast Red.json",
+      "name" : "Harz Labs Dental Cast Red",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "Harz Labs"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Harz Labs/Harz Labs Model Resin Black.json",
+      "name" : "Harz Labs Model Resin Black",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Harz Labs"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Harz Labs/Harz Labs Model Resin Cherry.json",
+      "name" : "Harz Labs Model Resin Cherry",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Harz Labs"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Henkel/LOCTITE 3D 3843 HDT60 High Toughness.json",
+      "name" : "Henkel LOCTITE 3D 3843 HDT60 High Toughness",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "Henkel"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Henkel/LOCTITE 3D IND475.json",
+      "name" : "Henkel LOCTITE 3D IND475",
+      "resin_type" : "flexible",
+      "rows" : 2,
+      "vendor" : "Henkel"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Henkel/LOCTITE 3D PRO476.json",
+      "name" : "Henkel LOCTITE 3D PRO476",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "Henkel"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Bio-Med Clear.json",
+      "name" : "Liqcreate Bio-Med Clear",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Clear Impact.json",
+      "name" : "Liqcreate Clear Impact",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Dental Model Pro Beige.json",
+      "name" : "Liqcreate Dental Model Pro Beige",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Dental Model Pro Grey.json",
+      "name" : "Liqcreate Dental Model Pro Grey",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Flexible-X.json",
+      "name" : "Liqcreate Flexible-X",
+      "resin_type" : "flexible",
+      "rows" : 2,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Premium Model.json",
+      "name" : "Liqcreate Premium Model",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Strong X.json",
+      "name" : "Liqcreate Strong X",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Tough-X.json",
+      "name" : "Liqcreate Tough-X",
+      "resin_type" : "engineering",
+      "rows" : 2,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Liqcreate/Liqcreate Wax Castable.json",
+      "name" : "Liqcreate Wax Castable",
+      "resin_type" : "casting",
+      "rows" : 3,
+      "vendor" : "Liqcreate"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/MakerJuice Labs/MakerJuice Labs Standard Red.json",
+      "name" : "MakerJuice Labs Standard Red",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "MakerJuice Labs"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Monocure/Monocure 3D Black Rapid Resin.json",
+      "name" : "Monocure 3D Black Rapid Resin",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Monocure"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Monocure/Monocure 3D Blue Rapid Resin.json",
+      "name" : "Monocure 3D Blue Rapid Resin",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Monocure"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Monocure/Monocure 3D Clear Rapid Resin.json",
+      "name" : "Monocure 3D Clear Rapid Resin",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Monocure"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Monocure/Monocure 3D Grey Rapid Resin.json",
+      "name" : "Monocure 3D Grey Rapid Resin",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Monocure"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Monocure/Monocure 3D White Rapid Resin.json",
+      "name" : "Monocure 3D White Rapid Resin",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Monocure"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/NextDent/NextDent Cast Purple.json",
+      "name" : "NextDent Cast Purple",
+      "resin_type" : "casting",
+      "rows" : 3,
+      "vendor" : "NextDent"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/NextDent/NextDent Crown Bridge.json",
+      "name" : "NextDent Crown Bridge",
+      "resin_type" : "medical",
+      "rows" : 1,
+      "vendor" : "NextDent"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/NextDent/NextDent Model 2.0 Grey.json",
+      "name" : "NextDent Model 2.0 Grey",
+      "resin_type" : "medical",
+      "rows" : 3,
+      "vendor" : "NextDent"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/NextDent/NextDent Surgical Guide.json",
+      "name" : "NextDent Surgical Guide",
+      "resin_type" : "medical",
+      "rows" : 2,
+      "vendor" : "NextDent"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Peopoly/Peopoly Deft White.json",
+      "name" : "Peopoly Deft White",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Peopoly"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Peopoly/Peopoly Neo Clear.json",
+      "name" : "Peopoly Neo Clear",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Peopoly"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Photocentric/Photocentric Ash Grey.json",
+      "name" : "Photocentric Ash Grey",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Photocentric"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Photocentric/Photocentric Hard Grey.json",
+      "name" : "Photocentric Hard Grey",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Photocentric"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/PrimaCreator/PrimaCreator Flex Clear.json",
+      "name" : "PrimaCreator Flex Clear",
+      "resin_type" : "flexible",
+      "rows" : 6,
+      "vendor" : "PrimaCreator"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/PrimaCreator/PrimaCreator Tough Clear.json",
+      "name" : "PrimaCreator Tough Clear",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "PrimaCreator"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/PrimaCreator/PrimaCreator Tough Light Grey.json",
+      "name" : "PrimaCreator Tough Light Grey",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "PrimaCreator"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/PrimaCreator/PrimaCreator Tough White.json",
+      "name" : "PrimaCreator Tough White",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "PrimaCreator"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/PrimaCreator/PrimaCreator Water Washable Transparent.json",
+      "name" : "PrimaCreator Water Washable Transparent",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "PrimaCreator"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Basic Black.json",
+      "name" : "Prusa Polymers Prusament Resin Basic Black",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Basic Grey.json",
+      "name" : "Prusa Polymers Prusament Resin Basic Grey",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Basic Orange.json",
+      "name" : "Prusa Polymers Prusament Resin Basic Orange",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin BioBased60 Herbal Green.json",
+      "name" : "Prusa Polymers Prusament Resin BioBased60 Herbal Green",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin BioBased60 Ivory White.json",
+      "name" : "Prusa Polymers Prusament Resin BioBased60 Ivory White",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin BioBased60 Magma Red.json",
+      "name" : "Prusa Polymers Prusament Resin BioBased60 Magma Red",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin BioBased60 Natural Yellow.json",
+      "name" : "Prusa Polymers Prusament Resin BioBased60 Natural Yellow",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin BioBased60 Obsidian Black.json",
+      "name" : "Prusa Polymers Prusament Resin BioBased60 Obsidian Black",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin BioBased60 Sapphire Blue.json",
+      "name" : "Prusa Polymers Prusament Resin BioBased60 Sapphire Blue",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Flex Anatomic Red.json",
+      "name" : "Prusa Polymers Prusament Resin Flex Anatomic Red",
+      "resin_type" : "medical",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Flex Gingiva Mask.json",
+      "name" : "Prusa Polymers Prusament Resin Flex Gingiva Mask",
+      "resin_type" : "medical",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Flex80 Black.json",
+      "name" : "Prusa Polymers Prusament Resin Flex80 Black",
+      "resin_type" : "flexible",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Flex80 Transparent Clear.json",
+      "name" : "Prusa Polymers Prusament Resin Flex80 Transparent Clear",
+      "resin_type" : "flexible",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Flex80 White.json",
+      "name" : "Prusa Polymers Prusament Resin Flex80 White",
+      "resin_type" : "flexible",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Impact65 Black.json",
+      "name" : "Prusa Polymers Prusament Resin Impact65 Black",
+      "resin_type" : "engineering",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Alabaster White.json",
+      "name" : "Prusa Polymers Prusament Resin Model Alabaster White",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Anthracite Grey.json",
+      "name" : "Prusa Polymers Prusament Resin Model Anthracite Grey",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Brick Red.json",
+      "name" : "Prusa Polymers Prusament Resin Model Brick Red",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Bright Cyan.json",
+      "name" : "Prusa Polymers Prusament Resin Model Bright Cyan",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Bright Magenta.json",
+      "name" : "Prusa Polymers Prusament Resin Model Bright Magenta",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Bright Yellow.json",
+      "name" : "Prusa Polymers Prusament Resin Model Bright Yellow",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Classic Red.json",
+      "name" : "Prusa Polymers Prusament Resin Model Classic Red",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Grass Green.json",
+      "name" : "Prusa Polymers Prusament Resin Model Grass Green",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Neutral Beige.json",
+      "name" : "Prusa Polymers Prusament Resin Model Neutral Beige",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Prusa Orange.json",
+      "name" : "Prusa Polymers Prusament Resin Model Prusa Orange",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Prusa Pro Green.json",
+      "name" : "Prusa Polymers Prusament Resin Model Prusa Pro Green",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Rich Black.json",
+      "name" : "Prusa Polymers Prusament Resin Model Rich Black",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Sandstone.json",
+      "name" : "Prusa Polymers Prusament Resin Model Sandstone",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Solid Grey.json",
+      "name" : "Prusa Polymers Prusament Resin Model Solid Grey",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Terra Brown.json",
+      "name" : "Prusa Polymers Prusament Resin Model Terra Brown",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Transparent Amber.json",
+      "name" : "Prusa Polymers Prusament Resin Model Transparent Amber",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Transparent Clear.json",
+      "name" : "Prusa Polymers Prusament Resin Model Transparent Clear",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Transparent Green.json",
+      "name" : "Prusa Polymers Prusament Resin Model Transparent Green",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Transparent Red.json",
+      "name" : "Prusa Polymers Prusament Resin Model Transparent Red",
+      "resin_type" : "",
+      "rows" : 3,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Model Ultra Violet.json",
+      "name" : "Prusa Polymers Prusament Resin Model Ultra Violet",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Anthracite Grey.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Anthracite Grey",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Brick Red.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Brick Red",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Bright Yellow.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Bright Yellow",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Classic Red.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Classic Red",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Grass Green.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Grass Green",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Prusa Orange.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Prusa Orange",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Rich Black.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Rich Black",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Sandstone Model.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Sandstone Model",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Terra Brown.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Terra Brown",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Transparent Amber.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Transparent Amber",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Transparent Green.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Transparent Green",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Prusa Polymers/Prusament Resin Tough Transparent Red.json",
+      "name" : "Prusa Polymers Prusament Resin Tough Transparent Red",
+      "resin_type" : "tough",
+      "rows" : 6,
+      "vendor" : "Prusa Polymers"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Resinworks 3D/Resinworks 3D Green.json",
+      "name" : "Resinworks 3D Green",
+      "resin_type" : "casting",
+      "rows" : 5,
+      "vendor" : "Resinworks 3D"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Resinworks 3D/Resinworks 3D Violet.json",
+      "name" : "Resinworks 3D Violet",
+      "resin_type" : "casting",
+      "rows" : 3,
+      "vendor" : "Resinworks 3D"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Blu Blue.json",
+      "name" : "Siraya Tech Blu Blue",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Blu Clear V2.json",
+      "name" : "Siraya Tech Blu Clear V2",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Easy Grey.json",
+      "name" : "Siraya Tech Blu Easy Grey",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Lava Black.json",
+      "name" : "Siraya Tech Blu Lava Black",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Lava Grey.json",
+      "name" : "Siraya Tech Blu Lava Grey",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Nylon Black.json",
+      "name" : "Siraya Tech Blu Nylon Black",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Blu Nylon Mecha.json",
+      "name" : "Siraya Tech Blu Nylon Mecha",
+      "resin_type" : "engineering",
+      "rows" : 48,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
       "file" : "materials/Siraya Tech/Blu Obsidian Black and Blu V3.json",
       "name" : "Siraya Tech Blu Obsidian Black and Blu V3",
       "resin_type" : "tough",
-      "rows" : 10,
+      "rows" : 58,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1545,7 +2832,7 @@
       "file" : "materials/Siraya Tech/Blu and Blu Clear V2.json",
       "name" : "Siraya Tech Blu and Blu Clear V2",
       "resin_type" : "tough",
-      "rows" : 9,
+      "rows" : 57,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1554,7 +2841,61 @@
       "file" : "materials/Siraya Tech/Build.json",
       "name" : "Siraya Tech Build",
       "resin_type" : "engineering",
-      "rows" : 11,
+      "rows" : 59,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Cast Purple.json",
+      "name" : "Siraya Tech Cast Purple",
+      "resin_type" : "",
+      "rows" : 47,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Cast Royal Blu.json",
+      "name" : "Siraya Tech Cast Royal Blu",
+      "resin_type" : "",
+      "rows" : 47,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Cast True Blue.json",
+      "name" : "Siraya Tech Cast True Blue",
+      "resin_type" : "",
+      "rows" : 47,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Craft Glow-in-Dark.json",
+      "name" : "Siraya Tech Craft Glow-in-Dark",
+      "resin_type" : "",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Craft High Clear.json",
+      "name" : "Siraya Tech Craft High Clear",
+      "resin_type" : "",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Easy.json",
+      "name" : "Siraya Tech Easy",
+      "resin_type" : "tough",
+      "rows" : 2,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1563,7 +2904,7 @@
       "file" : "materials/Siraya Tech/Easy Grey.json",
       "name" : "Siraya Tech Easy Grey",
       "resin_type" : "plant-based",
-      "rows" : 18,
+      "rows" : 59,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1572,7 +2913,43 @@
       "file" : "materials/Siraya Tech/Easy Obsidian Black.json",
       "name" : "Siraya Tech Easy Obsidian Black",
       "resin_type" : "plant-based",
-      "rows" : 18,
+      "rows" : 59,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Fast Black.json",
+      "name" : "Siraya Tech Fast Black",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Fast Grey.json",
+      "name" : "Siraya Tech Fast Grey",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Grey, White, Green, Smoky Black, Creamy, Metal Grey.json",
+      "name" : "Siraya Tech Fast Grey, White, Green, Smoky Black, Creamy, Metal Grey",
+      "resin_type" : "abs-like",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Mecha White.json",
+      "name" : "Siraya Tech Fast Mecha White",
+      "resin_type" : "abs-like",
+      "rows" : 49,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1581,7 +2958,70 @@
       "file" : "materials/Siraya Tech/Fast Navy Grey.json",
       "name" : "Siraya Tech Fast Navy Grey",
       "resin_type" : "abs-like",
-      "rows" : 18,
+      "rows" : 59,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Tough Grey.json",
+      "name" : "Siraya Tech Fast Tough Grey",
+      "resin_type" : "tough",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Fast Tough Navy Grey.json",
+      "name" : "Siraya Tech Fast Tough Navy Grey",
+      "resin_type" : "tough",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Magna Durable Black.json",
+      "name" : "Siraya Tech Magna Durable Black",
+      "resin_type" : "tough",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Magna Durable Clear.json",
+      "name" : "Siraya Tech Magna Durable Clear",
+      "resin_type" : "tough",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Magna Durable Grey.json",
+      "name" : "Siraya Tech Magna Durable Grey",
+      "resin_type" : "tough",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Rebound 55A Black.json",
+      "name" : "Siraya Tech Rebound 55A Black",
+      "resin_type" : "flexible",
+      "rows" : 44,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Sculpt.json",
+      "name" : "Siraya Tech Sculpt",
+      "resin_type" : "tough",
+      "rows" : 3,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1590,7 +3030,7 @@
       "file" : "materials/Siraya Tech/Sculpt Clear.json",
       "name" : "Siraya Tech Sculpt Clear",
       "resin_type" : "high-temp",
-      "rows" : 6,
+      "rows" : 55,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1599,7 +3039,61 @@
       "file" : "materials/Siraya Tech/Sculpt Grey.json",
       "name" : "Siraya Tech Sculpt Grey",
       "resin_type" : "high-temp",
-      "rows" : 4,
+      "rows" : 52,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Sculpt Ultra White.json",
+      "name" : "Siraya Tech Sculpt Ultra White",
+      "resin_type" : "engineering",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Simple Clear.json",
+      "name" : "Siraya Tech Simple Clear",
+      "resin_type" : "tough",
+      "rows" : 3,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Simple Clear, Grey, Smoky Black.json",
+      "name" : "Siraya Tech Simple Clear, Grey, Smoky Black",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Simple V2 Aqua Grey.json",
+      "name" : "Siraya Tech Simple V2 Aqua Grey",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Simple V2 Grey.json",
+      "name" : "Siraya Tech Simple V2 Grey",
+      "resin_type" : "standard",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Siraya Tech Tenacious.json",
+      "name" : "Siraya Tech Tenacious",
+      "resin_type" : "tough",
+      "rows" : 3,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1608,7 +3102,43 @@
       "file" : "materials/Siraya Tech/Tenacious Clear.json",
       "name" : "Siraya Tech Tenacious Clear",
       "resin_type" : "flexible",
-      "rows" : 3,
+      "rows" : 52,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Easy Grey.json",
+      "name" : "Siraya Tech Tenacious Easy Grey",
+      "resin_type" : "flexible",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Easy Navy Grey.json",
+      "name" : "Siraya Tech Tenacious Easy Navy Grey",
+      "resin_type" : "flexible",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Flex Black.json",
+      "name" : "Siraya Tech Tenacious Flex Black",
+      "resin_type" : "flexible",
+      "rows" : 49,
+      "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Siraya Tech/Tenacious Lava Black.json",
+      "name" : "Siraya Tech Tenacious Lava Black",
+      "resin_type" : "flexible",
+      "rows" : 49,
       "vendor" : "Siraya Tech"
     },
     {
@@ -1617,8 +3147,17 @@
       "file" : "materials/Siraya Tech/Tenacious Obsidian Black.json",
       "name" : "Siraya Tech Tenacious Obsidian Black",
       "resin_type" : "flexible",
-      "rows" : 3,
+      "rows" : 52,
       "vendor" : "Siraya Tech"
+    },
+    {
+      "color" : "",
+      "family" : "",
+      "file" : "materials/Zortrax/Zortrax Black.json",
+      "name" : "Zortrax Black",
+      "resin_type" : "tough",
+      "rows" : 2,
+      "vendor" : "Zortrax"
     }
   ]
 }

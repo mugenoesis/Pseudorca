@@ -129,3 +129,30 @@ TEST_CASE("A small cube slices for printers of different displays and formats", 
     CHECK(res.layer_count == Catch::Approx(100).margin(2));      // 20 mm at 0.2 mm
     CHECK(fs::file_size(res.archive_path) > 1000);
 }
+
+TEST_CASE("The printers added from the open profile libraries have their published screens", "[ResinCatalogue]")
+{
+    struct Expected { const char *file; int px, py; double width, height, build; const char *format; };
+    // resolution and pixel size (14 x 19 um on the GK3 and GK3 Pro, 20 x 26 on the Ultra) as the plugins give them; the screen is their product
+    const Expected printers[] = {
+        { "UniFormation/GK3.json",       15120, 6230, 211.68, 118.37, 240., "CTBENCRYPTED" },
+        { "UniFormation/GK3 Pro.json",   15120, 6230, 211.68, 118.37, 240., "CTBENCRYPTED" },
+        { "UniFormation/GK3 Ultra.json", 15120, 6230, 302.4,  161.98, 300., "CTBENCRYPTED" },
+        { "Elegoo/Jupiter SE.json",       5448, 3064, 277.848, 156.264, 300., "CTBENCRYPTED" },
+        { "Elegoo/Mars 3 Pro.json",       4098, 2560, 143.43,  89.6,   175., "CTBENCRYPTED" },
+        { "Prusa/SL1.json",               1440, 2560, 68.04,   120.96, 150., "SL1" },
+        { "Prusa/SL1S SPEED.json",        1620, 2560, 81.,     128.,   150., "SL1" },
+        { "Concepts3D/Athena II 12K.json", 11520, 5120, 218.88, 122.88, 235., "nanodlp" },
+        { "Concepts3D/Athena II 16K.json", 15120, 6230, 211.68, 118.37, 235., "nanodlp" },
+    };
+    for (const Expected &e : printers) {
+        INFO(e.file);
+        const DynamicPrintConfig cfg = load_machine(catalogue_dir() / "printers" / e.file);
+        CHECK(cfg.opt_int("display_pixels_x") == e.px);
+        CHECK(cfg.opt_int("display_pixels_y") == e.py);
+        CHECK(cfg.opt_float("display_width") == Catch::Approx(e.width).margin(0.01));
+        CHECK(cfg.opt_float("display_height") == Catch::Approx(e.height).margin(0.01));
+        CHECK(cfg.opt_float("printable_height") == Catch::Approx(e.build));
+        CHECK(cfg.opt_string("sla_archive_format") == e.format);
+    }
+}
