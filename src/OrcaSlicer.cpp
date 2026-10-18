@@ -2360,6 +2360,22 @@ int CLI::run(int argc, char **argv)
             record_exit_reson(outfile_dir, CLI_SUCCESS, 1, cli_errors[CLI_SUCCESS], sliced_info, hollow_result);
             return CLI_SUCCESS;
         }
+        // --sla-support-points-input: hand-placed support points instead of generated ones.
+        std::vector<sla::SupportPoints> given_support_points;
+        if (m_config.has("sla_support_points_input") && ! m_config.opt_string("sla_support_points_input").empty()) {
+            const std::string points_file = m_config.opt_string("sla_support_points_input");
+            boost::nowide::ifstream ifs(points_file);
+            std::string points_error;
+            if (! ifs.is_open())
+                points_error = "Cannot read the support points file " + points_file;
+            else if (! support_points_from_json(std::string((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>()), given_support_points, points_error))
+                points_error = points_file + ": " + points_error;
+            if (! points_error.empty()) {
+                boost::nowide::cerr << points_error << std::endl;
+                record_exit_reson(outfile_dir, CLI_CONFIG_FILE_ERROR, 0, points_error, sliced_info);
+                flush_and_exit(CLI_CONFIG_FILE_ERROR);
+            }
+        }
         SLAJobParams sla_params;
         sla_params.machine        = &load_machine_config;
         sla_params.process        = &load_process_config;
@@ -2369,6 +2385,38 @@ int CLI::run(int argc, char **argv)
         sla_params.progress       = [](int percent, const std::string &text) {
             boost::nowide::cout << "sla " << percent << "% " << text << std::endl;
         };
+        sla_params.support_points = given_support_points;
+        // --sla-support-points-output: write the support points instead of slicing.
+        if (m_config.has("sla_support_points_output") && ! m_config.opt_string("sla_support_points_output").empty()) {
+            const std::string points_out = m_config.opt_string("sla_support_points_output");
+            const SLASupportPointsResult points = run_sla_support_points(m_models.front(), sla_params);
+            std::string points_error = points.error;
+            if (points.code == CLI_SUCCESS) {
+                boost::system::error_code ec;
+                boost::filesystem::create_directories(boost::filesystem::path(points_out).parent_path(), ec);
+                boost::nowide::ofstream ofs(points_out, std::ios::binary);
+                ofs << support_points_to_json(points.objects);
+                if (! ofs.good())
+                    points_error = "Cannot write " + points_out;
+            }
+            if (points.code != CLI_SUCCESS || ! points_error.empty()) {
+                const int code = points.code != CLI_SUCCESS ? points.code : CLI_EXPORT_STL_ERROR;
+                boost::nowide::cerr << "support points failed: " << points_error << std::endl;
+                record_exit_reson(outfile_dir, code, 0, points_error, sliced_info);
+                flush_and_exit(code);
+            }
+            size_t total = 0;
+            for (const sla::SupportPoints &object : points.objects)
+                total += object.size();
+            std::map<std::string, std::string> points_result = {
+                {"printer_technology",  "SLA"},
+                {"support_points_file", points_out},
+                {"support_point_count", std::to_string(total)},
+            };
+            boost::nowide::cout << "sla exported " << points_out << std::endl;
+            record_exit_reson(outfile_dir, CLI_SUCCESS, 1, cli_errors[CLI_SUCCESS], sliced_info, points_result);
+            return CLI_SUCCESS;
+        }
         const SLAJobResult sla = run_sla_job(m_models.front(), sla_params);
         if (sla.code != CLI_SUCCESS) {
             boost::nowide::cerr << "resin slicing failed: " << sla.error << std::endl;
@@ -2383,6 +2431,7 @@ int CLI::run(int argc, char **argv)
             {"layer_height_mm",    std::to_string(sla.layer_height)},
             {"estimated_print_time_s", std::to_string(sla.print_time_s)},
             {"resin_used_ml",      std::to_string(sla.resin_used_ml)},
+            {"support_point_count", std::to_string(sla.support_point_count)},
         };
         boost::nowide::cout << "sla exported " << sla.archive_path << " layers=" << sla.layer_count << std::endl;
         record_exit_reson(outfile_dir, CLI_SUCCESS, 1, cli_errors[CLI_SUCCESS], sliced_info, sla_result);
@@ -5313,6 +5362,8 @@ int CLI::run(int argc, char **argv)
             // do nothing, the value is read where the belt printer places objects
         } else if (opt_key == "sla_hollow_output") {
             // do nothing, the value is read where a resin printer is sliced
+        } else if (opt_key == "sla_support_points_input" || opt_key == "sla_support_points_output") {
+            // do nothing, the values are read where a resin printer is sliced
         } else if (opt_key == "rotate") {
             for (auto &model : m_models)
                 for (auto &o : model.objects)

@@ -781,6 +781,9 @@ void SLAPrint::process(long long *, bool)
         for (SLAPrintObject *po : m_objects) {
             for (SLAPrintObjectStep step : steps) {
 
+                if (step > m_stop_after_object_step)
+                    continue;
+
                 // Cancellation checking. Each step will check for
                 // cancellation on its own and return earlier gracefully.
                 // Just after it returns execution gets to this point and
@@ -805,6 +808,8 @@ void SLAPrint::process(long long *, bool)
     };
 
     apply_steps_on_objects(level1_obj_steps);
+    if (m_stop_after_object_step != slaposCount)
+        return;
     apply_steps_on_objects(level2_obj_steps);
 
     st = Steps::max_objstatus;

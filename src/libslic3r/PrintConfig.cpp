@@ -13240,6 +13240,18 @@ CLITransformConfigDef::CLITransformConfigDef()
     def->cli_params = "file";
     def->set_default_value(new ConfigOptionString(""));
 
+    def = this->add("sla_support_points_input", coString);
+    def->label = L("Support points input");
+    def->tooltip = L("Resin printers only: a JSON file of hand-placed support points to use instead of generating them (see --sla-support-points-output for the format). Disabled by default.");
+    def->cli_params = "file";
+    def->set_default_value(new ConfigOptionString(""));
+
+    def = this->add("sla_support_points_output", coString);
+    def->label = L("Support points output");
+    def->tooltip = L("Resin printers only: instead of slicing, generate the support points (or take those of --sla-support-points-input) and write them to this JSON file, in the coordinates the model file has. Disabled by default.");
+    def->cli_params = "file";
+    def->set_default_value(new ConfigOptionString(""));
+
     /*def = this->add("copy", coInt);
     def->label = L("Copy");
     def->tooltip =L("Duplicate copies of model.");
