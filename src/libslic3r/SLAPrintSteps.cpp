@@ -51,6 +51,7 @@
 #include "libslic3r/Polygon.hpp"
 #include "libslic3r/PrintBase.hpp"
 #include "libslic3r/PrintConfig.hpp"
+#include "libslic3r/SLA/Cavities.hpp"
 #include "libslic3r/SLA/Hollowing.hpp"
 #include "libslic3r/SLA/JobController.hpp"
 #include "libslic3r/SLA/RasterBase.hpp"
@@ -589,6 +590,12 @@ void SLAPrint::Steps::slice_model(SLAPrintObject &po)
     auto &slice_grid = po.m_model_height_levels;
 
     po.m_model_slices = slice_csgmesh_ex(po.mesh_to_slice(), slice_grid, params, thr);
+
+    // A hollowed model has a closed interior on purpose, so this is only for a solid one.
+    if (po.m_config.fill_closed_cavities.getBool() && !po.m_config.hollowing_enable.getBool()) {
+        size_t filled = sla::fill_closed_cavities(po.m_model_slices, sla::CLOSED_CAVITY_MIN_AREA_MM2);
+        BOOST_LOG_TRIVIAL(info) << "Filled " << filled << " closed cavities";
+    }
 
     auto mit = slindex_it;
     for (size_t id = 0;

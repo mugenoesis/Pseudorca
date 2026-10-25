@@ -493,6 +493,8 @@ set(lisbslic3r_sources
     SLA/BranchingTreeSLA.cpp
     SLA/ZCorrection.hpp
     SLA/ZCorrection.cpp
+    SLA/Cavities.hpp
+    SLA/Cavities.cpp
     SLA/Workflows.hpp
     SLA/Workflows.cpp
     SLA/SupportIslands/EvaluateNeighbor.cpp
