@@ -2372,6 +2372,9 @@ PRINT_CONFIG_CLASS_DEFINE(
 
     // Indirectly controls the minimum size of created cavities.
     ((ConfigOptionFloat, hollowing_closing_distance))
+
+    // Fill the cavities no resin can flow into (cupping), see sla::fill_closed_cavities. Not done for a model that is hollowed.
+    ((ConfigOptionBool, fill_closed_cavities))
 )
 
 enum SLAMaterialSpeed { slamsSlow, slamsFast, slamsHighViscosity };

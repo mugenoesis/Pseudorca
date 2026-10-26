@@ -12,6 +12,7 @@ add_executable(${_TEST_NAME}_tests ${_TEST_NAME}_tests_main.cpp
     sla_supptreeutils_tests.cpp
     sla_archive_readwrite_tests.cpp
     sla_zcorrection_tests.cpp
+    sla_cavity_tests.cpp
     sla_print_job_tests.cpp
     sla_ctb_tests.cpp
     sla_tinymaker_tests.cpp

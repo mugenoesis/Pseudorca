@@ -1673,6 +1673,7 @@ static std::vector<std::string> s_Preset_sla_print_options {
     "hollowing_min_thickness",
     "hollowing_quality",
     "hollowing_closing_distance",
+    "fill_closed_cavities",
     "filename_format",
     "default_sla_print_profile",
     "compatible_printers",

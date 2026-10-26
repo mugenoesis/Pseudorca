@@ -9788,6 +9788,14 @@ void PrintConfigDef::init_sla_params()
     def->mode = comExpert;
     def->set_default_value(new ConfigOptionFloat(2.0));
 
+    def = this->add("fill_closed_cavities", coBool);
+    def->label = L("Fill closed cavities");
+    def->category = L("Hollowing");
+    def->tooltip = L("Fill the cavities that no resin can flow into. Such a cavity seals against the film and can suck on it as a layer "
+                     "peels off (cupping). A cavity with a channel to the outside is left alone, and so is a model that is hollowed.");
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("material_print_speed", coEnum);
     def->label = L("Print speed");
     def->tooltip = L(
