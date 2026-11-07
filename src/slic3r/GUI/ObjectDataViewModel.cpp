@@ -1072,10 +1072,6 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
 
         ObjectDataViewModelNode* last_instance_node = node_parent->GetNthChild(0);
         PrintIndicator last_instance_printable = last_instance_node->IsPrintable();
-        // Captured before delete: ItemDeleted only needs the node's former address as an
-        // opaque row id (the control never dereferences it), but reading a pointer's value
-        // after delete is itself UB, which -Werror=use-after-free correctly flags.
-        wxDataViewItem last_instance_item(last_instance_node);
         node_parent->GetChildren().Remove(last_instance_node);
         // Wrapped before the delete because GCC's -Wuse-after-free flags reading a freed pointer.
         const wxDataViewItem last_instance_item(last_instance_node);
@@ -1084,7 +1080,6 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
 
         ObjectDataViewModelNode* obj_node = node_parent->GetParent();
         obj_node->set_printable_icon(last_instance_printable);
-        wxDataViewItem node_parent_item(node_parent);
         obj_node->GetChildren().Remove(node_parent);
         // Wrapped before the delete because GCC's -Wuse-after-free flags reading a freed pointer.
         const wxDataViewItem node_parent_item(node_parent);
@@ -1106,7 +1101,6 @@ wxDataViewItem ObjectDataViewModel::Delete(const wxDataViewItem &item)
     if (node_parent->GetChildCount() == 0 && node_parent->m_type == itLayerRoot)
     {
         ObjectDataViewModelNode* obj_node = node_parent->GetParent();
-        wxDataViewItem node_parent_item(node_parent);
         obj_node->GetChildren().Remove(node_parent);
         // Wrapped before the delete because GCC's -Wuse-after-free flags reading a freed pointer.
         const wxDataViewItem node_parent_item(node_parent);
