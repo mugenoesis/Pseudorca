@@ -4099,6 +4099,20 @@ int CLI::run(int argc, char **argv)
             //computing
             ConfigOptionBools* filament_is_support = m_print_config.option<ConfigOptionBools>("filament_is_support", true);
 
+            // ORCA: get_min_flush_volumes sizes its result from filament_diameter and indexes the
+            // per-filament retraction-when-cut options with the same positions. A command line
+            // run with standalone presets carries none of them (or fewer than the filaments), and
+            // since the palette is now padded above this block runs for such runs too, so fill
+            // them in first rather than read past the end.
+            {
+                auto grow = [project_filament_count](auto *opt, auto fill) {
+                    if (opt && opt->values.size() < project_filament_count)
+                        opt->values.resize(project_filament_count, fill);
+                };
+                grow(m_print_config.option<ConfigOptionFloats>("filament_diameter", true), 1.75);
+                grow(m_print_config.option<ConfigOptionFloats>("filament_retraction_distances_when_cut"), std::numeric_limits<double>::quiet_NaN());
+                grow(m_print_config.option<ConfigOptionBools>("filament_long_retractions_when_cut"), static_cast<unsigned char>(0));
+            }
             const std::vector<int> &min_flush_volumes = Slic3r::GUI::get_min_flush_volumes(m_print_config, 0);
 
             if (filament_is_support->size() != project_filament_count)
