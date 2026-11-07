@@ -5138,12 +5138,12 @@ int CLI::run(int argc, char **argv)
     // same minimum Y the real bed already starts at -- called again right
     // before every actual `arrange_objects`/`arrangement::arrange` call
     // below, since `beds` gets reassigned from scratch in between.
-    auto cap_beds_for_belt_printer = [this](Points &beds_to_cap) {
-        if (beds_to_cap.empty() || m_models.empty()) return;
+    auto cap_beds_for_belt_printer = [this](Points &beds_to_cap) -> bool {
+        if (beds_to_cap.empty() || m_models.empty()) return false;
         ConfigOptionBool *infinite_y_opt = m_print_config.option<ConfigOptionBool>("belt_printer_infinite_y");
-        if (!infinite_y_opt || !infinite_y_opt->value) return;
+        if (!infinite_y_opt || !infinite_y_opt->value) return false;
         BoundingBoxf3 model_bbox = m_models[0].bounding_box_exact();
-        if (!model_bbox.defined) return;
+        if (!model_bbox.defined) return false;
         coord_t min_y = beds_to_cap.front().y(), max_y = beds_to_cap.front().y();
         for (const Point &p : beds_to_cap) {
             min_y = std::min(min_y, p.y());
@@ -5193,7 +5193,7 @@ int CLI::run(int argc, char **argv)
         // ~46mm from the prime lines with that sizing, not ~margin_mm).
         double arrange_depth_mm = std::max(20., model_bbox.size().y() + 2. * margin_mm);
         coord_t capped_max_y = min_y + scale_(arrange_depth_mm);
-        if (capped_max_y >= max_y) return;
+        if (capped_max_y >= max_y) return false;
         // --belt-shift-y moves this whole strip along the belt, so arrange
         // centres the object that much further from (or closer to) the origin.
         const coord_t belt_shift = scale_(m_config.opt_float("belt_shift_y"));
@@ -5202,8 +5202,10 @@ int CLI::run(int argc, char **argv)
         BOOST_LOG_TRIVIAL(info) << boost::format(
             "belt printer: capped auto-arrange's Y span to %1%mm near the prime-line origin (was %2%mm)")
             % arrange_depth_mm % unscale<double>(max_y - min_y);
+        return true;
     };
-    cap_beds_for_belt_printer(beds);
+    // True when the capped bed already carries --belt-shift-y, so the recentre below must not add it again.
+    const bool belt_shift_in_beds = cap_beds_for_belt_printer(beds);
     // ORCA: with the capped bed above sized tight to the object (just
     // object_depth + 2*margin_mm), allow_rotations letting arrange rotate
     // the object to fit better becomes a real, observed behavior (confirmed:
@@ -5261,7 +5263,8 @@ int CLI::run(int argc, char **argv)
             double margin_y_mm = support_enabled_recenter ? 30. : 15.;
             // --belt-shift-y: the caller measured where the print (support
             // included) really starts and wants it moved onto the prime lines.
-            const double belt_shift_y_mm = m_config.opt_float("belt_shift_y");
+            // The capped bed above already starts belt_shift_y further along the belt (min_y includes it).
+            const double belt_shift_y_mm = belt_shift_in_beds ? 0. : m_config.opt_float("belt_shift_y");
             Vec2d target(center_x_mm, unscale<double>(min_y) + margin_y_mm + belt_shift_y_mm);
             size_t num_instances = 0;
             for (const Model &model : m_models)
