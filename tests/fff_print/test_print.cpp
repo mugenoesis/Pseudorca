@@ -2425,3 +2425,45 @@ TEST_CASE("The belt build height check uses the compensated height", "[Print][be
     else
         CHECK(error.find(expected) != std::string::npos);
 }
+
+// Slice two 10 mm cubes 60 mm apart along the belt, the second one `lift` mm above the belt, and return the
+// critical empty-layer warnings. The layers lean at 45 degrees, so the cubes are separated by empty layers.
+static std::vector<std::string> belt_gap_warnings(double lift)
+{
+    indexed_triangle_set its = its_make_cube(10., 10., 10.);
+    indexed_triangle_set second = its_make_cube(10., 10., 10.);
+    its_transform(second, Transform3d(Eigen::Translation3d(0., 60., lift)));
+    its_merge(its, second);
+
+    Print print;
+    Model model;
+    init_print({ TriangleMesh(std::move(its)) }, print, model, belt_test_config());
+    model.objects.front()->instances.front()->set_offset(Vec3d(100., 100., 0.));
+    print.apply(model, belt_test_config());
+
+    std::mutex mutex;
+    std::vector<std::string> warnings;
+    print.set_status_callback([&mutex, &warnings](const PrintBase::SlicingStatus &status) {
+        if (status.message_type != PrintStateBase::SlicingEmptyGcodeLayers)
+            return;
+        std::lock_guard<std::mutex> lock(mutex);
+        warnings.push_back(status.text);
+    });
+    // Not gcode(): it silences the status callback. The warning is raised while the G-code is exported.
+    ScopedTemporaryFile temp(".gcode");
+    print.process();
+    print.export_gcode(temp.string(), nullptr, nullptr);
+    return warnings;
+}
+
+TEST_CASE("A belt gap between pieces that all rest on the belt is not an empty-layers warning", "[Print][belt]")
+{
+    const std::vector<std::string> warnings = belt_gap_warnings(0.);
+    INFO((warnings.empty() ? std::string() : warnings.front()));
+    CHECK(warnings.empty());
+}
+
+TEST_CASE("A belt gap before a piece floating above the belt is an empty-layers warning", "[Print][belt]")
+{
+    CHECK(! belt_gap_warnings(30.).empty());
+}
