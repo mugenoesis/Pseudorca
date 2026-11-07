@@ -68,3 +68,10 @@ set_tests_properties(cli_resin PROPERTIES
     LABELS "CLI;RequiresApp"
     SKIP_RETURN_CODE 77
     TIMEOUT 900)
+
+add_test(NAME cli_belt_placement
+    COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/test_cli_belt_placement.sh $<TARGET_FILE:OrcaSlicer> ${ORCA_CLI_TEST_PYTHON})
+set_tests_properties(cli_belt_placement PROPERTIES
+    LABELS "CLI;RequiresApp"
+    SKIP_RETURN_CODE 77
+    TIMEOUT 900)
